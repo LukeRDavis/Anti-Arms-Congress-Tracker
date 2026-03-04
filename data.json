@@ -1,6 +1,6 @@
 {
   "meta": {
-    "fetched_at": "2026-03-04T19:37:51.828922+00:00",
+    "fetched_at": "2026-03-04T19:42:20.976222+00:00",
     "trackaipac_scraped": "2026-03-04T19:37:51.828927+00:00",
     "member_count": 0,
     "anti_arms_count": 0,
@@ -13,7 +13,7 @@
     "sources": {
       "members": "api.congress.gov",
       "bills": "api.congress.gov (auto-discovered)",
-      "trackaipac": "trackaipac.com (scraped)",
+      "trackaipac": "trackaipac.com (cached)",
       "challengers": "trackaipac.com + FEC",
       "votes": "pending key",
       "fec": "api.open.fec.gov",
