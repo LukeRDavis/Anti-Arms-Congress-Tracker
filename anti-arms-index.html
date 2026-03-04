@@ -10,7 +10,7 @@
   <meta property="og:title"       content="Anti-Arms Congress Tracker" />
   <meta property="og:description" content="Interactive hemicycle map of every anti-arms member of Congress, with Polymarket odds and FEC finance data." />
   <meta property="og:type"        content="website" />
-  <meta property="og:url"         content="https://lukermdavis.github.io/Anti-Arms-Congress-Tracker/" />
+  <meta property="og:url"         content="https://lukerldavis.github.io/Anti-Arms-Congress-Tracker/" />
 
   <!-- Preact + hooks (UMD, no build step) -->
   <script src="https://unpkg.com/preact@10/dist/preact.umd.js"></script>
@@ -49,7 +49,7 @@ const html = htm.bind(h);
 
 // ─── CONFIG ───────────────────────────────────────────────────────────────────
 // Civic key is OK client-side IF you restrict it to your domain in Google Cloud Console:
-// https://console.cloud.google.com → APIs → Credentials → HTTP referrers → lukermdavis.github.io
+// https://console.cloud.google.com → APIs → Credentials → HTTP referrers → lukerldavis.github.io
 const CIVIC_KEY   = "AIzaSyCvHP-sSilnAIM53RtZ6pP2JigX-k0ckYk";
 const DATA_URL    = "./data.json";                 // served by GitHub Pages
 const GUN_PEERS   = [                              // Gun relay peers (public, free)
@@ -740,7 +740,7 @@ function App() {
       <div style=${{fontSize:8,color:"#1a1d27",marginTop:14,fontFamily:"monospace",textAlign:"center",maxWidth:800,lineHeight:1.8}}>
         SOURCES: HR 3565 · SENATE JRDs NOV 2024/APR 2025 · OPENFEC (SERVER-SIDE) · POLYMARKET (SERVER-SIDE) · GOOGLE CIVIC API · JEWISH INSIDER · RESPONSIBLE STATECRAFT · MAR 2026
         <br/>P2P SYNC: GUN.JS · DATA REFRESH: GITHUB ACTIONS (4H) · RATE LIMIT: 60S
-        <br/>REPO: <a href="https://github.com/LukeRDavis/Anti-Arms-Congress-Tracker" target="_blank" style=${{color:"#374151"}}>github.com/LukeRDavis/Anti-Arms-Congress-Tracker</a>
+        <br/>REPO: <a href="https://github.com/LukeRLDavis/Anti-Arms-Congress-Tracker" target="_blank" style=${{color:"#374151"}}>github.com/LukeRLDavis/Anti-Arms-Congress-Tracker</a>
       </div>
 
     </div>`;

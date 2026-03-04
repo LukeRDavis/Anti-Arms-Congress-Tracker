@@ -50,14 +50,14 @@ Go to **Settings → Pages**
 - Branch: `main` / `(root)`
 - Click Save
 
-Your site will be live at `https://lukermdavis.github.io/Anti-Arms-Congress-Tracker/` within ~2 minutes.
+Your site will be live at `https://lukerldavis.github.io/Anti-Arms-Congress-Tracker/` within ~2 minutes.
 
 ### 3. Restrict the Google Civic API key
 
 Go to [Google Cloud Console](https://console.cloud.google.com) → **APIs & Services → Credentials** → click your key → **Application restrictions → HTTP referrers** → add:
 
 ```
-https://lukermdavis.github.io/*
+https://lukerldavis.github.io/*
 ```
 
 This makes the Civic key safe to ship in the HTML — it won't work on any other domain.
@@ -87,7 +87,7 @@ Paste this anywhere:
 
 ```html
 <iframe
-  src="https://lukermdavis.github.io/Anti-Arms-Congress-Tracker/"
+  src="https://lukerldavis.github.io/Anti-Arms-Congress-Tracker/"
   width="100%"
   height="900"
   style="border:none;border-radius:12px;"
@@ -128,3 +128,4 @@ All member data is hardcoded in `index.html` (lines ~80–280). To update:
 - OpenFEC API — campaign finance, independent expenditures
 - Polymarket — incumbent reelection odds
 - Google Civic Information API — representative lookup by address
+- Jewish Insider, Responsible Statecraft, JTA, NBC News, Al Jazeera (challenger research)
