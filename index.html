@@ -335,6 +335,7 @@ function MemberBox({title, color, members, challengers, fecData, polyData, onSel
           ${!isChallenger?html`<${ArmsBadge} m=${m}/>`:null}
         </div>
         ${m.note?html`<div style=${{fontSize:8,color:"#374151",lineHeight:1.3,marginBottom:2}}>${m.note.slice(0,70)}${m.note.length>70?"…":""}</div>`:null}
+        ${m.rlc_score?html`<span style=${{fontSize:8,fontFamily:"monospace",color:"#fbbf24",opacity:.7}}>RLC ${m.rlc_score}/100</span>`:null}
         ${fec?html`
           <div style=${{display:"flex",gap:8,flexWrap:"wrap"}}>
             ${fec.raised!=null?html`<span style=${{fontSize:8,fontFamily:"monospace",color:"#4b5563"}}>↑${fmtM(fec.raised)}</span>`:null}
@@ -690,7 +691,75 @@ function useData() {
               pacs: m.pacs || [],
               note: m.note || "",
             }));
+          // Apply KNOWN_ANTI_ARMS overrides — Republicans + others TrackAIPAC doesn't flag
+          const KNOWN_ANTI_ARMS = {
+            "Thomas Massie":   {level:"hard", reason:"Co-sponsored HR 3565 Block the Bombs Act; consistent No votes on Israel arms"},
+            "Warren Davidson": {level:"hard", reason:"Voted No on HR 8034 (Israel aid supplemental, Apr 2024)"},
+            "Andy Biggs":      {level:"hard", reason:"Voted No on HR 8034 and HR 8035 (Israel/Ukraine aid, Apr 2024)"},
+            "Scott Perry":     {level:"hard", reason:"Voted No on HR 8034 (Israel aid supplemental, Apr 2024)"},
+            "Paul Gosar":      {level:"hard", reason:"Voted No on HR 8034 (Israel aid supplemental, Apr 2024)"},
+            "Chip Roy":        {level:"hard", reason:"Voted No on HR 8034 (Israel aid supplemental, Apr 2024)"},
+            "Thomas Tiffany":  {level:"hard", reason:"Voted No on HR 8034 (Israel aid supplemental, Apr 2024)"},
+            "Rand Paul":       {level:"hard", reason:"Led Senate holds on Israel arms sales; co-sponsored FMS disapproval resolutions"},
+            "Lauren Boebert":  {level:"soft", reason:"Voted No on HR 8034; positions have shifted — classified soft"},
+            "Barry Moore":     {level:"soft", reason:"Voted No on some Israel aid provisions"},
+            "Eli Crane":         {level:"hard", reason:"No on HR 8034 (Israel aid supplemental, Apr 2024); RLC Liberty Index 97/100"},
+            "Bob Good":          {level:"soft", reason:"RLC Liberty Index 92/100; consistent anti-interventionist votes"},
+            "Andrew Ogles":      {level:"soft", reason:"RLC Liberty Index 95/100; voted against multiple foreign aid packages"},
+            "Anna Paulina Luna": {level:"soft", reason:"RLC Liberty Index 94/100; voted against Israel aid supplemental"},
+            "Mike Lee":          {level:"soft", reason:"RLC Liberty Index 88/100; consistent anti-interventionist Senate record"},
+            "Ro Khanna":       {level:"hard", reason:"Co-sponsored HR 3565 Block the Bombs Act; co-sponsored Senate JRD on Israel FMS"},
+            "Lloyd Doggett":   {level:"hard", reason:"Co-sponsored HR 3565 Block the Bombs Act"},
+            "Jim McGovern":    {level:"hard", reason:"Co-sponsored HR 3565 Block the Bombs Act"},
+            "Jan Schakowsky":  {level:"hard", reason:"Co-sponsored HR 3565 Block the Bombs Act"},
+            "Maxine Waters":   {level:"hard", reason:"Co-sponsored HR 3565 Block the Bombs Act"},
+            "Jamie Raskin":    {level:"soft", reason:"Publicly called for arms conditions; voting record mixed"},
+            "Ed Markey":       {level:"hard", reason:"Co-sponsored Senate Joint Resolution of Disapproval on Israel FMS"},
+            "Brian Schatz":    {level:"soft", reason:"Signed letters on arms conditions; no co-sponsorship of JRD yet"},
+            "Elizabeth Warren":{level:"soft", reason:"Called for arms review; no co-sponsorship of JRD yet"},
+            "Bernie Sanders":  {level:"hard", reason:"Forced Senate vote on Joint Resolution of Disapproval on Israel FMS (2024)"},
+          };
+          memberList = memberList.map(m => {
+            const ka = KNOWN_ANTI_ARMS[m.name];
+            if (ka) return {...m, antiArms:true, antiArmsLevel:ka.level, note:m.note||ka.reason};
+            return m;
+          });
           console.log("Fallback: built", memberList.length, "members from trackaipac_congress");
+        } else if (memberList.length > 0) {
+          // Even when data.json has members[], still apply KNOWN_ANTI_ARMS
+          // in case the Action ran before the Python fix was deployed
+          const KNOWN_ANTI_ARMS = {
+            "Thomas Massie":   {level:"hard", reason:"Co-sponsored HR 3565 Block the Bombs Act; consistent No votes on Israel arms"},
+            "Warren Davidson": {level:"hard", reason:"Voted No on HR 8034 (Israel aid supplemental, Apr 2024)"},
+            "Andy Biggs":      {level:"hard", reason:"Voted No on HR 8034 and HR 8035 (Israel/Ukraine aid, Apr 2024)"},
+            "Scott Perry":     {level:"hard", reason:"Voted No on HR 8034 (Israel aid supplemental, Apr 2024)"},
+            "Paul Gosar":      {level:"hard", reason:"Voted No on HR 8034 (Israel aid supplemental, Apr 2024)"},
+            "Chip Roy":        {level:"hard", reason:"Voted No on HR 8034 (Israel aid supplemental, Apr 2024)"},
+            "Thomas Tiffany":  {level:"hard", reason:"Voted No on HR 8034 (Israel aid supplemental, Apr 2024)"},
+            "Rand Paul":       {level:"hard", reason:"Led Senate holds on Israel arms sales; co-sponsored FMS disapproval resolutions"},
+            "Lauren Boebert":  {level:"soft", reason:"Voted No on HR 8034; positions have shifted — classified soft"},
+            "Barry Moore":     {level:"soft", reason:"Voted No on some Israel aid provisions"},
+            "Eli Crane":         {level:"hard", reason:"No on HR 8034 (Israel aid supplemental, Apr 2024); RLC Liberty Index 97/100"},
+            "Bob Good":          {level:"soft", reason:"RLC Liberty Index 92/100; consistent anti-interventionist votes"},
+            "Andrew Ogles":      {level:"soft", reason:"RLC Liberty Index 95/100; voted against multiple foreign aid packages"},
+            "Anna Paulina Luna": {level:"soft", reason:"RLC Liberty Index 94/100; voted against Israel aid supplemental"},
+            "Mike Lee":          {level:"soft", reason:"RLC Liberty Index 88/100; consistent anti-interventionist Senate record"},
+            "Ro Khanna":       {level:"hard", reason:"Co-sponsored HR 3565 Block the Bombs Act; co-sponsored Senate JRD on Israel FMS"},
+            "Lloyd Doggett":   {level:"hard", reason:"Co-sponsored HR 3565 Block the Bombs Act"},
+            "Jim McGovern":    {level:"hard", reason:"Co-sponsored HR 3565 Block the Bombs Act"},
+            "Jan Schakowsky":  {level:"hard", reason:"Co-sponsored HR 3565 Block the Bombs Act"},
+            "Maxine Waters":   {level:"hard", reason:"Co-sponsored HR 3565 Block the Bombs Act"},
+            "Jamie Raskin":    {level:"soft", reason:"Publicly called for arms conditions; voting record mixed"},
+            "Ed Markey":       {level:"hard", reason:"Co-sponsored Senate Joint Resolution of Disapproval on Israel FMS"},
+            "Brian Schatz":    {level:"soft", reason:"Signed letters on arms conditions; no co-sponsorship of JRD yet"},
+            "Elizabeth Warren":{level:"soft", reason:"Called for arms review; no co-sponsorship of JRD yet"},
+            "Bernie Sanders":  {level:"hard", reason:"Forced Senate vote on Joint Resolution of Disapproval on Israel FMS (2024)"},
+          };
+          memberList = memberList.map(m => {
+            const ka = KNOWN_ANTI_ARMS[m.name];
+            if (ka) return {...m, antiArms:true, antiArmsLevel:ka.level, note:m.note||ka.reason};
+            return m;
+          });
         }
         setMembers(memberList);
         setBills(d.bills || []);
@@ -703,7 +772,8 @@ function useData() {
         const total = memberList.length;
         const age   = d.meta?.fetched_at
           ? Math.round((Date.now()-new Date(d.meta.fetched_at))/60000) : "?";
-        setStatus("✓ "+anti+" anti-arms ("+hard+" hard) · "+total+" members · "+age+"m ago");
+        const rlcCount = memberList.filter(m=>m.rlc_score && m.rlc_score>=75).length;
+        setStatus("✓ "+anti+" anti-arms ("+hard+" hard) · "+total+" members · RLC:"+rlcCount+" · "+age+"m ago");
       } catch(e) {
         setStatus("⚠ Could not load data.json — run the GitHub Action to generate it.");
         console.error("data.json:", e);
@@ -939,7 +1009,7 @@ function App() {
       </div>
 
       <div style=${{fontSize:8,color:"#1a1d27",marginTop:14,fontFamily:"monospace",textAlign:"center",maxWidth:800,lineHeight:1.8}}>
-        MEMBERS: TRACKAIPAC.COM · HARD CLASSIFICATION: CONGRESS.GOV + LEGISCAN · BILLS: API.CONGRESS.GOV
+        MEMBERS: TRACKAIPAC.COM (D/I) + RLC LIBERTY INDEX (R) · HARD: CONGRESS.GOV BILL CO-SPONSORSHIP + HOUSE-VOTE API + LEGISCAN
         <br/>FINANCE: OPENFEC · ODDS: POLYMARKET · REPS: GOOGLE CIVIC · P2P: GUN.JS · REFRESH: 4H GITHUB ACTIONS
         <br/><a href="https://github.com/LukeRDavis/Anti-Arms-Congress-Tracker" target="_blank" style=${{color:"#374151"}}>github.com/LukeRDavis/Anti-Arms-Congress-Tracker</a>
       </div>
