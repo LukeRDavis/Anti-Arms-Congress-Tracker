@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Anti-Arms Congress Tracker</title>
+  <meta name="description" content="Live tracker of US Congress members who oppose arms sales to Israel — seating chart, Polymarket odds, FEC finance data." />
+  <meta property="og:title"       content="Anti-Arms Congress Tracker" />
+  <meta property="og:description" content="Interactive hemicycle map of every anti-arms member of Congress, with Polymarket odds, FEC finance data, and tracked legislation." />
+  <meta property="og:type"        content="website" />
+  <meta property="og:url"         content="https://lukerdavis.github.io/Anti-Arms-Congress-Tracker/" />
+  <meta property="og:image"       content="https://lukerdavis.github.io/Anti-Arms-Congress-Tracker/og-preview.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card"       content="summary_large_image" />
+  <meta name="twitter:image"      content="https://lukerdavis.github.io/Anti-Arms-Congress-Tracker/og-preview.png" />
+
+  <script src="https://unpkg.com/preact@10/dist/preact.umd.js"></script>
+  <script src="https://unpkg.com/preact@10/hooks/dist/hooks.umd.js"></script>
+  <script src="https://unpkg.com/htm@3/dist/htm.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gun/sea.js"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 14px; }
+    body { background: #0a0c10; color: #e8e4dc; font-family: Georgia, serif; -webkit-font-smoothing: antialiased; }
+    input, button { font-family: monospace; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: #0a0c10; }
+    ::-webkit-scrollbar-thumb { background: #252830; border-radius: 2px; }
+    a { color: inherit; }
+    @media (max-width: 700px) {
+      .three-col { flex-direction: column !important; align-items: stretch !important; }
+      .side-box  { width: 100% !important; }
+      .ctr-col   { width: 100% !important; }
+      svg.hemi   { width: 100% !important; height: auto !important; }
+    }
+  </style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const { h, render, Fragment } = preact;
+const { useState, useEffect, useMemo } = preactHooks;
+const html = htm.bind(h);
+
+// ── Config ────────────────────────────────────────────────────────────────────
+const CIVIC_KEY       = "AIzaSyCvHP-sSilnAIM53RtZ6pP2JigX-k0ckYk";
+const DATA_URL        = "./data.json";
+const CHALLENGERS_URL = "./challengers.json";
+const HISTORY_URL     = "./history.json";
+const GUN_PEERS       = ["https://gun-us.herokuapp.com/gun","https://gun-manhattan.herokuapp.com/gun"];
+
+// ── Legislative thresholds — constitutional facts, never change ───────────────
+const THRESHOLDS = {
+  senate: [
+    { n:41,  label:"Filibuster Bloc",     color:"#a78bfa",
+      desc:"41 senators can sustain a filibuster, blocking any arms bill from reaching the floor." },
+    { n:51,  label:"Majority Control",    color:"#7c3aed",
+      desc:"51 senators can pass Joint Resolutions of Disapproval, blocking specific FMS arms sales to Israel." },
+    { n:67,  label:"Veto Override Block", color:"#6d28d9",
+      desc:"34+ senators make any presidential veto of arms restrictions permanent." },
+  ],
+  house: [
+    { n:60,  label:"Chaos Threshold",     color:"#a78bfa",
+      desc:"~60 members can block procedural rules votes, stalling arms bills before they reach the floor." },
+    { n:218, label:"Majority Control",    color:"#7c3aed",
+      desc:"218 votes passes the Block the Bombs Act and denies arms supplemental appropriations." },
+    { n:290, label:"Veto Override Block", color:"#6d28d9",
+      desc:"145+ members per side deny the 2/3 majority needed to override a presidential veto of arms restrictions." },
+  ],
+};
+
+// ── Color scheme ──────────────────────────────────────────────────────────────
+// Hard = legislative action (co-sponsored bill / on-record vote)
+// Soft = TrackAIPAC approved (rejects AIPAC money, no legislative vote yet)
+//
+//  R ────────── Soft Anti-R ──── Hard Anti-R ──── Hard Anti-D ──── Soft Anti-D ──────── D
+//  #991b1b      #a855f7          #c026d3           #7c3aed           #818cf8              #1e40af
+
+function dotColor(m) {
+  if (!m.antiArms) {
+    if (m.party === "R") return "#991b1b";
+    if (m.party === "D") return "#1e40af";
+    return "#9ca3af";
+  }
+  const hard = m.antiArmsLevel === "hard";
+  if (m.party === "R") return hard ? "#c026d3" : "#a855f7";
+  return hard ? "#7c3aed" : "#818cf8";
+}
+
+function antiArmsTag(m) {
+  if (!m.antiArms) return null;
+  return m.antiArmsLevel === "hard" ? "Hard Anti-Arms" : "Soft Anti-Arms";
+}
+
+function antiArmsTagColor(m) {
+  if (!m.antiArms) return "#9ca3af";
+  return m.antiArmsLevel === "hard"
+    ? (m.party === "R" ? "#c026d3" : "#7c3aed")
+    : (m.party === "R" ? "#a855f7" : "#818cf8");
+}
+
+// ── Hemicycle layout ──────────────────────────────────────────────────────────
+function computeHemicycle(n, cx, cy, innerR, spacing, rows) {
+  const radii  = Array.from({length:rows}, (_,i) => innerR + i*spacing);
+  const total  = radii.reduce((s,r) => s+r, 0);
+  let   perRow = radii.map(r => Math.round((r/total)*n));
+  perRow[perRow.length-1] += n - perRow.reduce((a,b)=>a+b, 0);
+  const pts = [];
+  for (let row=0; row<rows; row++) {
+    const r=radii[row], c=perRow[row];
+    for (let s=0; s<c; s++) {
+      const a = Math.PI*(s/(c-1||1));
+      pts.push({x: cx - r*Math.cos(a), y: cy - r*Math.sin(a), angle: a});
+    }
+  }
+  pts.sort((a,b) => b.angle - a.angle || a.y - b.y);
+  return pts;
+}
+
+function buildMembers(allMembers, chamber) {
+  const ch    = chamber === "house" ? "house" : "senate";
+  const chMem = allMembers.filter(m => m.chamber === ch);
+
+  // Seat order L→R: R | softAntiR | hardAntiR | hardAntiD | softAntiD | D | I
+  const hardAntiR = chMem.filter(m => m.antiArms && m.party==="R" && m.antiArmsLevel==="hard");
+  const softAntiR = chMem.filter(m => m.antiArms && m.party==="R" && m.antiArmsLevel!=="hard");
+  const hardAntiD = chMem.filter(m => m.antiArms && m.party!=="R" && m.antiArmsLevel==="hard");
+  const softAntiD = chMem.filter(m => m.antiArms && m.party!=="R" && m.antiArmsLevel!=="hard");
+  const restR     = chMem.filter(m => !m.antiArms && m.party==="R");
+  const restD     = chMem.filter(m => !m.antiArms && m.party==="D");
+  const restI     = chMem.filter(m => !m.antiArms && m.party==="I");
+
+  function fill(party, count) {
+    return Array.from({length:Math.max(0,count)}, (_,i)=>({
+      id:10000+(party==="R"?0:party==="D"?10000:20000)+i,
+      name:party+"-"+(i+1), party, state:"", antiArms:false, chamber:ch, _filler:true
+    }));
+  }
+
+  const rFill = restR.length > 0 ? restR : fill("R", ch==="house" ? 220-hardAntiR.length-softAntiR.length : 53-hardAntiR.length-softAntiR.length);
+  const dFill = restD.length > 0 ? restD : fill("D", ch==="house" ? 215-hardAntiD.length-softAntiD.length : 45-hardAntiD.length-softAntiD.length);
+  const iFill = restI.length > 0 ? restI : (ch==="senate" ? fill("I",2) : []);
+
+  return [...rFill, ...softAntiR, ...hardAntiR, ...hardAntiD, ...softAntiD, ...dFill, ...iFill];
+}
+
+function fmtM(n) {
+  if (!n&&n!==0) return "—";
+  if (n>=1e6) return "$"+(n/1e6).toFixed(1)+"M";
+  if (n>=1e3) return "$"+Math.round(n/1e3)+"K";
+  return "$"+n;
+}
+
+// ── Status badge ──────────────────────────────────────────────────────────────
+function StatusBadge({ps, prob}) {
+  const isInc = ps==="INCUMBENT"||ps==="INCUMBENT_RISK";
+  if (isInc && prob!=null) {
+    const pct=Math.round(prob*100), risk=prob<0.65;
+    return html`<span style=${{fontSize:9,padding:"1px 6px",borderRadius:3,fontFamily:"monospace",whiteSpace:"nowrap",
+      background:risk?"rgba(251,191,36,.15)":"rgba(34,197,94,.1)",color:risk?"#fbbf24":"#4ade80"}}>
+      ${risk?"⚡ At Risk · "+pct+"%":"✓ "+pct+"%"}
+    </span>`;
+  }
+  const MAP = {
+    INCUMBENT:       {bg:"rgba(34,197,94,.1)",   c:"#4ade80",t:"✓ Incumbent"},
+    INCUMBENT_RISK:  {bg:"rgba(251,191,36,.15)", c:"#fbbf24",t:"⚡ At Risk"},
+    DEFEATED:        {bg:"rgba(239,68,68,.13)",  c:"#f87171",t:"✗ Defeated"},
+    RESIGNED:        {bg:"rgba(156,163,175,.1)", c:"#9ca3af",t:"Resigned"},
+    RETIRED:         {bg:"rgba(156,163,175,.1)", c:"#9ca3af",t:"Retired"},
+    RETIRING:        {bg:"rgba(156,163,175,.1)", c:"#9ca3af",t:"Retiring '26"},
+    FLIPPED:         {bg:"rgba(251,191,36,.13)", c:"#fbbf24",t:"~ Flipped"},
+    RUNOFF:          {bg:"rgba(251,191,36,.15)", c:"#f59e0b",t:"⚡ Runoff"},
+    RECOUNT:         {bg:"rgba(251,191,36,.15)", c:"#f59e0b",t:"🔄 Recount"},
+    UPCOMING:        {bg:"rgba(139,92,246,.12)", c:"#a78bfa",t:"🗓 Upcoming"},
+    RESULTS_PENDING: {bg:"rgba(251,191,36,.15)", c:"#fbbf24",t:"📊 Pending"},
+    WON:             {bg:"rgba(34,197,94,.13)",  c:"#4ade80",t:"✓ WON"},
+    GENERAL:         {bg:"rgba(139,92,246,.12)", c:"#a78bfa",t:"🗓 General"},
+  };
+  const s = MAP[ps]||{bg:"transparent",c:"#9ca3af",t:ps||"—"};
+  return html`<span style=${{fontSize:9,padding:"1px 6px",borderRadius:3,fontFamily:"monospace",whiteSpace:"nowrap",background:s.bg,color:s.c}}>${s.t}</span>`;
+}
+
+// ── Anti-arms level badge ─────────────────────────────────────────────────────
+function ArmsBadge({m}) {
+  if (!m || !m.antiArms) return null;
+  const hard  = m.antiArmsLevel === "hard";
+  const color = antiArmsTagColor(m);
+  const bg    = hard ? color+"22" : color+"14";
+  return html`<span style=${{fontSize:8,padding:"1px 6px",borderRadius:3,fontFamily:"monospace",
+    whiteSpace:"nowrap",background:bg,color,border:"1px solid "+color+"33"}}>
+    ${hard ? "⚡ Hard Anti-Arms" : "◦ Soft Anti-Arms"}
+  </span>`;
+}
+
+// ── Progress bars ─────────────────────────────────────────────────────────────
+function ProgressBars({chamber, members}) {
+  const hard    = members.filter(m=>m.antiArms && m.antiArmsLevel==="hard").length;
+  const soft    = members.filter(m=>m.antiArms && m.antiArmsLevel!=="hard").length;
+  const current = hard + soft;
+
+  return html`
+    <div style=${{background:"#0f1117",border:"1px solid #1e2230",borderRadius:12,padding:"12px 14px",width:"100%",boxSizing:"border-box"}}>
+      <div style=${{fontSize:9,color:"#a78bfa",fontFamily:"monospace",letterSpacing:"0.14em",textTransform:"uppercase",marginBottom:7}}>
+        ◈ Anti-Arms Coalition · ${chamber==="senate"?"Senate":"House"}
+      </div>
+
+      <div style=${{display:"flex",gap:12,marginBottom:10,flexWrap:"wrap"}}>
+        <span style=${{fontSize:8,fontFamily:"monospace",display:"flex",alignItems:"center",gap:4}}>
+          <span style=${{width:9,height:9,borderRadius:2,background:"#7c3aed",display:"inline-block",flexShrink:0}}/>
+          <span style=${{color:"#a78bfa",fontWeight:600}}>Hard ${hard}</span>
+          <span style=${{color:"#374151"}}> co-sponsored or voted on record</span>
+        </span>
+        <span style=${{fontSize:8,fontFamily:"monospace",display:"flex",alignItems:"center",gap:4}}>
+          <span style=${{width:9,height:9,borderRadius:2,background:"#818cf8",opacity:0.7,display:"inline-block",flexShrink:0}}/>
+          <span style=${{color:"#818cf8",fontWeight:600}}>Soft ${soft}</span>
+          <span style=${{color:"#374151"}}> rejects AIPAC, no vote yet</span>
+        </span>
+      </div>
+
+      ${THRESHOLDS[chamber].map((th,i) => {
+        const hardPct = Math.min(100, Math.round((hard/th.n)*100));
+        const softPct = Math.min(100-hardPct, Math.round((soft/th.n)*100));
+        const reached = current >= th.n;
+        const hardHit = hard >= th.n;
+        return html`
+          <div key=${i} style=${{marginBottom:i<THRESHOLDS[chamber].length-1?14:0}}>
+            <div style=${{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:3}}>
+              <span style=${{fontSize:10,color:reached?"#4ade80":th.color,fontWeight:600}}>${th.label}</span>
+              <div style=${{display:"flex",gap:4,alignItems:"center",fontFamily:"monospace"}}>
+                <span style=${{fontSize:8,color:"#a78bfa"}}>${hard}H</span>
+                <span style=${{fontSize:8,color:"#374151"}}>+</span>
+                <span style=${{fontSize:8,color:"#818cf8"}}>${soft}S</span>
+                <span style=${{fontSize:8,color:"#374151"}}>=</span>
+                <span style=${{fontSize:10,color:reached?"#4ade80":"#6b7280",fontWeight:600}}>
+                  ${current}/${th.n}${reached?" ✓":""}
+                </span>
+              </div>
+            </div>
+            <div style=${{height:7,borderRadius:4,background:"#1a1d27",overflow:"hidden",marginBottom:4,position:"relative"}}>
+              <div style=${{position:"absolute",left:0,top:0,height:"100%",
+                width:hardPct+"%",background:hardHit?"#4ade80":"#7c3aed",
+                borderRadius:4,transition:"width 0.8s ease"}}/>
+              <div style=${{position:"absolute",left:hardPct+"%",top:0,height:"100%",
+                width:softPct+"%",background:"#818cf8",opacity:0.6,
+                transition:"all 0.8s ease"}}/>
+            </div>
+            <div style=${{fontSize:8,color:hardHit?"#4ade80":"#374151",fontFamily:"monospace",marginBottom:3}}>
+              ${hardHit
+                ? "✓ Hard threshold reached — "+hard+" members with on-record legislative vote"
+                : "Hard-only: "+hard+"/"+th.n+" — need "+(th.n-hard)+" more with a legislative vote"}
+            </div>
+            <div style=${{fontSize:9,color:"#374151",lineHeight:1.5}}>${th.desc}</div>
+          </div>`;
+      })}
+    </div>`;
+}
+
+// ── Tracked Legislation Panel ─────────────────────────────────────────────────
+function BillsPanel({bills}) {
+  if (!bills||bills.length===0) return null;
+  const anti = bills.filter(b=>b.classification==="anti_arms");
+  const pro  = bills.filter(b=>b.classification==="pro_arms");
+  const BillRow = ({b}) => html`
+    <div style=${{padding:"6px 9px",borderBottom:"1px solid #0e1016"}}>
+      <div style=${{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:4,marginBottom:2}}>
+        <a href=${b.url} target="_blank" rel="noreferrer"
+          style=${{fontSize:10,color:"#e8e4dc",fontWeight:600,lineHeight:1.3,flex:1,textDecoration:"none"}}>
+          ${b.type} ${b.number}
+          <span style=${{fontSize:8,color:"#374151",marginLeft:3}}>↗</span>
+        </a>
+        <span style=${{fontSize:8,padding:"1px 5px",borderRadius:3,fontFamily:"monospace",whiteSpace:"nowrap",
+          background:b.classification==="anti_arms"?"rgba(124,58,237,.15)":"rgba(239,68,68,.13)",
+          color:b.classification==="anti_arms"?"#a78bfa":"#f87171"}}>
+          ${b.classification==="anti_arms"?"🚫 Restricts":"🔫 Authorizes"}
+        </span>
+      </div>
+      <div style=${{fontSize:9,color:"#4b5563",lineHeight:1.4,marginBottom:2}}>
+        ${(b.title||"").slice(0,90)}${(b.title||"").length>90?"…":""}
+      </div>
+      <div style=${{display:"flex",gap:6,flexWrap:"wrap"}}>
+        ${b.sponsor_count?html`<span style=${{fontSize:8,fontFamily:"monospace",color:"#374151"}}>${b.sponsor_count} sponsors</span>`:null}
+        ${b.last_action_date?html`<span style=${{fontSize:8,fontFamily:"monospace",color:"#374151"}}>${b.last_action_date}</span>`:null}
+      </div>
+    </div>`;
+  return html`
+    <div style=${{background:"#0f1117",border:"1px solid #1e2230",borderRadius:12,overflow:"hidden",width:"100%",boxSizing:"border-box"}}>
+      <div style=${{padding:"8px 11px",background:"#090b0e",borderBottom:"1px solid #1e2230"}}>
+        <div style=${{fontSize:9,color:"#a78bfa",fontFamily:"monospace",letterSpacing:"0.14em",textTransform:"uppercase"}}>◈ Tracked Legislation · Auto-discovered</div>
+        <div style=${{fontSize:8,color:"#374151",marginTop:2}}>${anti.length} arms-restricting · ${pro.length} arms-authorizing · refreshed from api.congress.gov</div>
+      </div>
+      ${anti.length>0?html`
+        <div style=${{padding:"3px 9px",background:"#0a0c10",fontSize:8,color:"#374151",fontFamily:"monospace",letterSpacing:"0.1em",textTransform:"uppercase"}}>Anti-Arms Legislation</div>
+        ${anti.map((b,i)=>html`<${BillRow} key=${i} b=${b}/>`)}`:null}
+      ${pro.length>0?html`
+        <div style=${{padding:"3px 9px",background:"#0a0c10",fontSize:8,color:"#374151",fontFamily:"monospace",letterSpacing:"0.1em",textTransform:"uppercase"}}>Pro-Arms (tracked for No votes)</div>
+        ${pro.map((b,i)=>html`<${BillRow} key=${i} b=${b}/>`)}`:null}
+    </div>`;
+}
+
+// ── Member box (side panel) ───────────────────────────────────────────────────
+function MemberBox({title, color, members, challengers, fecData, polyData, onSelect}) {
+  const [tab, setTab] = useState("members");
+
+  const hard     = members.filter(m=>m.antiArmsLevel==="hard" && !["RETIRED","RESIGNED","DEFEATED","RETIRING","FLIPPED"].includes(m.ps));
+  const soft     = members.filter(m=>m.antiArmsLevel!=="hard" && !["RETIRED","RESIGNED","DEFEATED","RETIRING","FLIPPED"].includes(m.ps));
+  const departed = members.filter(m=>["RETIRED","RESIGNED","DEFEATED","FLIPPED","RETIRING"].includes(m.ps));
+
+  const groups = {
+    RECOUNT:  challengers.filter(c=>c.ps==="RECOUNT"),
+    PENDING:  challengers.filter(c=>c.ps==="RESULTS_PENDING"),
+    RUNOFF:   challengers.filter(c=>c.ps==="RUNOFF"),
+    WON:      challengers.filter(c=>c.ps==="WON"),
+    UPCOMING: challengers.filter(c=>c.ps==="UPCOMING"||c.ps==="GENERAL"),
+    DEFEATED: challengers.filter(c=>c.ps==="DEFEATED"),
+  };
+
+  const Row = ({m, isChallenger}) => {
+    const fec  = fecData[m.name];
+    const poly = polyData[m.name];
+    const loc  = m.state+(m.district!=null?"-"+m.district:m.chamber==="senate"?" · S":"");
+    return html`
+      <div onClick=${()=>onSelect&&onSelect(m)}
+        style=${{padding:"6px 9px",borderBottom:"1px solid #0e1016",cursor:"pointer"}}
+        onMouseEnter=${e=>{e.currentTarget.style.background="#0e1016";}}
+        onMouseLeave=${e=>{e.currentTarget.style.background="transparent";}}>
+        <div style=${{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:4,marginBottom:2}}>
+          <span style=${{fontSize:11,color:"#e8e4dc",fontWeight:600,lineHeight:1.2,flex:1}}>${m.name}</span>
+          <${StatusBadge} ps=${m.ps||"INCUMBENT"} prob=${poly?.prob}/>
+        </div>
+        <div style=${{display:"flex",gap:5,flexWrap:"wrap",marginBottom:2}}>
+          <span style=${{fontSize:8,fontFamily:"monospace",color:"#374151"}}>${loc}${isChallenger&&m.primaryDate?" · "+m.primaryDate:""}</span>
+          ${!isChallenger?html`<${ArmsBadge} m=${m}/>`:null}
+        </div>
+        ${m.note?html`<div style=${{fontSize:8,color:"#374151",lineHeight:1.3,marginBottom:2}}>${m.note.slice(0,70)}${m.note.length>70?"…":""}</div>`:null}
+        ${fec?html`
+          <div style=${{display:"flex",gap:8,flexWrap:"wrap"}}>
+            ${fec.raised!=null?html`<span style=${{fontSize:8,fontFamily:"monospace",color:"#4b5563"}}>↑${fmtM(fec.raised)}</span>`:null}
+            ${fec.ie_against>0?html`<span style=${{fontSize:8,fontFamily:"monospace",color:"#f87171"}}>⚡${fmtM(fec.ie_against)} vs</span>`:null}
+          </div>`:null}
+      </div>`;
+  };
+
+  const Section = ({label, items, isChallenger}) => {
+    if (!items||!items.length) return null;
+    return html`<${Fragment}>
+      ${label?html`<div style=${{padding:"3px 9px",background:"#090b0e",fontSize:8,color:"#374151",fontFamily:"monospace",letterSpacing:"0.1em",textTransform:"uppercase"}}>${label}</div>`:null}
+      ${items.map((m,i)=>html`<${Row} key=${i} m=${m} isChallenger=${isChallenger}/>`)}
+    </${Fragment}>`;
+  };
+
+  return html`
+    <div class="side-box" style=${{width:222,background:"#0f1117",border:"1px solid "+color+"22",borderRadius:12,overflow:"hidden",flexShrink:0}}>
+      <div style=${{background:"linear-gradient(135deg,"+color+"16,"+color+"05)",borderBottom:"1px solid "+color+"22",padding:"9px 11px"}}>
+        <div style=${{fontSize:9,fontWeight:700,letterSpacing:"0.14em",textTransform:"uppercase",color,fontFamily:"monospace"}}>${title}</div>
+        <div style=${{fontSize:8,color:"#374151",marginTop:2}}>
+          ${hard.length} hard · ${soft.length} soft · ${departed.length} departed · ${challengers.length} challengers
+        </div>
+      </div>
+      <div style=${{display:"flex",borderBottom:"1px solid #0e1016"}}>
+        ${[["members","Members"],["challengers","Challengers"]].map(([k,l])=>html`
+          <button key=${k} onClick=${()=>setTab(k)} style=${{
+            flex:1,padding:"5px",border:"none",cursor:"pointer",fontFamily:"monospace",fontSize:9,
+            background:tab===k?"#161920":"transparent",color:tab===k?color:"#374151",
+            borderBottom:tab===k?"2px solid "+color:"none"}}>
+            ${l}
+          </button>`)}
+      </div>
+      <div style=${{maxHeight:440,overflowY:"auto"}}>
+        ${tab==="members"?html`
+          ${hard.length>0?html`<div style=${{padding:"3px 9px",background:"#090b0e",fontSize:8,color:"#374151",fontFamily:"monospace",letterSpacing:"0.1em",textTransform:"uppercase"}}>⚡ Hard Anti-Arms</div>`:null}
+          <${Section} items=${hard}/>
+          ${soft.length>0?html`<div style=${{padding:"3px 9px",background:"#090b0e",fontSize:8,color:"#374151",fontFamily:"monospace",letterSpacing:"0.1em",textTransform:"uppercase"}}>◦ Soft Anti-Arms</div>`:null}
+          <${Section} items=${soft}/>
+          <${Section} label="Departed" items=${departed}/>
+        `:html`
+          ${challengers.length===0?html`<div style=${{padding:16,fontSize:10,color:"#374151",textAlign:"center"}}>No challengers tracked.</div>`:null}
+          <${Section} label="Recount"        items=${groups.RECOUNT}   isChallenger/>
+          <${Section} label="Results Pending" items=${groups.PENDING}  isChallenger/>
+          <${Section} label="Runoff"         items=${groups.RUNOFF}    isChallenger/>
+          <${Section} label="Won Primary"    items=${groups.WON}       isChallenger/>
+          <${Section} label="Upcoming"       items=${groups.UPCOMING}  isChallenger/>
+          <${Section} label="Defeated"       items=${groups.DEFEATED}  isChallenger/>
+        `}
+      </div>
+    </div>`;
+}
+
+// ── Detail panel ──────────────────────────────────────────────────────────────
+function DetailPanel({member, fecData, polyData, bills, chamber}) {
+  if (!member||member._filler) return html`
+    <div style=${{color:"#1f2937",fontSize:11,textAlign:"center",paddingTop:20}}>
+      <div style=${{fontSize:16,marginBottom:4,opacity:.2}}>○</div>
+      Click any dot or name
+    </div>`;
+
+  const fec    = fecData[member.name];
+  const poly   = polyData[member.name];
+  const color  = dotColor(member);
+  const mBills = (member.bills||[]).map(id=>bills.find(b=>b.id===id)).filter(Boolean);
+  const votes  = member.votes||[];
+  const hard   = member.antiArmsLevel === "hard";
+
+  const copyLink = () => {
+    const base = window.location.origin+window.location.pathname;
+    const qs   = "?"+(chamber!=="house"?"chamber="+chamber+"&":"")+"member="+encodeURIComponent(member.name);
+    navigator.clipboard?.writeText(base+qs).then(()=>alert("Link copied!")).catch(()=>prompt("Copy:",base+qs));
+  };
+
+  return html`
+    <div>
+      <div style=${{display:"flex",alignItems:"center",gap:9,marginBottom:8}}>
+        <div style=${{width:30,height:30,borderRadius:"50%",background:color,flexShrink:0,
+          display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,fontWeight:700,color:"#fff",
+          boxShadow: member.antiArms && hard ? "0 0 12px "+color+"60" : "none"}}>
+          ${member.name.charAt(0)}
+        </div>
+        <div style=${{flex:1}}>
+          <div style=${{fontSize:12,fontWeight:700,color:"#f0ebe0",lineHeight:1.2}}>${member.name}</div>
+          <div style=${{fontSize:9,color:"#374151",fontFamily:"monospace",marginTop:1}}>
+            ${member.state}${member.district!=null?"-"+member.district:""} ·
+            ${member.party==="D"?"Democrat":member.party==="R"?"Republican":"Independent"}
+          </div>
+        </div>
+        <${StatusBadge} ps=${member.ps||"INCUMBENT"} prob=${poly?.prob}/>
+      </div>
+
+      ${member.antiArms?html`
+        <div style=${{marginBottom:8,padding:"7px 10px",borderRadius:8,
+          background:hard?"rgba(124,58,237,.1)":"rgba(129,140,248,.07)",
+          border:"1px solid "+(hard?"#7c3aed33":"#818cf833")}}>
+          <div style=${{display:"flex",alignItems:"center",gap:6,marginBottom:3}}>
+            <${ArmsBadge} m=${member}/>
+          </div>
+          <div style=${{fontSize:9,color:"#4b5563",lineHeight:1.5}}>
+            ${hard
+              ? "Has taken a legislative stand — co-sponsored arms-restricting legislation or cast an on-record No vote against arms authorization."
+              : "Endorsed by TrackAIPAC: rejects AIPAC contributions and has low or zero Israel lobby receipts. No on-record legislative vote yet."}
+          </div>
+          ${member.lobby_total>0?html`
+            <div style=${{fontSize:8,color:"#374151",fontFamily:"monospace",marginTop:3}}>
+              Israel lobby receipts: ${fmtM(member.lobby_total)}
+              ${member.pacs&&member.pacs.length>0?html` · ${member.pacs.slice(0,4).join(", ")}`:null}
+            </div>`:null}
+        </div>`:null}
+
+      ${member.note?html`<div style=${{fontSize:10,color:"#4b5563",marginBottom:8,lineHeight:1.5}}>${member.note}</div>`:null}
+
+      ${mBills.length>0?html`
+        <div style=${{marginBottom:8}}>
+          <div style=${{fontSize:8,color:"#374151",fontFamily:"monospace",letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:4}}>Co-sponsored legislation</div>
+          ${mBills.map((b,i)=>html`
+            <div key=${i} style=${{fontSize:9,fontFamily:"monospace",marginBottom:2}}>
+              <a href=${b.url} target="_blank" rel="noreferrer" style=${{color:"#a78bfa",textDecoration:"none"}}>${b.type} ${b.number} ↗</a>
+              <span style=${{color:"#4b5563",marginLeft:5}}>${(b.title||"").slice(0,55)}${(b.title||"").length>55?"…":""}</span>
+            </div>`)}
+        </div>`:null}
+
+      ${votes.length>0?html`
+        <div style=${{marginBottom:8}}>
+          <div style=${{fontSize:8,color:"#374151",fontFamily:"monospace",letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:4}}>On-record votes</div>
+          ${votes.map((v,i)=>html`
+            <div key=${i} style=${{fontSize:9,fontFamily:"monospace",marginBottom:2}}>
+              <span style=${{color:v.vote==="No"?"#f87171":"#4ade80",marginRight:4}}>${v.vote}</span>
+              <span style=${{color:"#4b5563"}}>${v.bill} — ${(v.desc||"").slice(0,50)}</span>
+            </div>`)}
+        </div>`:null}
+
+      <div style=${{display:"flex",gap:7,flexWrap:"wrap"}}>
+        ${fec?html`
+          <div style=${{flex:"1 1 130px",borderRadius:7,border:"1px solid #1a1d27",overflow:"hidden"}}>
+            <div style=${{padding:"3px 7px",background:"#090b0e",fontSize:8,color:"#fbbf24",fontFamily:"monospace"}}>FEC 2024</div>
+            ${[["Raised",fmtM(fec.raised)],["Spent",fmtM(fec.spent)],["Cash",fmtM(fec.cash)],
+               ...(fec.ie_against>0?[["vs IEs",fmtM(fec.ie_against)]]:[] ),
+               ...(fec.ie_support>0?[["for IEs",fmtM(fec.ie_support)]]:[] ),
+            ].map(([k,v])=>html`
+              <div key=${k} style=${{display:"flex",justifyContent:"space-between",padding:"3px 7px",borderTop:"1px solid #0e1016"}}>
+                <span style=${{fontSize:9,color:"#4b5563"}}>${k}</span>
+                <span style=${{fontSize:9,color:"#e8e4dc",fontFamily:"monospace"}}>${v}</span>
+              </div>`)}
+            ${fec.cid?html`<div style=${{padding:"3px 7px",borderTop:"1px solid #0e1016"}}>
+              <a href=${"https://www.fec.gov/data/candidate/"+fec.cid+"/"} target="_blank" rel="noreferrer"
+                style=${{fontSize:8,color:"#374151",fontFamily:"monospace",textDecoration:"none"}}>→ FEC profile ↗</a>
+            </div>`:null}
+          </div>`:null}
+
+        ${poly?html`
+          <div style=${{flex:"1 1 130px",borderRadius:7,border:"1px solid #1a1d27",overflow:"hidden"}}>
+            <div style=${{padding:"3px 7px",background:"#090b0e",fontSize:8,color:"#a78bfa",fontFamily:"monospace"}}>POLYMARKET</div>
+            <div style=${{padding:"4px 7px",borderTop:"1px solid #0e1016",fontSize:9,color:"#6b7280",lineHeight:1.4}}>${poly.question}</div>
+            ${poly.prob!=null?html`
+              <div style=${{padding:"4px 7px",borderTop:"1px solid #0e1016",display:"flex",alignItems:"center",gap:6}}>
+                <div style=${{flex:1,height:5,borderRadius:3,background:"#1a1d27",overflow:"hidden"}}>
+                  <div style=${{height:"100%",width:Math.round(poly.prob*100)+"%",background:poly.prob>=.65?"#4ade80":"#fbbf24",borderRadius:3}}/>
+                </div>
+                <span style=${{fontSize:9,fontFamily:"monospace",color:poly.prob>=.65?"#4ade80":"#fbbf24"}}>${Math.round(poly.prob*100)+"%"}</span>
+              </div>`:null}
+            ${poly.url?html`<div style=${{padding:"3px 7px",borderTop:"1px solid #0e1016"}}>
+              <a href=${poly.url} target="_blank" rel="noreferrer"
+                style=${{fontSize:8,color:"#374151",fontFamily:"monospace",textDecoration:"none"}}>→ Polymarket ↗</a>
+            </div>`:null}
+          </div>`:null}
+      </div>
+
+      <div style=${{marginTop:8}}>
+        <button onClick=${copyLink}
+          style=${{padding:"4px 10px",borderRadius:6,border:"1px solid #1e2230",background:"transparent",
+            color:"#6b7280",fontFamily:"monospace",fontSize:9,cursor:"pointer"}}>
+          ⎘ Copy member link
+        </button>
+      </div>
+    </div>`;
+}
+
+// ── History Timeline ──────────────────────────────────────────────────────────
+function HistoryTimeline({history}) {
+  const [filter, setFilter] = useState("all");
+  const events = (history.events||[]).filter(e =>
+    filter==="all" ? true :
+    filter==="flips" ? (e.change==="pro_to_anti"||e.change==="anti_to_pro") :
+    filter==="departures" ? e.change==="departed" : true
+  );
+  const STYLE = {
+    pro_to_anti: {color:"#a78bfa",bg:"rgba(124,58,237,.13)",icon:"✦",label:"Pro → Anti-Arms"},
+    anti_to_pro: {color:"#f87171",bg:"rgba(239,68,68,.13)", icon:"✗",label:"Anti → Pro-Arms"},
+    departed:    {color:"#9ca3af",bg:"rgba(156,163,175,.1)",icon:"○",label:"Departed"},
+  };
+  const fmtDate = iso => {
+    try { return new Date(iso).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}); }
+    catch { return iso; }
+  };
+  if (!history.events||history.events.length===0) return html`
+    <div style=${{background:"#0f1117",border:"1px solid #1e2230",borderRadius:12,padding:"16px",width:"100%",boxSizing:"border-box",textAlign:"center",color:"#374151",fontSize:10,fontFamily:"monospace"}}>
+      ◈ Status History — populates automatically as members flip positions or depart
+    </div>`;
+  return html`
+    <div style=${{background:"#0f1117",border:"1px solid #1e2230",borderRadius:12,overflow:"hidden",width:"100%",boxSizing:"border-box"}}>
+      <div style=${{padding:"10px 14px",background:"#090b0e",borderBottom:"1px solid #1e2230",display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:6}}>
+        <div>
+          <div style=${{fontSize:9,color:"#a78bfa",fontFamily:"monospace",letterSpacing:"0.14em",textTransform:"uppercase"}}>◈ Member Status History</div>
+          <div style=${{fontSize:8,color:"#374151",marginTop:2}}>
+            Auto-detected every 4h · ${history.events.length} events recorded
+            ${history.last_updated?html` · ${fmtDate(history.last_updated)}`:""}
+          </div>
+        </div>
+        <div style=${{display:"flex",gap:2,background:"#0a0c10",borderRadius:6,padding:2,border:"1px solid #1e2230"}}>
+          ${[["all","All"],["flips","Flips"],["departures","Departures"]].map(([k,l])=>html`
+            <button key=${k} onClick=${()=>setFilter(k)}
+              style=${{padding:"3px 8px",borderRadius:4,border:"none",cursor:"pointer",fontFamily:"monospace",fontSize:8,
+                background:filter===k?"#161920":"transparent",color:filter===k?"#a78bfa":"#374151"}}>
+              ${l}
+            </button>`)}
+        </div>
+      </div>
+      ${events.length===0?html`<div style=${{padding:14,color:"#374151",fontSize:9,textAlign:"center",fontFamily:"monospace"}}>No events match this filter.</div>`:
+        html`<div style=${{maxHeight:340,overflowY:"auto"}}>
+          ${events.map((e,i)=>{
+            const s=STYLE[e.change]||{color:"#9ca3af",bg:"rgba(156,163,175,.05)",icon:"·",label:e.change};
+            return html`
+              <div key=${i} style=${{display:"flex",borderBottom:"1px solid #0e1016"}}>
+                <div style=${{width:66,flexShrink:0,padding:"8px 6px 8px 10px",borderRight:"1px solid #0e1016",display:"flex",flexDirection:"column",justifyContent:"center"}}>
+                  <div style=${{fontSize:8,fontFamily:"monospace",color:"#4b5563",lineHeight:1.3}}>${fmtDate(e.date)}</div>
+                </div>
+                <div style=${{width:28,flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",borderRight:"1px solid #0e1016",background:s.bg}}>
+                  <span style=${{fontSize:12,color:s.color}}>${s.icon}</span>
+                </div>
+                <div style=${{flex:1,padding:"8px 10px"}}>
+                  <div style=${{display:"flex",alignItems:"center",gap:6,flexWrap:"wrap",marginBottom:2}}>
+                    <span style=${{fontSize:11,color:"#e8e4dc",fontWeight:600}}>${e.member}</span>
+                    <span style=${{fontSize:8,padding:"1px 5px",borderRadius:3,fontFamily:"monospace",background:s.bg,color:s.color,whiteSpace:"nowrap"}}>${s.label}</span>
+                    <span style=${{fontSize:8,fontFamily:"monospace",color:"#374151"}}>
+                      ${e.state}${e.chamber?" · "+e.chamber.charAt(0).toUpperCase()+e.chamber.slice(1):""}
+                      ${e.party?" ["+e.party+"]":""}
+                    </span>
+                  </div>
+                  <div style=${{fontSize:9,color:"#4b5563",lineHeight:1.5}}>${e.trigger||""}</div>
+                </div>
+              </div>`;
+          })}
+        </div>`}
+    </div>`;
+}
+
+// ── Find My Rep ───────────────────────────────────────────────────────────────
+function FindMyRep({members, onHighlight}) {
+  const [addr,setAddr]=useState(""), [reps,setReps]=useState(null), [loading,setLoad]=useState(false), [err,setErr]=useState(null);
+  const lookup = async () => {
+    if (!addr.trim()) return;
+    setLoad(true); setErr(null); setReps(null);
+    try {
+      const r = await fetch("https://civicinfo.googleapis.com/civicinfo/v2/representatives"
+        +"?key="+CIVIC_KEY+"&address="+encodeURIComponent(addr.trim())
+        +"&levels=country&roles=legislatorUpperBody&roles=legislatorLowerBody");
+      if (!r.ok) throw new Error();
+      const d = await r.json();
+      const out=[];
+      (d.offices||[]).forEach(o=>(o.officialIndices||[]).forEach(i=>{
+        const off=d.officials?.[i]; if(off) out.push({name:off.name,party:off.party,photo:off.photoUrl,phones:off.phones,urls:off.urls,office:o.name});
+      }));
+      setReps(out);
+      out.forEach(rep=>{
+        const i=members.findIndex(m=>m.name&&rep.name&&m.name.toLowerCase().includes(rep.name.split(" ").slice(-1)[0].toLowerCase()));
+        if(i>=0) onHighlight(i);
+      });
+    } catch { setErr("Address not found. Try a full US street address."); }
+    setLoad(false);
+  };
+  const pc = p=>p==="Democratic"||p==="Democrat"?"#1e40af":p==="Republican"?"#991b1b":"#9ca3af";
+  return html`
+    <div style=${{background:"#0f1117",border:"1px solid #1e2230",borderRadius:12,padding:"11px 13px",width:"100%",boxSizing:"border-box"}}>
+      <div style=${{fontSize:9,color:"#fbbf24",fontFamily:"monospace",letterSpacing:"0.12em",marginBottom:6,textTransform:"uppercase"}}>⊙ Find My Representatives · Google Civic API</div>
+      <div style=${{display:"flex",gap:5}}>
+        <input value=${addr} onInput=${e=>setAddr(e.target.value)} onKeyDown=${e=>e.key==="Enter"&&lookup()}
+          placeholder="Enter your US address and press Enter…"
+          style=${{flex:1,background:"#090b0e",border:"1px solid #1e2230",borderRadius:7,padding:"5px 9px",color:"#e8e4dc",fontSize:11,fontFamily:"monospace",outline:"none"}}/>
+        <button onClick=${lookup} disabled=${loading}
+          style=${{padding:"5px 12px",borderRadius:7,border:"none",cursor:"pointer",background:loading?"#1a1d27":"#fbbf24",color:"#0a0c10",fontFamily:"monospace",fontSize:11,fontWeight:700}}>
+          ${loading?"…":"Look up"}
+        </button>
+      </div>
+      ${err?html`<div style=${{fontSize:9,color:"#f87171",marginTop:4,fontFamily:"monospace"}}>${err}</div>`:null}
+      ${reps&&reps.length?html`
+        <div style=${{marginTop:8,display:"flex",flexWrap:"wrap",gap:7}}>
+          ${reps.map((rep,i)=>html`
+            <div key=${i} style=${{flex:"1 1 170px",background:"#12151c",borderRadius:8,border:"1px solid "+pc(rep.party)+"22",padding:"7px 9px"}}>
+              <div style=${{display:"flex",gap:7,alignItems:"center",marginBottom:3}}>
+                ${rep.photo?html`<img src=${rep.photo} alt=${rep.name} style=${{width:24,height:24,borderRadius:"50%",objectFit:"cover",flexShrink:0}} onError=${e=>{e.target.style.display="none";}}/>`:null}
+                <div>
+                  <div style=${{fontSize:11,fontWeight:700,color:"#f0ebe0",lineHeight:1.2}}>${rep.name}</div>
+                  <div style=${{fontSize:8,color:"#374151",fontFamily:"monospace"}}>${rep.office}</div>
+                </div>
+              </div>
+              <div style=${{display:"flex",gap:5,flexWrap:"wrap"}}>
+                <span style=${{fontSize:8,padding:"1px 5px",borderRadius:3,background:pc(rep.party)+"18",color:pc(rep.party),fontFamily:"monospace"}}>${rep.party}</span>
+                ${rep.phones?.[0]?html`<a href=${"tel:"+rep.phones[0]} style=${{fontSize:8,color:"#4b5563",fontFamily:"monospace",textDecoration:"none"}}>📞 ${rep.phones[0]}</a>`:null}
+                ${rep.urls?.[0]?html`<a href=${rep.urls[0]} target="_blank" rel="noreferrer" style=${{fontSize:8,color:"#4b9cd3",fontFamily:"monospace",textDecoration:"none"}}>↗ Web</a>`:null}
+              </div>
+            </div>`)}
+        </div>`:null}
+    </div>`;
+}
+
+// ── Data loading ──────────────────────────────────────────────────────────────
+function useData() {
+  const [allMembers,   setMembers]     = useState([]);
+  const [bills,        setBills]       = useState([]);
+  const [challengers,  setChallengers] = useState([]);
+  const [history,      setHistory]     = useState({events:[]});
+  const [fecData,      setFec]         = useState({});
+  const [polyData,     setPoly]        = useState({});
+  const [fetchedAt,    setFetchedAt]   = useState(null);
+  const [status,       setStatus]      = useState("Loading…");
+  const [loaded,       setLoaded]      = useState(false);
+
+  useEffect(() => {
+    fetch(HISTORY_URL+"?_="+Date.now()).then(r=>r.json()).then(d=>{
+      if (d.events) setHistory(d);
+    }).catch(()=>{});
+
+    fetch(CHALLENGERS_URL+"?_="+Date.now()).then(r=>r.json()).then(d=>{
+      if (d.challengers) setChallengers(d.challengers);
+    }).catch(()=>{});
+
+    // data.json is a static file — always fetch directly, no gating
+    (async () => {
+      try {
+        const r = await fetch(DATA_URL+"?_="+Date.now());
+        if (!r.ok) throw new Error("HTTP "+r.status);
+        const d = await r.json();
+
+        setMembers(d.members || []);
+        setBills(d.bills || []);
+        if (d.fec&&Object.keys(d.fec).length>0)   setFec(d.fec);
+        if (d.poly&&Object.keys(d.poly).length>0)  setPoly(d.poly);
+        if (d.meta?.fetched_at) setFetchedAt(d.meta.fetched_at);
+
+        const anti  = (d.members||[]).filter(m=>m.antiArms).length;
+        const hard  = (d.members||[]).filter(m=>m.antiArmsLevel==="hard").length;
+        const total = (d.members||[]).length;
+        const age   = d.meta?.fetched_at
+          ? Math.round((Date.now()-new Date(d.meta.fetched_at))/60000) : "?";
+        setStatus("✓ "+anti+" anti-arms ("+hard+" hard) · "+total+" members · "+age+"m ago");
+      } catch(e) {
+        setStatus("⚠ Could not load data.json — run the GitHub Action to generate it.");
+        console.error("data.json:", e);
+        setLoaded(true);
+      }
+      setLoaded(true);
+    })();
+
+    // Gun.js: share FEC/Polymarket between peers (non-blocking)
+    try {
+      const gun  = Gun({peers:GUN_PEERS, localStorage:false});
+      const node = gun.get("anti-arms-tracker-v4");
+      node.get("fec").on(d=>{
+        if(d){const c=Object.fromEntries(Object.entries(d).filter(([k])=>k!=="_"));if(Object.keys(c).length>0)setFec(c);}
+      });
+      node.get("poly").on(d=>{
+        if(d){const c=Object.fromEntries(Object.entries(d).filter(([k])=>k!=="_"));if(Object.keys(c).length>0)setPoly(c);}
+      });
+    } catch(e) { console.warn("Gun.js:", e); }
+  }, []);
+
+  return {allMembers, bills, challengers, history, fecData, polyData, fetchedAt, status, loaded};
+}
+
+// ── Main App ──────────────────────────────────────────────────────────────────
+function App() {
+  const [chamber,  setChamber]  = useState("house");
+  const [selected, setSelected] = useState(null);
+  const [hovered,  setHovered]  = useState(null);
+  const [showAnti, setShowAnti] = useState(false);
+  const [hardOnly, setHardOnly] = useState(false);
+
+  const {allMembers, bills, challengers, history, fecData, polyData, fetchedAt, status, loaded} = useData();
+  const members = useMemo(() => buildMembers(allMembers, chamber), [allMembers, chamber]);
+
+  // URL deep-link (mount only)
+  useEffect(() => {
+    const p = new URLSearchParams(window.location.search);
+    if (p.get("chamber")==="senate") setChamber("senate");
+    const mName = p.get("member");
+    if (mName) {
+      const idx = members.findIndex(m=>m.name===mName);
+      if (idx>=0) setSelected(idx);
+    }
+  }, []);
+
+  useEffect(() => {
+    const p = new URLSearchParams();
+    if (chamber!=="house") p.set("chamber",chamber);
+    if (selected!==null&&members[selected]?.name&&!members[selected]._filler)
+      p.set("member",members[selected].name);
+    const qs=p.toString();
+    window.history.replaceState(null,"",qs?"?"+qs:window.location.pathname);
+  }, [selected, chamber, members]);
+
+  const svgW=610, svgH=300, cx=svgW/2, cy=svgH-14;
+  const cfg = chamber==="house" ? {innerR:50,spacing:20,rows:9} : {innerR:78,spacing:30,rows:6};
+  const positions = useMemo(()=>computeHemicycle(members.length,cx,cy,cfg.innerR,cfg.spacing,cfg.rows),
+    [members.length,cx,cy,cfg.innerR,cfg.spacing,cfg.rows]);
+
+  const dotR      = chamber==="house" ? 4.5 : 6.5;
+  const selMember = selected!==null ? members[selected] : null;
+  const ch        = chamber==="house" ? "house" : "senate";
+  const sideR     = allMembers.filter(m=>m.antiArms&&m.party==="R"&&m.chamber===ch);
+  const sideD     = allMembers.filter(m=>m.antiArms&&m.party!=="R"&&m.chamber===ch);
+  const challR    = challengers.filter(c=>c.party==="R"&&c.chamber===ch);
+  const challD    = challengers.filter(c=>c.party!=="R"&&c.chamber===ch);
+
+  const totalAnti = members.filter(m=>m.antiArms).length;
+  const totalHard = members.filter(m=>m.antiArmsLevel==="hard").length;
+  const totalSoft = totalAnti - totalHard;
+
+  if (!loaded) return html`
+    <div style=${{minHeight:"100vh",background:"#0a0c10",display:"flex",alignItems:"center",justifyContent:"center"}}>
+      <div style=${{textAlign:"center",fontFamily:"monospace",color:"#374151",fontSize:10}}>
+        <div style=${{fontSize:22,marginBottom:10,opacity:.2}}>◈</div>
+        ${status}
+      </div>
+    </div>`;
+
+  if (loaded && allMembers.length===0) return html`
+    <div style=${{minHeight:"100vh",background:"#0a0c10",display:"flex",alignItems:"center",justifyContent:"center",padding:24}}>
+      <div style=${{textAlign:"center",fontFamily:"monospace",maxWidth:420}}>
+        <div style=${{fontSize:22,marginBottom:10,opacity:.2}}>◈</div>
+        <div style=${{color:"#fbbf24",marginBottom:8,fontSize:11}}>data.json loaded but contains no members yet.</div>
+        <div style=${{color:"#374151",fontSize:9,lineHeight:1.8}}>
+          Go to your GitHub repo → Actions → Refresh Data → Run workflow.<br/>
+          The first run populates member data from TrackAIPAC. It takes ~2 minutes.
+        </div>
+        <button onClick=${()=>window.location.reload()}
+          style=${{marginTop:14,padding:"6px 16px",borderRadius:7,border:"none",
+            background:"#fbbf24",color:"#0a0c10",fontFamily:"monospace",fontSize:10,
+            fontWeight:700,cursor:"pointer"}}>
+          Reload page
+        </button>
+      </div>
+    </div>`;
+
+  return html`
+    <div style=${{minHeight:"100vh",background:"#0a0c10",display:"flex",flexDirection:"column",alignItems:"center",padding:"18px 10px"}}>
+
+      <div style=${{textAlign:"center",marginBottom:10}}>
+        <div style=${{fontSize:8,letterSpacing:"0.22em",textTransform:"uppercase",color:"#374151",fontFamily:"monospace",marginBottom:3}}>
+          119TH UNITED STATES CONGRESS · 2025–2026
+        </div>
+        <h1 style=${{fontSize:19,fontWeight:700,margin:"0 0 2px",letterSpacing:"-0.02em",color:"#f0ebe0"}}>
+          Anti-Arms Congress Tracker
+        </h1>
+        <div style=${{fontSize:9,color:"#6b7280",display:"flex",gap:8,justifyContent:"center",flexWrap:"wrap",alignItems:"center"}}>
+          <span style=${{fontFamily:"monospace",color:"#6b7280",fontSize:8}}>${status}</span>
+          ${fetchedAt?html`<span style=${{fontFamily:"monospace",color:"#374151",fontSize:8}}>
+            · ${new Date(fetchedAt).toLocaleString("en-US",{month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"})}
+          </span>`:null}
+        </div>
+      </div>
+
+      <!-- Chamber toggle -->
+      <div style=${{display:"flex",gap:2,background:"#161920",borderRadius:10,padding:3,marginBottom:9,border:"1px solid #1e2230"}}>
+        ${["house","senate"].map(c=>html`
+          <button key=${c} onClick=${()=>{setChamber(c);setSelected(null);}}
+            style=${{padding:"5px 15px",borderRadius:8,border:"none",cursor:"pointer",fontFamily:"monospace",fontSize:10,
+              letterSpacing:"0.08em",textTransform:"uppercase",fontWeight:600,
+              background:chamber===c?"#f0ebe0":"transparent",color:chamber===c?"#0a0c10":"#6b7280"}}>
+            ${c==="senate"?"Senate · 100":"House · 435"}
+          </button>`)}
+      </div>
+
+      <!-- Legend + stat pills -->
+      <div style=${{display:"flex",gap:5,flexWrap:"wrap",justifyContent:"center",marginBottom:7}}>
+        ${[
+          {c:"#991b1b", bg:"rgba(153,27,27,.1)",  l:"Rep",       n:members.filter(m=>m.party==="R"&&!m.antiArms).length},
+          {c:"#a855f7", bg:"rgba(168,85,247,.1)",  l:"Soft Anti-R",n:members.filter(m=>m.antiArms&&m.party==="R"&&m.antiArmsLevel!=="hard").length},
+          {c:"#c026d3", bg:"rgba(192,38,211,.12)", l:"Hard Anti-R",n:members.filter(m=>m.antiArms&&m.party==="R"&&m.antiArmsLevel==="hard").length},
+          {c:"#7c3aed", bg:"rgba(124,58,237,.1)",  l:"Hard Anti-D",n:members.filter(m=>m.antiArms&&m.party!=="R"&&m.antiArmsLevel==="hard").length},
+          {c:"#818cf8", bg:"rgba(129,140,248,.1)", l:"Soft Anti-D",n:members.filter(m=>m.antiArms&&m.party!=="R"&&m.antiArmsLevel!=="hard").length},
+          {c:"#1e40af", bg:"rgba(30,64,175,.1)",   l:"Dem",       n:members.filter(m=>m.party==="D"&&!m.antiArms).length},
+        ].map(b=>html`
+          <span key=${b.l} style=${{display:"inline-flex",alignItems:"center",gap:4,background:b.bg,border:"1px solid "+b.c+"30",borderRadius:5,padding:"2px 7px",fontSize:9,fontFamily:"monospace",color:b.c}}>
+            <span style=${{width:5,height:5,borderRadius:"50%",background:b.c,display:"inline-block"}}/>
+            ${b.l+" "+b.n}
+          </span>`)}
+        <button onClick=${()=>setShowAnti(v=>!v)}
+          style=${{padding:"2px 7px",borderRadius:5,border:"1px solid #7c3aed33",background:showAnti?"#7c3aed1a":"transparent",color:showAnti?"#c084fc":"#4b5563",fontFamily:"monospace",fontSize:9,cursor:"pointer"}}>
+          ${showAnti?"Show all":"Highlight anti-arms"}
+        </button>
+        <button onClick=${()=>setHardOnly(v=>!v)}
+          style=${{padding:"2px 7px",borderRadius:5,border:"1px solid #c026d333",background:hardOnly?"#c026d31a":"transparent",color:hardOnly?"#e879f9":"#4b5563",fontFamily:"monospace",fontSize:9,cursor:"pointer"}}>
+          ${hardOnly?"Show all":"Hard only"}
+        </button>
+      </div>
+
+      <!-- Three columns -->
+      <div class="three-col" style=${{display:"flex",gap:10,alignItems:"flex-start",flexWrap:"wrap",justifyContent:"center",width:"100%",maxWidth:1080}}>
+
+        <${MemberBox} title="Anti-Arms Republicans" color="#a855f7"
+          members=${sideR} challengers=${challR}
+          fecData=${fecData} polyData=${polyData}
+          onSelect=${m=>setSelected(members.findIndex(x=>x.name===m.name))}/>
+
+        <div class="ctr-col" style=${{display:"flex",flexDirection:"column",gap:7,alignItems:"center",flex:1,minWidth:0}}>
+
+          <!-- Hemicycle SVG -->
+          <div style=${{background:"#0f1117",border:"1px solid #1a1d27",borderRadius:13,overflow:"hidden",width:"100%",maxWidth:610}}>
+            <svg class="hemi" width=${svgW} height=${svgH} viewBox=${"0 0 "+svgW+" "+svgH} style=${{display:"block",width:"100%",height:"auto"}}>
+              ${Array.from({length:cfg.rows}).map((_,i)=>{
+                const r=cfg.innerR+i*cfg.spacing;
+                return html`<path key=${i} d=${"M "+(cx-r)+" "+cy+" A "+r+" "+r+" 0 0 1 "+(cx+r)+" "+cy} fill="none" stroke="#111419" stroke-width="1"/>`;
+              })}
+              ${positions.map((pos,i)=>{
+                const m=members[i]; if(!m) return null;
+                const isHard = m.antiArmsLevel==="hard";
+                const dimDot = (showAnti&&!m.antiArms) || (hardOnly&&(!m.antiArms||!isHard));
+                const isSel=selected===i, isHov=hovered===i;
+                const color=dotColor(m), poly=polyData[m.name], atRisk=poly&&poly.prob<0.65;
+                const r=isHov?dotR+1.5:dotR;
+                return html`<g key=${i}>
+                  ${isSel?html`<circle cx=${pos.x} cy=${pos.y} r=${dotR+4.5} fill="none" stroke=${color} stroke-width="1.5" opacity=".35"/>`:null}
+                  ${isHard&&m.antiArms&&!dimDot?html`<circle cx=${pos.x} cy=${pos.y} r=${dotR+3.5} fill="none" stroke=${color} stroke-width="1" opacity=".25"/>`:null}
+                  ${m.antiArms&&!isHard&&!dimDot?html`<circle cx=${pos.x} cy=${pos.y} r=${dotR+2} fill="none" stroke=${color} stroke-width=".6" opacity=".15"/>`:null}
+                  ${atRisk&&!dimDot?html`<circle cx=${pos.x} cy=${pos.y} r=${dotR+2.5} fill="none" stroke="#fbbf24" stroke-width="1" opacity=".35" stroke-dasharray="2,2"/>`:null}
+                  <circle cx=${pos.x} cy=${pos.y} r=${r}
+                    fill=${dimDot?"#111419":color} opacity=${dimDot?.07:1}
+                    stroke=${isSel?"#fff":"none"} stroke-width="1.5"
+                    style=${{cursor:m._filler?"default":"pointer",transition:"r 0.1s"}}
+                    onClick=${()=>!m._filler&&setSelected(selected===i?null:i)}
+                    onMouseEnter=${()=>!m._filler&&setHovered(i)}
+                    onMouseLeave=${()=>setHovered(null)}/>
+                </g>`;
+              })}
+              <line x1=${cx} y1=${cy} x2=${cx} y2=${cy-(cfg.innerR+(cfg.rows-1)*cfg.spacing)-16} stroke="#1e2230" stroke-width="1" stroke-dasharray="3,3"/>
+              <text x=${cx-80} y="11" fill="#991b1b" font-size="7" font-family="monospace" text-anchor="middle" opacity=".5">R</text>
+              <text x=${cx-52} y="11" fill="#a855f7" font-size="6" font-family="monospace" text-anchor="middle" opacity=".6">Soft-R</text>
+              <text x=${cx-22} y="11" fill="#c026d3" font-size="6" font-family="monospace" text-anchor="middle" opacity=".7">Hard-R</text>
+              <text x=${cx+22} y="11" fill="#7c3aed" font-size="6" font-family="monospace" text-anchor="middle" opacity=".7">Hard-D</text>
+              <text x=${cx+52} y="11" fill="#818cf8" font-size="6" font-family="monospace" text-anchor="middle" opacity=".6">Soft-D</text>
+              <text x=${cx+80} y="11" fill="#1e40af" font-size="7" font-family="monospace" text-anchor="middle" opacity=".5">D</text>
+              <ellipse cx=${cx} cy=${cy+6} rx="18" ry="6" fill="#0f1117"/>
+              <rect x=${cx-3} y=${cy-7} width="6" height="13" fill="#0f1117" rx="2"/>
+            </svg>
+          </div>
+
+          <!-- Detail panel -->
+          <div style=${{width:"100%",maxWidth:610,background:"#0f1117",border:"1px solid #1a1d27",borderRadius:11,padding:"10px 13px",minHeight:70}}>
+            <${DetailPanel} member=${selMember} fecData=${fecData} polyData=${polyData} bills=${bills} chamber=${chamber}/>
+          </div>
+
+          <!-- Progress bars -->
+          <div style=${{width:"100%",maxWidth:610}}>
+            <${ProgressBars} chamber=${chamber} members=${members}/>
+          </div>
+
+          <!-- Legislation -->
+          <div style=${{width:"100%",maxWidth:610}}>
+            <${BillsPanel} bills=${bills}/>
+          </div>
+
+          <!-- History -->
+          <div style=${{width:"100%",maxWidth:610}}>
+            <${HistoryTimeline} history=${history}/>
+          </div>
+
+          <!-- Find My Rep -->
+          <div style=${{width:"100%",maxWidth:610}}>
+            <${FindMyRep} members=${members} onHighlight=${setSelected}/>
+          </div>
+        </div>
+
+        <${MemberBox} title="Anti-Arms Democrats" color="#7c3aed"
+          members=${sideD} challengers=${challD}
+          fecData=${fecData} polyData=${polyData}
+          onSelect=${m=>setSelected(members.findIndex(x=>x.name===m.name))}/>
+
+      </div>
+
+      <div style=${{fontSize:8,color:"#1a1d27",marginTop:14,fontFamily:"monospace",textAlign:"center",maxWidth:800,lineHeight:1.8}}>
+        MEMBERS: TRACKAIPAC.COM · HARD CLASSIFICATION: CONGRESS.GOV + LEGISCAN · BILLS: API.CONGRESS.GOV
+        <br/>FINANCE: OPENFEC · ODDS: POLYMARKET · REPS: GOOGLE CIVIC · P2P: GUN.JS · REFRESH: 4H GITHUB ACTIONS
+        <br/><a href="https://github.com/LukeRDavis/Anti-Arms-Congress-Tracker" target="_blank" style=${{color:"#374151"}}>github.com/LukeRDavis/Anti-Arms-Congress-Tracker</a>
+      </div>
+    </div>`;
+}
+
+render(html`<${App}/>`, document.getElementById("app"));
+</script>
+</body>
+</html>
