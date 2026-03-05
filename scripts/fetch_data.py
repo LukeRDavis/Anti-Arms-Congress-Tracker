@@ -129,6 +129,217 @@ KNOWN_FEC_IDS = {
 }
 
 
+# ── Historical anti-arms counts by Congress ────────────────────────────────────
+# Sources: Congress.gov co-sponsorship, clerk.house.gov roll calls, TrackAIPAC archives
+# 117th: Block the Bombs Act (HR 3103) era, pre-Gaza
+# 118th: Post-Oct 7 peak — HR 8034 Nay 58 total (21R+37D)
+CONGRESS_HISTORY = {
+    117: {
+        "congress": 117, "years": "2021–22", "label": "117th",
+        "hardR": 3, "softR": 1, "hardD": 13, "softD": 6, "hardI": 1, "softI": 0,
+        "note": "Block the Bombs Act (HR 3103) introduced. Squad + libertarian R opposition. Pre-Gaza conflict.",
+        "key_events": ["HR 3103 Block the Bombs Act", "Rand Paul FMS Senate holds"],
+        "source": "Congress.gov co-sponsorship + known positions",
+    },
+    118: {
+        "congress": 118, "years": "2023–24", "label": "118th",
+        "hardR": 9, "softR": 4, "hardD": 26, "softD": 14, "hardI": 2, "softI": 0,
+        "note": "Post-Oct 7 peak. HR 8034 Nay: 21R+37D (58 total). Block the Bombs Act (HR 3565) 22 co-sponsors. Senate JRDs forced.",
+        "key_events": [
+            "Oct 7, 2023: Hamas attack → Gaza war → surge in anti-arms sentiment",
+            "Apr 20, 2024: HR 8034 Israel Security Supplemental — 21R+37D voted Nay",
+            "Jun 2024: Bernie Sanders forced Senate JRD floor vote on Israel FMS",
+            "Aug 2024: Bowman (D-NY) and Bush (D-MO) lost primaries to AIPAC-backed challengers",
+        ],
+        "source": "clerk.house.gov/evs/2024/roll152.xml + Congress.gov",
+    },
+}
+
+# ── 2026 Key Races ─────────────────────────────────────────────────────────────
+# Tracks incumbents at risk and challengers who could change the 120th Congress count
+# status: "won_primary" | "pending_primary" | "pending_general" | "confirmed" | "safe"
+# impact: effect on 120th Congress anti-arms count if candidate wins
+RACES_2026 = [
+    # ── RESULTS CONFIRMED (March 3, 2026 primaries) ──────────────────────────
+    {
+        "id": "talarico-tx-senate",
+        "name": "James Talarico", "party": "D", "state": "TX", "chamber": "senate",
+        "anti_arms": True, "anti_arms_level": "soft",
+        "type": "challenger",  # not currently in Congress
+        "status": "pending_general",
+        "primary_date": "2026-03-03", "primary_result": "WON",
+        "primary_pct": 53.1, "primary_opponent_pct": 46.0,
+        "primary_opponent": "Jasmine Crockett",
+        "general_date": "2026-11-03",
+        "general_opponent": "John Cornyn or Ken Paxton (R runoff May 26)",
+        "cook_rating": None,  # too early
+        "win_prob": 0.22,  # Texas hasn't gone D statewide since 1994; Trump +13 in 2024
+        "impact_if_wins": "+1 soft-D Senate (major historic upset)",
+        "impact_if_loses": "No change (seat stays R)",
+        "note": "Won D primary 53% vs Crockett 46% (Mar 3). Supports banning offensive weapons to Israel. Will face Cornyn or Paxton after May 26 runoff.",
+        "polymarket_url": None,
+    },
+    {
+        "id": "foushee-nc04",
+        "name": "Valerie Foushee", "party": "D", "state": "NC", "chamber": "house", "district": 4,
+        "anti_arms": True, "anti_arms_level": "soft",
+        "type": "incumbent",
+        "status": "pending_general",  # narrowly won primary (recount pending → Allam conceded)
+        "primary_date": "2026-03-03", "primary_result": "WON",
+        "primary_pct": 49.18, "primary_opponent_pct": 48.22,
+        "primary_opponent": "Nida Allam",
+        "general_date": "2026-11-03",
+        "general_opponent": "TBD (R)",
+        "cook_rating": "Likely Democratic",
+        "win_prob": 0.88,
+        "impact_if_wins": "+1 soft-D retained (Foushee pledged to block arms to Israel this cycle)",
+        "impact_if_loses": "-1 D anti-arms seat",
+        "note": "Won primary by 1,202 votes (49.18% vs Allam 48.22%). Allam conceded Mar 4. Foushee swore off AIPAC money this cycle, pledged arms restrictions legislation.",
+        "polymarket_url": None,
+    },
+    # ── PENDING PRIMARIES ─────────────────────────────────────────────────────
+    {
+        "id": "massie-ky04-primary",
+        "name": "Thomas Massie", "party": "R", "state": "KY", "chamber": "house", "district": 4,
+        "anti_arms": True, "anti_arms_level": "hard",
+        "type": "incumbent",
+        "status": "pending_primary",
+        "primary_date": "2026-05-19",
+        "primary_opponent": "Ed Gallrein (Trump-endorsed, Navy SEAL)",
+        "general_date": "2026-11-03",
+        "general_opponent": "TBD (D)",
+        "cook_rating": "Solid Republican (general)",
+        "win_prob": 0.62,  # Massie claims +17 own polling; Trump machine + $10M against him
+        "impact_if_wins": "Retains 1 hard-R anti-arms vote (most consistent in Congress)",
+        "impact_if_loses": "-1 hard-R (Gallrein would vote pro-arms with Trump)",
+        "note": "Trump endorsed Gallrein Oct 2025. Massie claims +17 lead in own internal polling. Rand Paul campaigning with him. Cook: Solid R general. Primary May 19.",
+        "polymarket_url": None,
+    },
+    {
+        "id": "paul-ky-senate",
+        "name": "Rand Paul", "party": "R", "state": "KY", "chamber": "senate",
+        "anti_arms": True, "anti_arms_level": "hard",
+        "type": "incumbent",
+        "status": "safe",  # not up for election in 2026
+        "primary_date": None, "general_date": None,
+        "general_opponent": None,
+        "cook_rating": None,
+        "win_prob": None,
+        "impact_if_wins": None,
+        "impact_if_loses": None,
+        "note": "Term ends Jan 2029 — not on 2026 ballot. Safe for this cycle.",
+    },
+    # ── ANTI-ARMS CHALLENGERS IN COMPETITIVE RACES ───────────────────────────
+    {
+        "id": "casar-tx37",
+        "name": "Greg Casar", "party": "D", "state": "TX", "chamber": "house", "district": 37,
+        "anti_arms": True, "anti_arms_level": "soft",
+        "type": "incumbent",  # running in redrawn TX-37 from TX-35
+        "status": "pending_primary",
+        "primary_date": "2026-03-03",  # TX primary was March 3
+        "primary_result": "WON",  # safe D district
+        "general_date": "2026-11-03",
+        "cook_rating": "Safe Democratic",
+        "win_prob": 0.95,
+        "impact_if_wins": "+1 soft-D retained (TX-35 redrawn to TX-37)",
+        "note": "Running in redrawn TX-37. Safe D seat.",
+    },
+    {
+        "id": "tlaib-mi12",
+        "name": "Rashida Tlaib", "party": "D", "state": "MI", "chamber": "house", "district": 12,
+        "anti_arms": True, "anti_arms_level": "soft",
+        "type": "incumbent",
+        "status": "pending_primary",
+        "primary_date": "2026-08-04",  # MI primary
+        "primary_opponent": "TBD",
+        "general_date": "2026-11-03",
+        "cook_rating": "Safe Democratic",
+        "win_prob": 0.80,  # won 2024 primary by large margin, but well-funded challenges possible
+        "impact_if_wins": "+1 soft-D retained",
+        "impact_if_loses": "Likely -1 if defeated by AIPAC-backed primary challenger",
+        "note": "Won 2024 primary 58% vs AIPAC-backed challenger. May face renewed challenge in 2026.",
+    },
+    {
+        "id": "omar-mn05",
+        "name": "Ilhan Omar", "party": "D", "state": "MN", "chamber": "house", "district": 5,
+        "anti_arms": True, "anti_arms_level": "soft",
+        "type": "incumbent",
+        "status": "pending_primary",
+        "primary_date": "2026-08-11",  # MN primary
+        "general_date": "2026-11-03",
+        "cook_rating": "Safe Democratic",
+        "win_prob": 0.78,
+        "impact_if_wins": "+1 soft-D retained",
+        "note": "Survived close 2024 primary 56%. AIPAC spent heavily against her. May face challenge again.",
+    },
+]
+
+# ── Clerk House Vote XML scraper ───────────────────────────────────────────────
+CLERK_XML_BASE = "http://clerk.house.gov/evs"
+
+# Key 118th Congress votes for historical record
+HISTORICAL_VOTE_XMLS = {
+    "118-hr8034": ("2024", "152"),   # Israel Security Supplemental — Nay = anti-arms
+    "118-hr8035": ("2024", "153"),   # Ukraine/Israel combined — Nay = anti-arms
+}
+
+
+
+
+def fetch_clerk_vote_xmls():
+    """
+    Scrapes Clerk of the House XML roll call files for historical votes.
+    Returns dict: vote_id → {desc, date, nays: [{name_id, name, party, state}], ...}
+    Free, no API key needed.
+    """
+    import xml.etree.ElementTree as ET
+    results = {}
+
+    for vote_id, (year, roll) in HISTORICAL_VOTE_XMLS.items():
+        url = f"{CLERK_XML_BASE}/{year}/roll{roll.zfill(3)}.xml"
+        print(f"  Fetching Clerk XML: roll {roll} ({year}) …")
+        try:
+            data = fetch_bytes(url)
+            if not data:
+                print(f"  Clerk XML fetch failed for {vote_id}")
+                continue
+            root = ET.fromstring(data)
+            meta = root.find("vote-metadata")
+            desc  = (meta.findtext("vote-desc") or "")[:100]
+            date  = meta.findtext("action-date") or ""
+            legis = meta.findtext("legis-num") or ""
+
+            nays, yeas = [], []
+            for rv in root.findall(".//recorded-vote"):
+                leg  = rv.find("legislator")
+                vote = (rv.findtext("vote") or "").strip().upper()
+                if leg is None: continue
+                entry = {
+                    "name_id": leg.get("name-id", ""),
+                    "name":    leg.text or "",
+                    "party":   leg.get("party", ""),
+                    "state":   leg.get("state", ""),
+                }
+                if "NAY" in vote or "NO" in vote:
+                    nays.append(entry)
+                elif "YEA" in vote or "AYE" in vote or "YES" in vote:
+                    yeas.append(entry)
+
+            results[vote_id] = {
+                "id": vote_id, "desc": desc, "legis": legis,
+                "date": date, "yeas": len(yeas), "nays": len(nays),
+                "nay_members": nays,
+                "url": f"https://clerk.house.gov/Votes/{year}{roll}",
+            }
+            r_nays = sum(1 for m in nays if m["party"]=="R")
+            d_nays = sum(1 for m in nays if m["party"]=="D")
+            print(f"  Roll {roll}: {desc[:50]} — Nay: {len(nays)} ({r_nays}R+{d_nays}D)")
+            time.sleep(0.5)
+        except Exception as e:
+            print(f"  Clerk XML error for {vote_id}: {e}")
+
+    return results
+
 # ── Utilities ─────────────────────────────────────────────────────────────────
 def fetch_json(url, headers=None, retries=2):
     req = urllib.request.Request(url, headers=headers or {})
@@ -984,6 +1195,128 @@ def merge_challengers(ta_endorsed, rlc_endorsed, fec_candidates):
     return result
 
 
+
+# ─────────────────────────────────────────────────────────────────────────────
+# BALLOTPEDIA — race status, opponent names, primary results
+# ─────────────────────────────────────────────────────────────────────────────
+
+def scrape_ballotpedia_race(name, state, chamber, district=None):
+    """
+    Attempts to scrape basic race data from Ballotpedia for a candidate.
+    Returns dict with opponent, primary_result, general_opponent fields.
+    Non-critical — falls back gracefully if page not found.
+    """
+    # Construct Ballotpedia URL slug
+    name_slug  = name.lower().replace(" ", "_").replace(".", "").replace("'", "")
+    state_full = {
+        "AL":"Alabama","AK":"Alaska","AZ":"Arizona","AR":"Arkansas","CA":"California",
+        "CO":"Colorado","CT":"Connecticut","DE":"Delaware","FL":"Florida","GA":"Georgia",
+        "HI":"Hawaii","ID":"Idaho","IL":"Illinois","IN":"Indiana","IA":"Iowa",
+        "KS":"Kansas","KY":"Kentucky","LA":"Louisiana","ME":"Maine","MD":"Maryland",
+        "MA":"Massachusetts","MI":"Michigan","MN":"Minnesota","MS":"Mississippi",
+        "MO":"Missouri","MT":"Montana","NE":"Nebraska","NV":"Nevada","NH":"New_Hampshire",
+        "NJ":"New_Jersey","NM":"New_Mexico","NY":"New_York","NC":"North_Carolina",
+        "ND":"North_Dakota","OH":"Ohio","OK":"Oklahoma","OR":"Oregon","PA":"Pennsylvania",
+        "RI":"Rhode_Island","SC":"South_Carolina","SD":"South_Dakota","TN":"Tennessee",
+        "TX":"Texas","UT":"Utah","VT":"Vermont","VA":"Virginia","WA":"Washington",
+        "WV":"West_Virginia","WI":"Wisconsin","WY":"Wyoming",
+    }.get(state, state)
+
+    if chamber == "senate":
+        url = f"https://ballotpedia.org/{name_slug},_United_States_Senate_election_in_{state_full}_(2026)"
+    else:
+        dist_str = f"{'st' if district==1 else 'nd' if district==2 else 'rd' if district==3 else 'th'}_{district}" if district else ""
+        url = f"https://ballotpedia.org/{name_slug},_United_States_Representative,_{state_full}_{district}{dist_str}_Congressional_District_(2026)"
+
+    html = fetch_html(url)
+    if not html or "does not exist" in html.lower()[:500]:
+        # Try simpler slug: just first_last_state_2026
+        url2 = f"https://ballotpedia.org/{name_slug}_(politician)"
+        html = fetch_html(url2)
+    if not html: return {}
+
+    result = {}
+
+    # Primary result
+    if re.search(r'won\s+the\s+primary', html, re.IGNORECASE):
+        result["primary_result"] = "WON"
+    elif re.search(r'lost\s+the\s+primary', html, re.IGNORECASE):
+        result["primary_result"] = "LOST"
+    elif re.search(r'candidate\s+in\s+the\s+primary', html, re.IGNORECASE):
+        result["primary_result"] = "PENDING"
+
+    # Opponent in general
+    opp_m = re.search(r'running\s+against\s+([A-Z][a-zA-Z\s\-\.]+?)\s+in\s+the\s+(?:general|November)', html, re.IGNORECASE)
+    if opp_m: result["general_opponent"] = opp_m.group(1).strip()
+
+    # Primary opponent  
+    primopp_m = re.search(r'primary\s+(?:challenger|opponent|against)\s+([A-Z][a-zA-Z\s\-\.]+?)[\.,]', html, re.IGNORECASE)
+    if primopp_m: result["primary_opponent"] = primopp_m.group(1).strip()
+
+    # Cook rating
+    cook_m = re.search(r'Cook\s+Political[^:]*:\s*([A-Za-z\s]+)(?:Democratic|Republican|\.|<)', html, re.IGNORECASE)
+    if cook_m: result["cook_rating"] = cook_m.group(1).strip()
+
+    return result
+
+
+def enrich_races_with_ballotpedia(races):
+    """
+    Enriches RACES_2026 with live data from Ballotpedia.
+    Only fetches for races where status is pending (not already confirmed).
+    Updates: primary_result, general_opponent, primary_opponent, cook_rating.
+    """
+    print("\nEnriching races with Ballotpedia data …")
+    enriched = 0
+    for race in races:
+        # Skip if already confirmed or not up this cycle
+        if race.get("status") in ("safe", "confirmed"): continue
+        if race.get("primary_result") == "WON" and race.get("general_opponent") not in (None, "TBD", ""):
+            continue  # already have all the data we need
+
+        bp = scrape_ballotpedia_race(
+            race["name"], race.get("state",""), race.get("chamber","house"), race.get("district")
+        )
+        if not bp:
+            time.sleep(0.5)
+            continue
+
+        # Merge — only overwrite if BP returned a value
+        if bp.get("primary_result") and not race.get("primary_result"):
+            race["primary_result"] = bp["primary_result"]
+        if bp.get("general_opponent") and race.get("general_opponent") in (None, "TBD", ""):
+            race["general_opponent"] = bp["general_opponent"]
+        if bp.get("primary_opponent") and race.get("primary_opponent") in (None, "TBD", ""):
+            race["primary_opponent"] = bp["primary_opponent"]
+        if bp.get("cook_rating") and not race.get("cook_rating"):
+            race["cook_rating"] = bp["cook_rating"]
+        if bp:
+            enriched += 1
+        time.sleep(0.7)
+
+    print(f"  Ballotpedia: enriched {enriched}/{len(races)} races")
+    return races
+
+
+def wire_polymarket_to_races(races, poly_data):
+    """
+    Matches Polymarket market data to races by candidate name.
+    Updates win_prob and polymarket_url fields in-place.
+    """
+    if not poly_data:
+        return races
+    for race in races:
+        name = race["name"]
+        if name in poly_data:
+            mk = poly_data[name]
+            prob = mk.get("prob")
+            if prob is not None:
+                race["win_prob"]       = round(prob, 3)
+                race["win_prob_src"]   = "polymarket"
+                race["polymarket_url"] = mk.get("url", "")
+                print(f"  Poly → {name}: {round(prob*100)}%")
+    return races
+
 # ─────────────────────────────────────────────────────────────────────────────
 # MAIN
 # ─────────────────────────────────────────────────────────────────────────────
@@ -1034,6 +1367,7 @@ def main():
     members_by_id  = {m["bioguide_id"]: m for m in members if m.get("bioguide_id")}
     members_by_name= {m["name"].lower(): m for m in members}
 
+    clerk_votes  = fetch_clerk_vote_xmls() if should_scrape else existing.get("clerk_votes", {})
     bills        = discover_bills(members_by_id) or existing.get("bills", [])
     house_votes  = fetch_house_votes(members_by_id) if CONGRESS_KEY else existing.get("house_votes", {})
     members      = enrich_hard_classification(members, bills)
@@ -1046,6 +1380,11 @@ def main():
 
     fec  = fetch_fec(members)  or existing.get("fec",  {})
     poly = fetch_poly(members) or existing.get("poly", {})
+
+    # Enrich race cards with live data
+    races = [dict(r) for r in RACES_2026]   # deep copy so we can modify
+    races = enrich_races_with_ballotpedia(races)
+    races = wire_polymarket_to_races(races, poly)
 
     anti = sum(1 for m in members if m["antiArms"])
     hard = sum(1 for m in members if m.get("antiArmsLevel")=="hard")
@@ -1082,6 +1421,9 @@ def main():
         "trackaipac_endorsed": ta_endorsed,
         "rlc_index":           rlc_index,
         "rlc_endorsed":        rlc_endorsed,
+        "congress_history":    CONGRESS_HISTORY,
+        "races_2026":          races,
+        "clerk_votes":         clerk_votes,
     }
 
     with open("data.json","w") as f:
