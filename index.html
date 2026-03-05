@@ -670,15 +670,37 @@ function useData() {
         if (!r.ok) throw new Error("HTTP "+r.status);
         const d = await r.json();
 
-        setMembers(d.members || []);
+        // Build member list — fall back to trackaipac_congress if members[] is empty
+        // (handles old data.json generated before the Python fix was deployed)
+        let memberList = d.members || [];
+        if (memberList.length === 0 && d.trackaipac_congress) {
+          memberList = Object.values(d.trackaipac_congress)
+            .filter(m => m.name && m.name.toLowerCase() !== "vacant" && m.name.length > 2)
+            .map(m => ({
+              bioguide_id: "",
+              name:        m.name,
+              party:       m.party || "?",
+              state:       m.state || "",
+              district:    (m.district !== "" && m.district != null) ? m.district : null,
+              chamber:     m.chamber || "house",
+              antiArms:    !!(m.antiArms || m.approved),
+              antiArmsLevel: (m.antiArms || m.approved) ? "soft" : null,
+              ps: "INCUMBENT", bills: [], votes: [],
+              lobby_total: m.lobby_total || 0,
+              pacs: m.pacs || [],
+              note: m.note || "",
+            }));
+          console.log("Fallback: built", memberList.length, "members from trackaipac_congress");
+        }
+        setMembers(memberList);
         setBills(d.bills || []);
         if (d.fec&&Object.keys(d.fec).length>0)   setFec(d.fec);
         if (d.poly&&Object.keys(d.poly).length>0)  setPoly(d.poly);
         if (d.meta?.fetched_at) setFetchedAt(d.meta.fetched_at);
 
-        const anti  = (d.members||[]).filter(m=>m.antiArms).length;
-        const hard  = (d.members||[]).filter(m=>m.antiArmsLevel==="hard").length;
-        const total = (d.members||[]).length;
+        const anti  = memberList.filter(m=>m.antiArms).length;
+        const hard  = memberList.filter(m=>m.antiArmsLevel==="hard").length;
+        const total = memberList.length;
         const age   = d.meta?.fetched_at
           ? Math.round((Date.now()-new Date(d.meta.fetched_at))/60000) : "?";
         setStatus("✓ "+anti+" anti-arms ("+hard+" hard) · "+total+" members · "+age+"m ago");
