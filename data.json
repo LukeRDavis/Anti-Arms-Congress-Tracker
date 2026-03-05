@@ -1,7 +1,7 @@
 {
   "meta": {
-    "fetched_at": "2026-03-05T11:12:32.137812+00:00",
-    "trackaipac_scraped": "2026-03-05T11:12:32.137817+00:00",
+    "fetched_at": "2026-03-05T11:17:57.533731+00:00",
+    "trackaipac_scraped": "2026-03-05T11:17:57.533751+00:00",
     "member_count": 532,
     "anti_arms_count": 41,
     "hard_count": 15,
@@ -21072,5 +21072,1128 @@
       "opponent": "",
       "incumbentParty": ""
     }
-  ]
+  ],
+  "congress_history": {
+    "117": {
+      "congress": 117,
+      "years": "2021\u201322",
+      "label": "117th",
+      "hardR": 3,
+      "softR": 1,
+      "hardD": 13,
+      "softD": 6,
+      "hardI": 1,
+      "softI": 0,
+      "note": "Block the Bombs Act (HR 3103) introduced. Squad + libertarian R opposition. Pre-Gaza conflict.",
+      "key_events": [
+        "HR 3103 Block the Bombs Act",
+        "Rand Paul FMS Senate holds"
+      ],
+      "source": "Congress.gov co-sponsorship + known positions"
+    },
+    "118": {
+      "congress": 118,
+      "years": "2023\u201324",
+      "label": "118th",
+      "hardR": 9,
+      "softR": 4,
+      "hardD": 26,
+      "softD": 14,
+      "hardI": 2,
+      "softI": 0,
+      "note": "Post-Oct 7 peak. HR 8034 Nay: 21R+37D (58 total). Block the Bombs Act (HR 3565) 22 co-sponsors. Senate JRDs forced.",
+      "key_events": [
+        "Oct 7, 2023: Hamas attack \u2192 Gaza war \u2192 surge in anti-arms sentiment",
+        "Apr 20, 2024: HR 8034 Israel Security Supplemental \u2014 21R+37D voted Nay",
+        "Jun 2024: Bernie Sanders forced Senate JRD floor vote on Israel FMS",
+        "Aug 2024: Bowman (D-NY) and Bush (D-MO) lost primaries to AIPAC-backed challengers"
+      ],
+      "source": "clerk.house.gov/evs/2024/roll152.xml + Congress.gov"
+    }
+  },
+  "races_2026": [
+    {
+      "id": "talarico-tx-senate",
+      "name": "James Talarico",
+      "party": "D",
+      "state": "TX",
+      "chamber": "senate",
+      "anti_arms": true,
+      "anti_arms_level": "soft",
+      "type": "challenger",
+      "status": "pending_general",
+      "primary_date": "2026-03-03",
+      "primary_result": "WON",
+      "primary_pct": 53.1,
+      "primary_opponent_pct": 46.0,
+      "primary_opponent": "Jasmine Crockett",
+      "general_date": "2026-11-03",
+      "general_opponent": "John Cornyn or Ken Paxton (R runoff May 26)",
+      "cook_rating": null,
+      "win_prob": 0.22,
+      "impact_if_wins": "+1 soft-D Senate (major historic upset)",
+      "impact_if_loses": "No change (seat stays R)",
+      "note": "Won D primary 53% vs Crockett 46% (Mar 3). Supports banning offensive weapons to Israel. Will face Cornyn or Paxton after May 26 runoff.",
+      "polymarket_url": null
+    },
+    {
+      "id": "foushee-nc04",
+      "name": "Valerie Foushee",
+      "party": "D",
+      "state": "NC",
+      "chamber": "house",
+      "district": 4,
+      "anti_arms": true,
+      "anti_arms_level": "soft",
+      "type": "incumbent",
+      "status": "pending_general",
+      "primary_date": "2026-03-03",
+      "primary_result": "WON",
+      "primary_pct": 49.18,
+      "primary_opponent_pct": 48.22,
+      "primary_opponent": "Nida Allam",
+      "general_date": "2026-11-03",
+      "general_opponent": "TBD (R)",
+      "cook_rating": "Likely Democratic",
+      "win_prob": 0.88,
+      "impact_if_wins": "+1 soft-D retained (Foushee pledged to block arms to Israel this cycle)",
+      "impact_if_loses": "-1 D anti-arms seat",
+      "note": "Won primary by 1,202 votes (49.18% vs Allam 48.22%). Allam conceded Mar 4. Foushee swore off AIPAC money this cycle, pledged arms restrictions legislation.",
+      "polymarket_url": null
+    },
+    {
+      "id": "massie-ky04-primary",
+      "name": "Thomas Massie",
+      "party": "R",
+      "state": "KY",
+      "chamber": "house",
+      "district": 4,
+      "anti_arms": true,
+      "anti_arms_level": "hard",
+      "type": "incumbent",
+      "status": "pending_primary",
+      "primary_date": "2026-05-19",
+      "primary_opponent": "Ed Gallrein (Trump-endorsed, Navy SEAL)",
+      "general_date": "2026-11-03",
+      "general_opponent": "TBD (D)",
+      "cook_rating": "Solid Republican (general)",
+      "win_prob": 0.62,
+      "impact_if_wins": "Retains 1 hard-R anti-arms vote (most consistent in Congress)",
+      "impact_if_loses": "-1 hard-R (Gallrein would vote pro-arms with Trump)",
+      "note": "Trump endorsed Gallrein Oct 2025. Massie claims +17 lead in own internal polling. Rand Paul campaigning with him. Cook: Solid R general. Primary May 19.",
+      "polymarket_url": null
+    },
+    {
+      "id": "paul-ky-senate",
+      "name": "Rand Paul",
+      "party": "R",
+      "state": "KY",
+      "chamber": "senate",
+      "anti_arms": true,
+      "anti_arms_level": "hard",
+      "type": "incumbent",
+      "status": "safe",
+      "primary_date": null,
+      "general_date": null,
+      "general_opponent": null,
+      "cook_rating": null,
+      "win_prob": null,
+      "impact_if_wins": null,
+      "impact_if_loses": null,
+      "note": "Term ends Jan 2029 \u2014 not on 2026 ballot. Safe for this cycle."
+    },
+    {
+      "id": "casar-tx37",
+      "name": "Greg Casar",
+      "party": "D",
+      "state": "TX",
+      "chamber": "house",
+      "district": 37,
+      "anti_arms": true,
+      "anti_arms_level": "soft",
+      "type": "incumbent",
+      "status": "pending_primary",
+      "primary_date": "2026-03-03",
+      "primary_result": "WON",
+      "general_date": "2026-11-03",
+      "cook_rating": "Safe Democratic",
+      "win_prob": 0.95,
+      "impact_if_wins": "+1 soft-D retained (TX-35 redrawn to TX-37)",
+      "note": "Running in redrawn TX-37. Safe D seat."
+    },
+    {
+      "id": "tlaib-mi12",
+      "name": "Rashida Tlaib",
+      "party": "D",
+      "state": "MI",
+      "chamber": "house",
+      "district": 12,
+      "anti_arms": true,
+      "anti_arms_level": "soft",
+      "type": "incumbent",
+      "status": "pending_primary",
+      "primary_date": "2026-08-04",
+      "primary_opponent": "TBD",
+      "general_date": "2026-11-03",
+      "cook_rating": "Safe Democratic",
+      "win_prob": 0.8,
+      "impact_if_wins": "+1 soft-D retained",
+      "impact_if_loses": "Likely -1 if defeated by AIPAC-backed primary challenger",
+      "note": "Won 2024 primary 58% vs AIPAC-backed challenger. May face renewed challenge in 2026."
+    },
+    {
+      "id": "omar-mn05",
+      "name": "Ilhan Omar",
+      "party": "D",
+      "state": "MN",
+      "chamber": "house",
+      "district": 5,
+      "anti_arms": true,
+      "anti_arms_level": "soft",
+      "type": "incumbent",
+      "status": "pending_primary",
+      "primary_date": "2026-08-11",
+      "general_date": "2026-11-03",
+      "cook_rating": "Safe Democratic",
+      "win_prob": 0.78,
+      "impact_if_wins": "+1 soft-D retained",
+      "note": "Survived close 2024 primary 56%. AIPAC spent heavily against her. May face challenge again."
+    }
+  ],
+  "clerk_votes": {
+    "118-hr8034": {
+      "id": "118-hr8034",
+      "desc": "Israel Security Supplemental Appropriations Act, 2024",
+      "legis": "H R 8034",
+      "date": "20-Apr-2024",
+      "yeas": 366,
+      "nays": 65,
+      "nay_members": [
+        {
+          "name_id": "B001318",
+          "name": "Balint",
+          "party": "D",
+          "state": "VT"
+        },
+        {
+          "name_id": "B001292",
+          "name": "Beyer",
+          "party": "D",
+          "state": "VA"
+        },
+        {
+          "name_id": "B001302",
+          "name": "Biggs",
+          "party": "R",
+          "state": "AZ"
+        },
+        {
+          "name_id": "B000574",
+          "name": "Blumenauer",
+          "party": "D",
+          "state": "OR"
+        },
+        {
+          "name_id": "B000825",
+          "name": "Boebert",
+          "party": "R",
+          "state": "CO"
+        },
+        {
+          "name_id": "B001223",
+          "name": "Bowman",
+          "party": "D",
+          "state": "NY"
+        },
+        {
+          "name_id": "B001309",
+          "name": "Burchett",
+          "party": "R",
+          "state": "TN"
+        },
+        {
+          "name_id": "B001224",
+          "name": "Bush",
+          "party": "D",
+          "state": "MO"
+        },
+        {
+          "name_id": "C001072",
+          "name": "Carson",
+          "party": "D",
+          "state": "IN"
+        },
+        {
+          "name_id": "C001131",
+          "name": "Casar",
+          "party": "D",
+          "state": "TX"
+        },
+        {
+          "name_id": "C001091",
+          "name": "Castro (TX)",
+          "party": "D",
+          "state": "TX"
+        },
+        {
+          "name_id": "C001080",
+          "name": "Chu",
+          "party": "D",
+          "state": "CA"
+        },
+        {
+          "name_id": "C001116",
+          "name": "Clyde",
+          "party": "R",
+          "state": "GA"
+        },
+        {
+          "name_id": "C001132",
+          "name": "Crane",
+          "party": "R",
+          "state": "AZ"
+        },
+        {
+          "name_id": "D000626",
+          "name": "Davidson",
+          "party": "R",
+          "state": "OH"
+        },
+        {
+          "name_id": "D000623",
+          "name": "DeSaulnier",
+          "party": "D",
+          "state": "CA"
+        },
+        {
+          "name_id": "D000616",
+          "name": "DesJarlais",
+          "party": "R",
+          "state": "TN"
+        },
+        {
+          "name_id": "D000624",
+          "name": "Dingell",
+          "party": "D",
+          "state": "MI"
+        },
+        {
+          "name_id": "D000399",
+          "name": "Doggett",
+          "party": "D",
+          "state": "TX"
+        },
+        {
+          "name_id": "F000476",
+          "name": "Frost",
+          "party": "D",
+          "state": "FL"
+        },
+        {
+          "name_id": "G000578",
+          "name": "Gaetz",
+          "party": "R",
+          "state": "FL"
+        },
+        {
+          "name_id": "G000559",
+          "name": "Garamendi",
+          "party": "D",
+          "state": "CA"
+        },
+        {
+          "name_id": "G000586",
+          "name": "Garc\u00eda (IL)",
+          "party": "D",
+          "state": "IL"
+        },
+        {
+          "name_id": "G000595",
+          "name": "Good (VA)",
+          "party": "R",
+          "state": "VA"
+        },
+        {
+          "name_id": "G000565",
+          "name": "Gosar",
+          "party": "R",
+          "state": "AZ"
+        },
+        {
+          "name_id": "G000553",
+          "name": "Green, Al (TX)",
+          "party": "D",
+          "state": "TX"
+        },
+        {
+          "name_id": "G000596",
+          "name": "Greene (GA)",
+          "party": "R",
+          "state": "GA"
+        },
+        {
+          "name_id": "G000551",
+          "name": "Grijalva",
+          "party": "D",
+          "state": "AZ"
+        },
+        {
+          "name_id": "H001052",
+          "name": "Harris",
+          "party": "R",
+          "state": "MD"
+        },
+        {
+          "name_id": "H001095",
+          "name": "Hunt",
+          "party": "R",
+          "state": "TX"
+        },
+        {
+          "name_id": "J000309",
+          "name": "Jackson (IL)",
+          "party": "D",
+          "state": "IL"
+        },
+        {
+          "name_id": "J000298",
+          "name": "Jayapal",
+          "party": "D",
+          "state": "WA"
+        },
+        {
+          "name_id": "J000288",
+          "name": "Johnson (GA)",
+          "party": "D",
+          "state": "GA"
+        },
+        {
+          "name_id": "K000389",
+          "name": "Khanna",
+          "party": "D",
+          "state": "CA"
+        },
+        {
+          "name_id": "K000380",
+          "name": "Kildee",
+          "party": "D",
+          "state": "MI"
+        },
+        {
+          "name_id": "L000551",
+          "name": "Lee (CA)",
+          "party": "D",
+          "state": "CA"
+        },
+        {
+          "name_id": "L000602",
+          "name": "Lee (PA)",
+          "party": "D",
+          "state": "PA"
+        },
+        {
+          "name_id": "L000569",
+          "name": "Luetkemeyer",
+          "party": "R",
+          "state": "MO"
+        },
+        {
+          "name_id": "M001184",
+          "name": "Massie",
+          "party": "R",
+          "state": "KY"
+        },
+        {
+          "name_id": "M000312",
+          "name": "McGovern",
+          "party": "D",
+          "state": "MA"
+        },
+        {
+          "name_id": "M001216",
+          "name": "Mills",
+          "party": "R",
+          "state": "FL"
+        },
+        {
+          "name_id": "M001195",
+          "name": "Mooney",
+          "party": "R",
+          "state": "WV"
+        },
+        {
+          "name_id": "N000026",
+          "name": "Nehls",
+          "party": "R",
+          "state": "TX"
+        },
+        {
+          "name_id": "N000190",
+          "name": "Norman",
+          "party": "R",
+          "state": "SC"
+        },
+        {
+          "name_id": "O000172",
+          "name": "Ocasio-Cortez",
+          "party": "D",
+          "state": "NY"
+        },
+        {
+          "name_id": "O000173",
+          "name": "Omar",
+          "party": "D",
+          "state": "MN"
+        },
+        {
+          "name_id": "P000604",
+          "name": "Payne",
+          "party": "D",
+          "state": "NJ"
+        },
+        {
+          "name_id": "P000605",
+          "name": "Perry",
+          "party": "R",
+          "state": "PA"
+        },
+        {
+          "name_id": "P000597",
+          "name": "Pingree",
+          "party": "D",
+          "state": "ME"
+        },
+        {
+          "name_id": "P000607",
+          "name": "Pocan",
+          "party": "D",
+          "state": "WI"
+        },
+        {
+          "name_id": "P000617",
+          "name": "Pressley",
+          "party": "D",
+          "state": "MA"
+        },
+        {
+          "name_id": "R000617",
+          "name": "Ramirez",
+          "party": "D",
+          "state": "IL"
+        },
+        {
+          "name_id": "R000606",
+          "name": "Raskin",
+          "party": "D",
+          "state": "MD"
+        },
+        {
+          "name_id": "R000103",
+          "name": "Rosendale",
+          "party": "R",
+          "state": "MT"
+        },
+        {
+          "name_id": "R000614",
+          "name": "Roy",
+          "party": "R",
+          "state": "TX"
+        },
+        {
+          "name_id": "T000472",
+          "name": "Takano",
+          "party": "D",
+          "state": "CA"
+        },
+        {
+          "name_id": "T000193",
+          "name": "Thompson (MS)",
+          "party": "D",
+          "state": "MS"
+        },
+        {
+          "name_id": "T000165",
+          "name": "Tiffany",
+          "party": "R",
+          "state": "WI"
+        },
+        {
+          "name_id": "T000481",
+          "name": "Tlaib",
+          "party": "D",
+          "state": "MI"
+        },
+        {
+          "name_id": "T000487",
+          "name": "Tokuda",
+          "party": "D",
+          "state": "HI"
+        },
+        {
+          "name_id": "V000081",
+          "name": "Vel\u00e1zquez",
+          "party": "D",
+          "state": "NY"
+        },
+        {
+          "name_id": "W000187",
+          "name": "Waters",
+          "party": "D",
+          "state": "CA"
+        },
+        {
+          "name_id": "W000822",
+          "name": "Watson Coleman",
+          "party": "D",
+          "state": "NJ"
+        },
+        {
+          "name_id": "W000828",
+          "name": "Williams (NY)",
+          "party": "R",
+          "state": "NY"
+        },
+        {
+          "name_id": "Z000018",
+          "name": "Zinke",
+          "party": "R",
+          "state": "MT"
+        }
+      ],
+      "url": "https://clerk.house.gov/Votes/2024152"
+    },
+    "118-hr8035": {
+      "id": "118-hr8035",
+      "desc": "Fire Weather Development Act",
+      "legis": "H R 4866",
+      "date": "29-Apr-2024",
+      "yeas": 341,
+      "nays": 87,
+      "nay_members": [
+        {
+          "name_id": "A000055",
+          "name": "Aderholt",
+          "party": "R",
+          "state": "AL"
+        },
+        {
+          "name_id": "A000379",
+          "name": "Alford",
+          "party": "R",
+          "state": "MO"
+        },
+        {
+          "name_id": "A000375",
+          "name": "Arrington",
+          "party": "R",
+          "state": "TX"
+        },
+        {
+          "name_id": "B001299",
+          "name": "Banks",
+          "party": "R",
+          "state": "IN"
+        },
+        {
+          "name_id": "B001314",
+          "name": "Bean (FL)",
+          "party": "R",
+          "state": "FL"
+        },
+        {
+          "name_id": "B001302",
+          "name": "Biggs",
+          "party": "R",
+          "state": "AZ"
+        },
+        {
+          "name_id": "B001311",
+          "name": "Bishop (NC)",
+          "party": "R",
+          "state": "NC"
+        },
+        {
+          "name_id": "B000574",
+          "name": "Blumenauer",
+          "party": "D",
+          "state": "OR"
+        },
+        {
+          "name_id": "B000825",
+          "name": "Boebert",
+          "party": "R",
+          "state": "CO"
+        },
+        {
+          "name_id": "B001317",
+          "name": "Brecheen",
+          "party": "R",
+          "state": "OK"
+        },
+        {
+          "name_id": "B001315",
+          "name": "Budzinski",
+          "party": "D",
+          "state": "IL"
+        },
+        {
+          "name_id": "B001309",
+          "name": "Burchett",
+          "party": "R",
+          "state": "TN"
+        },
+        {
+          "name_id": "B001316",
+          "name": "Burlison",
+          "party": "R",
+          "state": "MO"
+        },
+        {
+          "name_id": "C001125",
+          "name": "Carter (LA)",
+          "party": "D",
+          "state": "LA"
+        },
+        {
+          "name_id": "C001131",
+          "name": "Casar",
+          "party": "D",
+          "state": "TX"
+        },
+        {
+          "name_id": "C001118",
+          "name": "Cline",
+          "party": "R",
+          "state": "VA"
+        },
+        {
+          "name_id": "C001115",
+          "name": "Cloud",
+          "party": "R",
+          "state": "TX"
+        },
+        {
+          "name_id": "C001116",
+          "name": "Clyde",
+          "party": "R",
+          "state": "GA"
+        },
+        {
+          "name_id": "C001053",
+          "name": "Cole",
+          "party": "R",
+          "state": "OK"
+        },
+        {
+          "name_id": "C001129",
+          "name": "Collins",
+          "party": "R",
+          "state": "GA"
+        },
+        {
+          "name_id": "C001108",
+          "name": "Comer",
+          "party": "R",
+          "state": "KY"
+        },
+        {
+          "name_id": "C001132",
+          "name": "Crane",
+          "party": "R",
+          "state": "AZ"
+        },
+        {
+          "name_id": "C001087",
+          "name": "Crawford",
+          "party": "R",
+          "state": "AR"
+        },
+        {
+          "name_id": "C001114",
+          "name": "Curtis",
+          "party": "R",
+          "state": "UT"
+        },
+        {
+          "name_id": "D000626",
+          "name": "Davidson",
+          "party": "R",
+          "state": "OH"
+        },
+        {
+          "name_id": "D000600",
+          "name": "Diaz-Balart",
+          "party": "R",
+          "state": "FL"
+        },
+        {
+          "name_id": "D000032",
+          "name": "Donalds",
+          "party": "R",
+          "state": "FL"
+        },
+        {
+          "name_id": "D000615",
+          "name": "Duncan",
+          "party": "R",
+          "state": "SC"
+        },
+        {
+          "name_id": "E000296",
+          "name": "Evans",
+          "party": "D",
+          "state": "PA"
+        },
+        {
+          "name_id": "F000246",
+          "name": "Fallon",
+          "party": "R",
+          "state": "TX"
+        },
+        {
+          "name_id": "F000471",
+          "name": "Fitzgerald",
+          "party": "R",
+          "state": "WI"
+        },
+        {
+          "name_id": "F000450",
+          "name": "Foxx",
+          "party": "R",
+          "state": "NC"
+        },
+        {
+          "name_id": "F000478",
+          "name": "Fry",
+          "party": "R",
+          "state": "SC"
+        },
+        {
+          "name_id": "G000578",
+          "name": "Gaetz",
+          "party": "R",
+          "state": "FL"
+        },
+        {
+          "name_id": "G000585",
+          "name": "Gomez",
+          "party": "D",
+          "state": "CA"
+        },
+        {
+          "name_id": "G000595",
+          "name": "Good (VA)",
+          "party": "R",
+          "state": "VA"
+        },
+        {
+          "name_id": "G000565",
+          "name": "Gosar",
+          "party": "R",
+          "state": "AZ"
+        },
+        {
+          "name_id": "G000377",
+          "name": "Granger",
+          "party": "R",
+          "state": "TX"
+        },
+        {
+          "name_id": "G000596",
+          "name": "Greene (GA)",
+          "party": "R",
+          "state": "GA"
+        },
+        {
+          "name_id": "G000551",
+          "name": "Grijalva",
+          "party": "D",
+          "state": "AZ"
+        },
+        {
+          "name_id": "H001096",
+          "name": "Hageman",
+          "party": "R",
+          "state": "WY"
+        },
+        {
+          "name_id": "H001052",
+          "name": "Harris",
+          "party": "R",
+          "state": "MD"
+        },
+        {
+          "name_id": "H001086",
+          "name": "Harshbarger",
+          "party": "R",
+          "state": "TN"
+        },
+        {
+          "name_id": "H001077",
+          "name": "Higgins (LA)",
+          "party": "R",
+          "state": "LA"
+        },
+        {
+          "name_id": "H001095",
+          "name": "Hunt",
+          "party": "R",
+          "state": "TX"
+        },
+        {
+          "name_id": "J000304",
+          "name": "Jackson (TX)",
+          "party": "R",
+          "state": "TX"
+        },
+        {
+          "name_id": "J000032",
+          "name": "Jackson Lee",
+          "party": "D",
+          "state": "TX"
+        },
+        {
+          "name_id": "J000302",
+          "name": "Joyce (PA)",
+          "party": "R",
+          "state": "PA"
+        },
+        {
+          "name_id": "K000400",
+          "name": "Kamlager-Dove",
+          "party": "D",
+          "state": "CA"
+        },
+        {
+          "name_id": "K000394",
+          "name": "Kim (NJ)",
+          "party": "D",
+          "state": "NJ"
+        },
+        {
+          "name_id": "K000392",
+          "name": "Kustoff",
+          "party": "R",
+          "state": "TN"
+        },
+        {
+          "name_id": "L000578",
+          "name": "LaMalfa",
+          "party": "R",
+          "state": "CA"
+        },
+        {
+          "name_id": "L000600",
+          "name": "Langworthy",
+          "party": "R",
+          "state": "NY"
+        },
+        {
+          "name_id": "L000589",
+          "name": "Lesko",
+          "party": "R",
+          "state": "AZ"
+        },
+        {
+          "name_id": "L000596",
+          "name": "Luna",
+          "party": "R",
+          "state": "FL"
+        },
+        {
+          "name_id": "M001223",
+          "name": "Magaziner",
+          "party": "D",
+          "state": "RI"
+        },
+        {
+          "name_id": "M001184",
+          "name": "Massie",
+          "party": "R",
+          "state": "KY"
+        },
+        {
+          "name_id": "M001156",
+          "name": "McHenry",
+          "party": "R",
+          "state": "NC"
+        },
+        {
+          "name_id": "M000687",
+          "name": "Mfume",
+          "party": "D",
+          "state": "MD"
+        },
+        {
+          "name_id": "M001211",
+          "name": "Miller (IL)",
+          "party": "R",
+          "state": "IL"
+        },
+        {
+          "name_id": "M001216",
+          "name": "Mills",
+          "party": "R",
+          "state": "FL"
+        },
+        {
+          "name_id": "M001195",
+          "name": "Mooney",
+          "party": "R",
+          "state": "WV"
+        },
+        {
+          "name_id": "M001212",
+          "name": "Moore (AL)",
+          "party": "R",
+          "state": "AL"
+        },
+        {
+          "name_id": "N000026",
+          "name": "Nehls",
+          "party": "R",
+          "state": "TX"
+        },
+        {
+          "name_id": "N000190",
+          "name": "Norman",
+          "party": "R",
+          "state": "SC"
+        },
+        {
+          "name_id": "O000175",
+          "name": "Ogles",
+          "party": "R",
+          "state": "TN"
+        },
+        {
+          "name_id": "P000197",
+          "name": "Pelosi",
+          "party": "D",
+          "state": "CA"
+        },
+        {
+          "name_id": "P000605",
+          "name": "Perry",
+          "party": "R",
+          "state": "PA"
+        },
+        {
+          "name_id": "P000608",
+          "name": "Peters",
+          "party": "D",
+          "state": "CA"
+        },
+        {
+          "name_id": "P000599",
+          "name": "Posey",
+          "party": "R",
+          "state": "FL"
+        },
+        {
+          "name_id": "R000612",
+          "name": "Rose",
+          "party": "R",
+          "state": "TN"
+        },
+        {
+          "name_id": "R000103",
+          "name": "Rosendale",
+          "party": "R",
+          "state": "MT"
+        },
+        {
+          "name_id": "R000614",
+          "name": "Roy",
+          "party": "R",
+          "state": "TX"
+        },
+        {
+          "name_id": "R000609",
+          "name": "Rutherford",
+          "party": "R",
+          "state": "FL"
+        },
+        {
+          "name_id": "S001224",
+          "name": "Self",
+          "party": "R",
+          "state": "TX"
+        },
+        {
+          "name_id": "S001185",
+          "name": "Sewell",
+          "party": "D",
+          "state": "AL"
+        },
+        {
+          "name_id": "S001207",
+          "name": "Sherrill",
+          "party": "D",
+          "state": "NJ"
+        },
+        {
+          "name_id": "S001172",
+          "name": "Smith (NE)",
+          "party": "R",
+          "state": "NE"
+        },
+        {
+          "name_id": "S000929",
+          "name": "Spartz",
+          "party": "R",
+          "state": "IN"
+        },
+        {
+          "name_id": "S001214",
+          "name": "Steube",
+          "party": "R",
+          "state": "FL"
+        },
+        {
+          "name_id": "S001220",
+          "name": "Strong",
+          "party": "R",
+          "state": "AL"
+        },
+        {
+          "name_id": "S001193",
+          "name": "Swalwell",
+          "party": "D",
+          "state": "CA"
+        },
+        {
+          "name_id": "S001223",
+          "name": "Sykes",
+          "party": "D",
+          "state": "OH"
+        },
+        {
+          "name_id": "T000486",
+          "name": "Torres (NY)",
+          "party": "D",
+          "state": "NY"
+        },
+        {
+          "name_id": "W000823",
+          "name": "Waltz",
+          "party": "R",
+          "state": "FL"
+        },
+        {
+          "name_id": "W000825",
+          "name": "Wexton",
+          "party": "D",
+          "state": "VA"
+        },
+        {
+          "name_id": "W000826",
+          "name": "Wild",
+          "party": "D",
+          "state": "PA"
+        }
+      ],
+      "url": "https://clerk.house.gov/Votes/2024153"
+    }
+  }
 }
