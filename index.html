@@ -143,14 +143,12 @@ function buildMembers(allMembers, chamber) {
   const ch    = chamber === "house" ? "house" : "senate";
   const chMem = allMembers.filter(m => m.chamber === ch);
 
-  // Seat order L→R: R | softAntiR | hardAntiR | hardAntiD | softAntiD | D | I
-  const hardAntiR = chMem.filter(m => m.antiArms && m.party==="R" && m.antiArmsLevel==="hard");
-  const softAntiR = chMem.filter(m => m.antiArms && m.party==="R" && m.antiArmsLevel!=="hard");
-  const hardAntiD = chMem.filter(m => m.antiArms && m.party!=="R" && m.antiArmsLevel==="hard");
-  const softAntiD = chMem.filter(m => m.antiArms && m.party!=="R" && m.antiArmsLevel!=="hard");
-  const restR     = chMem.filter(m => !m.antiArms && m.party==="R");
-  const restD     = chMem.filter(m => !m.antiArms && m.party==="D");
-  const restI     = chMem.filter(m => !m.antiArms && m.party==="I");
+  // Seat order L→R: R | Anti-R | Anti-D | D | I
+  const antiR = chMem.filter(m => m.antiArms && m.party === "R");
+  const antiD = chMem.filter(m => m.antiArms && m.party !== "R");
+  const restR  = chMem.filter(m => !m.antiArms && m.party === "R");
+  const restD  = chMem.filter(m => !m.antiArms && m.party === "D");
+  const restI  = chMem.filter(m => !m.antiArms && m.party === "I");
 
   function fill(party, count) {
     return Array.from({length:Math.max(0,count)}, (_,i)=>({
@@ -159,12 +157,13 @@ function buildMembers(allMembers, chamber) {
     }));
   }
 
-  const rFill = restR.length > 0 ? restR : fill("R", ch==="house" ? 220-hardAntiR.length-softAntiR.length : 53-hardAntiR.length-softAntiR.length);
-  const dFill = restD.length > 0 ? restD : fill("D", ch==="house" ? 215-hardAntiD.length-softAntiD.length : 45-hardAntiD.length-softAntiD.length);
+  const rFill = restR.length > 0 ? restR : fill("R", ch==="house" ? 220-antiR.length : 53-antiR.length);
+  const dFill = restD.length > 0 ? restD : fill("D", ch==="house" ? 215-antiD.length : 45-antiD.length);
   const iFill = restI.length > 0 ? restI : (ch==="senate" ? fill("I",2) : []);
 
-  return [...rFill, ...softAntiR, ...hardAntiR, ...hardAntiD, ...softAntiD, ...dFill, ...iFill];
+  return [...rFill, ...antiR, ...antiD, ...dFill, ...iFill];
 }
+
 function fmtM(n) {
   if (!n&&n!==0) return "—";
   if (n>=1e6) return "$"+(n/1e6).toFixed(1)+"M";
@@ -382,9 +381,8 @@ function BillsPanel({bills}) {
 function MemberBox({title, color, members, challengers, fecData, polyData, onSelect}) {
   const [tab, setTab] = useState("members");
 
-  const hard     = members.filter(m=>m.antiArmsLevel==="hard" && !["RETIRED","RESIGNED","DEFEATED","RETIRING","FLIPPED"].includes(m.ps));
-  const soft     = members.filter(m=>m.antiArmsLevel!=="hard" && !["RETIRED","RESIGNED","DEFEATED","RETIRING","FLIPPED"].includes(m.ps));
-  const departed = members.filter(m=>["RETIRED","RESIGNED","DEFEATED","FLIPPED","RETIRING"].includes(m.ps));
+  const active   = members.filter(m => !["RETIRED","RESIGNED","DEFEATED","RETIRING","FLIPPED"].includes(m.ps));
+  const departed = members.filter(m => ["RETIRED","RESIGNED","DEFEATED","FLIPPED","RETIRING"].includes(m.ps));
 
   const groups = {
     RECOUNT:  challengers.filter(c=>c.ps==="RECOUNT"),
@@ -435,7 +433,7 @@ function MemberBox({title, color, members, challengers, fecData, polyData, onSel
       <div style=${{background:"linear-gradient(135deg,"+color+"16,"+color+"05)",borderBottom:"1px solid "+color+"22",padding:"9px 11px"}}>
         <div style=${{fontSize:9,fontWeight:700,letterSpacing:"0.14em",textTransform:"uppercase",color,fontFamily:"monospace"}}>${title}</div>
         <div style=${{fontSize:8,color:"#374151",marginTop:2}}>
-          ${hard.length} hard · ${soft.length} soft · ${departed.length} departed · ${challengers.length} challengers
+          ${active.length} active · ${departed.length} departed · ${challengers.length} challengers
         </div>
       </div>
       <div style=${{display:"flex",borderBottom:"1px solid #0e1016"}}>
@@ -449,10 +447,8 @@ function MemberBox({title, color, members, challengers, fecData, polyData, onSel
       </div>
       <div style=${{maxHeight:440,overflowY:"auto"}}>
         ${tab==="members"?html`
-          ${hard.length>0?html`<div style=${{padding:"3px 9px",background:"#090b0e",fontSize:8,color:"#374151",fontFamily:"monospace",letterSpacing:"0.1em",textTransform:"uppercase"}}>⚡ Anti-Intervention</div>`:null}
-          <${Section} items=${hard}/>
-          ${soft.length>0?html`<div style=${{padding:"3px 9px",background:"#090b0e",fontSize:8,color:"#374151",fontFamily:"monospace",letterSpacing:"0.1em",textTransform:"uppercase"}}>◦ Anti-Intervention</div>`:null}
-          <${Section} items=${soft}/>
+          ${active.length>0?html`<div style=${{padding:"3px 9px",background:"#090b0e",fontSize:8,color:"#374151",fontFamily:"monospace",letterSpacing:"0.1em",textTransform:"uppercase"}}>◈ Anti-Intervention</div>`:null}
+          <${Section} items=${active}/>
           <${Section} label="Departed" items=${departed}/>
         `:html`
           ${challengers.length===0?html`<div style=${{padding:16,fontSize:10,color:"#374151",textAlign:"center"}}>No challengers tracked.</div>`:null}
@@ -1606,7 +1602,7 @@ function App() {
                 return html`<path key=${i} d=${"M "+(cx-r)+" "+cy+" A "+r+" "+r+" 0 0 1 "+(cx+r)+" "+cy} fill="none" stroke="#111419" stroke-width="1"/>`;
               })}
               ${positions.map((pos,i)=>{
-                const m=members[i]; if(!m) return null;
+                const m=pos; if(!m||m._filler) return null;
                 const dimDot = showAnti && !m.antiArms;
                 const isSel=selected===i, isHov=hovered===i;
                 const color=dotColor(m), poly=polyData[m.name], atRisk=poly&&poly.prob<0.65;
@@ -1626,12 +1622,10 @@ function App() {
                 </g>`;
               })}
               <line x1=${cx} y1=${cy} x2=${cx} y2=${cy-(cfg.innerR+(cfg.rows-1)*cfg.spacing)-16} stroke="#1e2230" stroke-width="1" stroke-dasharray="3,3"/>
-              <text x=${cx-80} y="11" fill="#991b1b" font-size="7" font-family="monospace" text-anchor="middle" opacity=".5">R</text>
-              <text x=${cx-52} y="11" fill="#a855f7" font-size="6" font-family="monospace" text-anchor="middle" opacity=".6">Soft-R</text>
-              <text x=${cx-22} y="11" fill="#c026d3" font-size="6" font-family="monospace" text-anchor="middle" opacity=".7">Hard-R</text>
-              <text x=${cx+22} y="11" fill="#7c3aed" font-size="6" font-family="monospace" text-anchor="middle" opacity=".7">Hard-D</text>
-              <text x=${cx+52} y="11" fill="#818cf8" font-size="6" font-family="monospace" text-anchor="middle" opacity=".6">Soft-D</text>
-              <text x=${cx+80} y="11" fill="#1e40af" font-size="7" font-family="monospace" text-anchor="middle" opacity=".5">D</text>
+              <text x=${cx-100} y="11" fill="#991b1b" font-size="7" font-family="monospace" text-anchor="middle" opacity=".5">R</text>
+              <text x=${cx-40}  y="11" fill="#e879f9" font-size="6" font-family="monospace" text-anchor="middle" opacity=".8">Anti-R</text>
+              <text x=${cx+40}  y="11" fill="#818cf8" font-size="6" font-family="monospace" text-anchor="middle" opacity=".8">Anti-D</text>
+              <text x=${cx+100} y="11" fill="#1e40af" font-size="7" font-family="monospace" text-anchor="middle" opacity=".5">D</text>
               <ellipse cx=${cx} cy=${cy+6} rx="18" ry="6" fill="#0f1117"/>
               <rect x=${cx-3} y=${cy-7} width="6" height="13" fill="#0f1117" rx="2"/>
             </svg>
