@@ -101,68 +101,46 @@ function antiArmsTagColor(m) {
 }
 
 
-function computeHemicycle(members, chamber, cx, cy, innerR, spacing, rows) {
-  // Returns [{...member, x, y, _color}] ordered for hemicycle layout
-  const chMem = members.filter(m =>
-    m.chamber === chamber &&
-    !["RETIRED","RESIGNED","DEFEATED","RETIRING","FAILED_PRIMARY"].includes(m.ps)
-  );
-  const antiR  = chMem.filter(m => m.antiArms && m.party === "R");
-  const antiD  = chMem.filter(m => m.antiArms && m.party !== "R");
-  const rest   = chMem.filter(m => !m.antiArms);
-  const allSeats = [
-    ...antiR.map(m => ({...m, _color: dotColor(m)})),
-    ...rest.map(m  => ({...m, _color: "#1e2230"})),
-    ...antiD.map(m => ({...m, _color: dotColor(m)})),
-  ];
+function computeHemicycle(n, cx, cy, innerR, spacing, rows) {
+  // Distribute n seats across rows proportional to arc length (longer outer rows get more seats)
+  const radii = Array.from({length: rows}, (_, i) => innerR + i * spacing);
+  const totalR = radii.reduce((s, r) => s + r, 0);
 
   const positions = [];
-  let idx = 0;
+  let seated = 0;
   for (let row = 0; row < rows; row++) {
-    const r      = innerR + row * spacing;
-    const seats  = Math.round(Math.PI * r / (spacing * 0.95));
-    const count  = Math.min(seats, allSeats.length - idx + (row < rows - 1 ? 0 : 0));
-    for (let s = 0; s < count && idx < allSeats.length; s++, idx++) {
-      const angle = (Math.PI / (count - 1)) * s;
+    const r     = radii[row];
+    const count = row === rows - 1
+      ? (n - seated)                                    // last row absorbs remainder
+      : Math.round(n * r / totalR);
+    seated += count;
+    for (let s = 0; s < count; s++) {
+      const angle = count === 1 ? Math.PI / 2 : (Math.PI / (count - 1)) * s;
       positions.push({
-        ...allSeats[idx],
         x: cx - r * Math.cos(angle),
         y: cy - r * Math.sin(angle),
       });
     }
   }
-  // Fill any remaining with fillers
-  while (positions.length < members.length) {
-    positions.push({_filler: true, x: -999, y: -999, _color: "#111419"});
-  }
   return positions;
 }
+
 
 
 function buildMembers(allMembers, chamber) {
   const ch    = chamber === "house" ? "house" : "senate";
   const chMem = allMembers.filter(m => m.chamber === ch);
 
-  // Seat order L→R: R | Anti-R | Anti-D | D | I
   const antiR = chMem.filter(m => m.antiArms && m.party === "R");
   const antiD = chMem.filter(m => m.antiArms && m.party !== "R");
-  const restR  = chMem.filter(m => !m.antiArms && m.party === "R");
-  const restD  = chMem.filter(m => !m.antiArms && m.party === "D");
-  const restI  = chMem.filter(m => !m.antiArms && m.party === "I");
+  const restR = chMem.filter(m => !m.antiArms && m.party === "R");
+  const restD = chMem.filter(m => !m.antiArms && m.party === "D");
+  const restI = chMem.filter(m => !m.antiArms && m.party === "I");
 
-  function fill(party, count) {
-    return Array.from({length:Math.max(0,count)}, (_,i)=>({
-      id:10000+(party==="R"?0:party==="D"?10000:20000)+i,
-      name:party+"-"+(i+1), party, state:"", antiArms:false, chamber:ch, _filler:true
-    }));
-  }
-
-  const rFill = restR.length > 0 ? restR : fill("R", ch==="house" ? 220-antiR.length : 53-antiR.length);
-  const dFill = restD.length > 0 ? restD : fill("D", ch==="house" ? 215-antiD.length : 45-antiD.length);
-  const iFill = restI.length > 0 ? restI : (ch==="senate" ? fill("I",2) : []);
-
-  return [...rFill, ...antiR, ...antiD, ...dFill, ...iFill];
+  // Hemicycle seat order L→R: R bloc | anti-R | anti-D | D bloc | I
+  return [...restR, ...antiR, ...antiD, ...restD, ...restI];
 }
+
 
 function fmtM(n) {
   if (!n&&n!==0) return "—";
@@ -507,7 +485,7 @@ function DetailPanel({member, fecData, polyData, bills, chamber}) {
             <${ArmsBadge} member=${member}/>
           </div>
           <div style=${{fontSize:9,color:"#4b5563",lineHeight:1.5}}>
-            ${member.antiArms ? "Opposes foreign interventionism and arms sales." : null}
+            "Opposes foreign interventionism — opposed arms sales or aid to foreign countries by vote or TrackAIPAC endorsement."
           </div>
           ${member.lobby_total>0?html`
             <div style=${{fontSize:8,color:"#374151",fontFamily:"monospace",marginTop:3}}>
@@ -981,10 +959,6 @@ function useData() {
       if (d.events) setHistory(d);
     }).catch(() => {});
 
-    fetch(CHALLENGERS_URL + "?_=" + Date.now()).then(r => r.json()).then(d => {
-      if (d.challengers) setChalls(d.challengers);
-    }).catch(() => {});
-
     (async () => {
       try {
         const r = await fetch(DATA_URL + "?_=" + Date.now());
@@ -1026,10 +1000,7 @@ function useData() {
           "Jim McGovern":     {reason:"Co-sponsored HR 3565 Block the Bombs Act"},
           "Jan Schakowsky":   {reason:"Co-sponsored HR 3565 Block the Bombs Act"},
           "Maxine Waters":    {reason:"Co-sponsored HR 3565 Block the Bombs Act"},
-          "Jamie Raskin":     {reason:"Publicly called for arms conditions; voting record mixed"},
           "Ed Markey":        {reason:"Co-sponsored Senate JRD on Israel FMS"},
-          "Brian Schatz":     {reason:"Signed letters on arms conditions"},
-          "Elizabeth Warren": {reason:"Called for arms review"},
           "Bernie Sanders":   {reason:"Forced Senate vote on JRD on Israel FMS (2024)"},
         };
         memberList = memberList.map(m => {
@@ -1039,6 +1010,17 @@ function useData() {
 
         setMembers(memberList);
         setBills(d.bills || []);
+
+        // Populate challengers from embedded endorsed lists
+        const taEndorsed  = (d.trackaipac_endorsed || []).map(c => ({
+          ...c, ps: c.ps || "UPCOMING", chamber: c.chamber || "house",
+        }));
+        const rlcEndorsed = (d.rlc_endorsed || []).map(c => ({
+          ...c, ps: c.ps || "UPCOMING", chamber: c.chamber || "house",
+        }));
+        const seenNames = new Set(taEndorsed.map(c => c.name));
+        const allChalls = [...taEndorsed, ...rlcEndorsed.filter(c => !seenNames.has(c.name))];
+        if (allChalls.length > 0) setChalls(allChalls);
         if (d.races_2026 && d.races_2026.length) setRaces(d.races_2026);
         if (d.fec && Object.keys(d.fec).length > 0) setFec(d.fec);
 
@@ -1098,7 +1080,7 @@ function useData() {
   }
 
   return {
-    allMembers, bills, challengers: [], history, races, fecData,
+    allMembers, bills, challengers, history, races, fecData,
     polyData:    mergedPoly,
     polyLive,
     polyUpdated: polyUpdated,
@@ -1478,8 +1460,8 @@ function App() {
 
   const svgW=610, svgH=300, cx=svgW/2, cy=svgH-14;
   const cfg = chamber==="house" ? {innerR:50,spacing:20,rows:9} : {innerR:78,spacing:30,rows:6};
-  const positions = useMemo(()=>computeHemicycle(members,chamber,cx,cy,cfg.innerR,cfg.spacing,cfg.rows),
-    [members,chamber,cx,cy,cfg.innerR,cfg.spacing,cfg.rows]);
+  const positions = useMemo(()=>computeHemicycle(members.length,cx,cy,cfg.innerR,cfg.spacing,cfg.rows),
+    [members.length,cx,cy,cfg.innerR,cfg.spacing,cfg.rows]);
 
   const dotR      = chamber==="house" ? 4.5 : 6.5;
   const selMember = selected!==null ? members[selected] : null;
@@ -1602,7 +1584,7 @@ function App() {
                 return html`<path key=${i} d=${"M "+(cx-r)+" "+cy+" A "+r+" "+r+" 0 0 1 "+(cx+r)+" "+cy} fill="none" stroke="#111419" stroke-width="1"/>`;
               })}
               ${positions.map((pos,i)=>{
-                const m=pos; if(!m) return null;
+                const m=members[i]; if(!m||m._filler) return null;
                 const dimDot = showAnti && !m.antiArms;
                 const isSel=selected===i, isHov=hovered===i;
                 const color=dotColor(m), poly=polyData[m.name], atRisk=poly&&poly.prob<0.65;
@@ -1667,7 +1649,7 @@ function App() {
       `}
 
       <div style=${{fontSize:8,color:"#1a1d27",marginTop:14,fontFamily:"monospace",textAlign:"center",maxWidth:800,lineHeight:1.8}}>
-        MEMBERS: TRACKAIPAC.COM (D/I) + RLC LIBERTY INDEX (R) · HARD: CONGRESS.GOV BILL CO-SPONSORSHIP + HOUSE-VOTE API + LEGISCAN
+        MEMBERS: TRACKAIPAC.COM (D/I) + RLC LIBERTY INDEX (R) · VOTES: CONGRESS.GOV HOUSE-VOTE API + CLERK XML
         <br/>FINANCE: OPENFEC · ODDS: POLYMARKET · REPS: GOOGLE CIVIC · P2P: GUN.JS · REFRESH: 4H GITHUB ACTIONS
         <br/><a href="https://github.com/LukeRDavis/Anti-Establishment-Congressional-Tracker" target="_blank" style=${{color:"#374151"}}>github.com/LukeRDavis/Anti-Establishment-Congressional-Tracker</a>
       </div>
