@@ -408,7 +408,7 @@ function MemberBox({title, color, members, challengers, fecData, polyData, onSel
         </div>
         <div style=${{display:"flex",gap:5,flexWrap:"wrap",marginBottom:2}}>
           <span style=${{fontSize:8,fontFamily:"monospace",color:"#374151"}}>${loc}${isChallenger&&m.primaryDate?" · "+m.primaryDate:""}</span>
-          ${!isChallenger?html`<${ArmsBadge} m=${m}/>`:null}
+          ${!isChallenger?html`<${ArmsBadge} member=${m}/>`:null}
         </div>
         ${m.note?html`<div style=${{fontSize:8,color:"#374151",lineHeight:1.3,marginBottom:2}}>${m.note.slice(0,70)}${m.note.length>70?"…":""}</div>`:null}
         ${m.rlc_score?html`<span style=${{fontSize:8,fontFamily:"monospace",color:"#fbbf24",opacity:.7}}>RLC ${m.rlc_score}/100</span>`:null}
@@ -504,7 +504,7 @@ function DetailPanel({member, fecData, polyData, bills, chamber}) {
           background:"rgba(129,140,248,.07)",
           border:"1px solid #818cf833"}}>
           <div style=${{display:"flex",alignItems:"center",gap:6,marginBottom:3}}>
-            <${ArmsBadge} m=${member}/>
+            <${ArmsBadge} member=${member}/>
           </div>
           <div style=${{fontSize:9,color:"#4b5563",lineHeight:1.5}}>
             ${member.antiArms ? "Opposes foreign interventionism and arms sales." : null}
@@ -1602,7 +1602,7 @@ function App() {
                 return html`<path key=${i} d=${"M "+(cx-r)+" "+cy+" A "+r+" "+r+" 0 0 1 "+(cx+r)+" "+cy} fill="none" stroke="#111419" stroke-width="1"/>`;
               })}
               ${positions.map((pos,i)=>{
-                const m=pos; if(!m||m._filler) return null;
+                const m=pos; if(!m) return null;
                 const dimDot = showAnti && !m.antiArms;
                 const isSel=selected===i, isHov=hovered===i;
                 const color=dotColor(m), poly=polyData[m.name], atRisk=poly&&poly.prob<0.65;
