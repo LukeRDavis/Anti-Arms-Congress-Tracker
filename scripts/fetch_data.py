@@ -1576,11 +1576,14 @@ def main():
     challengers  = merge_challengers(ta_endorsed, rlc_endorsed, fec_cands)
 
     fec  = fetch_fec(members)  or existing.get("fec",  {})
-    poly = fetch_poly(members, races=races) or existing.get("poly", {})
 
-    # Enrich race cards with live data
-    races = [dict(r) for r in RACES_2026]   # deep copy so we can modify
+    # Build race cards BEFORE fetch_poly so we can pass them in for matching
+    races = [dict(r) for r in RACES_2026]
     races = enrich_races_with_ballotpedia(races)
+
+    poly  = fetch_poly(members, races=races) or existing.get("poly", {})
+
+    # Wire live Polymarket odds into race cards
     races = wire_polymarket_to_races(races, poly)
 
     anti = sum(1 for m in members if m["antiArms"])
