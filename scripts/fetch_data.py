@@ -37,6 +37,338 @@ FEC_KEY       = os.environ.get("FEC_KEY",       "")
 POLY_KEY      = os.environ.get("POLY_KEY",      "")
 LEGISCAN_KEY  = os.environ.get("LEGISCAN_KEY",  "")
 
+# ── AI Classification keys ────────────────────────────────────────────────────
+GEMINI_KEY      = os.environ.get("GEMINI_KEY",       "")
+OPENROUTER_KEY  = os.environ.get("OPENROUTER_API_KEY","")
+GROQ_KEY        = os.environ.get("GROQ_API_KEY",     "")
+
+# ─────────────────────────────────────────────────────────────────────────────
+# AI CLASSIFICATION ENGINE
+# Tier 1: Google Gemini 2.0 Flash (free, 1500 req/day via AI Studio key)
+# Tier 2: OpenRouter free models  (no daily hard limit on free tier)
+# Tier 3: Groq free tier          (llama-3.1-8b-instant, very fast)
+# Tier 4: Hardcoded KNOWN_ANTI_INTERVENTION dict (always available)
+#
+# Anti-intervention standard (strict):
+#   QUALIFY:     Voted No on Israel/Ukraine arms authorization (HR 8034/8035 etc.)
+#                Co-sponsored HR 3565 Block the Bombs Act
+#                Forced or co-sponsored Senate JRD disapproving Israel FMS
+#                Voted No on any Senate arm sale resolution
+#   DO NOT QUALIFY: Signed letters, called for review, called for conditions,
+#                   statements, press releases, "concerned" quotes
+# ─────────────────────────────────────────────────────────────────────────────
+
+_AI_SYSTEM_PROMPT = """You are a strict congressional vote analyst classifying US Congress members as anti-intervention (True/False).
+
+CLASSIFICATION STANDARD — True ONLY if the member has at least ONE of:
+1. On-record NO vote on Israel or Ukraine arms authorization (e.g. HR 8034, HR 8035, NDAA Israel provisions)
+2. Co-sponsored HR 3565 (Block the Bombs Act) or equivalent anti-arms legislation
+3. Forced or co-sponsored a Senate Joint Resolution of Disapproval on Israel FMS sales
+4. Voted NO on any Senate privileged resolution approving Israel arms sales
+
+DO NOT classify True for:
+- Signed letters or wrote op-eds about arms conditions
+- Called for arms review or pause (without a vote or bill co-sponsorship)
+- Said they are "concerned" about civilian casualties
+- Endorsed by TrackAIPAC but has no documented vote or bill action
+- General anti-war or anti-interventionist statements
+
+Return ONLY valid JSON — an array of objects, one per member:
+[{"name": "Full Name", "antiArms": true/false, "confidence": "high/medium/low", "reason": "one sentence citing specific vote or bill, or explaining why not qualified"}]
+
+Be conservative. When in doubt, return false."""
+
+_AI_USER_TEMPLATE = """Classify these Congress members using the strict anti-intervention standard. 
+Use their documented vote records and bill co-sponsorships only. 
+If a member's only evidence is a statement, letter, or general position, classify false.
+
+Members to classify:
+{members_json}
+
+Return only the JSON array, no other text."""
+
+
+def _post_json(url, payload, headers):
+    """POST JSON payload, return parsed response or None."""
+    try:
+        data = json.dumps(payload).encode()
+        req  = urllib.request.Request(url, data=data, headers=headers, method="POST")
+        with urllib.request.urlopen(req, timeout=30) as r:
+            return json.loads(r.read().decode())
+    except urllib.error.HTTPError as e:
+        body = ""
+        try: body = e.read().decode()[:200]
+        except: pass
+        print(f"    HTTP {e.code}: {body}")
+        return None
+    except Exception as e:
+        print(f"    Request error: {e}")
+        return None
+
+
+def _call_gemini(members_batch):
+    """Call Gemini 2.0 Flash. Returns list of classification dicts or None."""
+    if not GEMINI_KEY:
+        return None
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={GEMINI_KEY}"
+    payload = {
+        "system_instruction": {"parts": [{"text": _AI_SYSTEM_PROMPT}]},
+        "contents": [{"parts": [{"text": _AI_USER_TEMPLATE.format(
+            members_json=json.dumps(members_batch, indent=2)
+        )}]}],
+        "generationConfig": {
+            "temperature": 0.1,
+            "maxOutputTokens": 4096,
+            "responseMimeType": "application/json",
+        },
+    }
+    resp = _post_json(url, payload, {"Content-Type": "application/json"})
+    if not resp:
+        return None
+    try:
+        text = resp["candidates"][0]["content"]["parts"][0]["text"]
+        return json.loads(text)
+    except Exception as e:
+        print(f"    Gemini parse error: {e}")
+        return None
+
+
+def _call_openrouter(members_batch):
+    """Call OpenRouter free model. Returns list or None."""
+    if not OPENROUTER_KEY:
+        return None
+    url = "https://openrouter.ai/api/v1/chat/completions"
+    headers = {
+        "Authorization":  f"Bearer {OPENROUTER_KEY}",
+        "Content-Type":   "application/json",
+        "HTTP-Referer":   "https://lukerdavis.github.io/Anti-Establishment-Congressional-Tracker/",
+        "X-Title":        "Anti-Establishment Congressional Tracker",
+    }
+    payload = {
+        "model": "meta-llama/llama-3.3-70b-instruct:free",
+        "messages": [
+            {"role": "system",  "content": _AI_SYSTEM_PROMPT},
+            {"role": "user",    "content": _AI_USER_TEMPLATE.format(
+                members_json=json.dumps(members_batch, indent=2)
+            )},
+        ],
+        "temperature": 0.1,
+        "max_tokens":  4096,
+        "response_format": {"type": "json_object"},
+    }
+    resp = _post_json(url, payload, headers)
+    if not resp:
+        return None
+    try:
+        text = resp["choices"][0]["message"]["content"]
+        parsed = json.loads(text)
+        # OpenRouter json_object wraps in a key sometimes
+        if isinstance(parsed, dict):
+            for v in parsed.values():
+                if isinstance(v, list): return v
+            return None
+        return parsed
+    except Exception as e:
+        print(f"    OpenRouter parse error: {e}")
+        return None
+
+
+def _call_groq(members_batch):
+    """Call Groq llama-3.1-8b-instant. Returns list or None."""
+    if not GROQ_KEY:
+        return None
+    url = "https://api.groq.com/openai/v1/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {GROQ_KEY}",
+        "Content-Type":  "application/json",
+    }
+    payload = {
+        "model": "llama-3.1-8b-instant",
+        "messages": [
+            {"role": "system",  "content": _AI_SYSTEM_PROMPT},
+            {"role": "user",    "content": _AI_USER_TEMPLATE.format(
+                members_json=json.dumps(members_batch, indent=2)
+            )},
+        ],
+        "temperature":   0.1,
+        "max_tokens":    4096,
+        "response_format": {"type": "json_object"},
+    }
+    resp = _post_json(url, payload, headers)
+    if not resp:
+        return None
+    try:
+        text = resp["choices"][0]["message"]["content"]
+        parsed = json.loads(text)
+        if isinstance(parsed, dict):
+            for v in parsed.values():
+                if isinstance(v, list): return v
+            return None
+        return parsed
+    except Exception as e:
+        print(f"    Groq parse error: {e}")
+        return None
+
+
+def ai_classify_members(members, existing_ai_cache=None):
+    """
+    Run AI classification on members whose status needs verification.
+    
+    Targets:
+      - Any member with antiArms=True but no vote record or bill co-sponsorship
+        (i.e. only TrackAIPAC endorsement or RLC score — these need AI verification)
+      - Members in KNOWN_ANTI_INTERVENTION with weak reasons (letters/statements)
+    
+    Falls back gracefully through Gemini → OpenRouter → Groq → hardcoded logic.
+    Caches results keyed by member name to avoid re-classifying on every run.
+    Returns updated members list and the ai_cache dict.
+    """
+    if not any([GEMINI_KEY, OPENROUTER_KEY, GROQ_KEY]):
+        print("  AI classification: no API keys available — using hardcoded logic only")
+        return members, existing_ai_cache or {}
+
+    cache = dict(existing_ai_cache or {})
+    cache_ttl_hours = 48  # re-classify every 48h
+
+    # Identify members needing AI review
+    WEAK_REASONS = [
+        "signed letters", "called for", "review", "conditions",
+        "concerned", "statements", "press release", "called on",
+        "urged", "asked for",
+    ]
+    # Explicitly skip — we already have ground-truth votes for these
+    SKIP_NAMES = set(KNOWN_ANTI_INTERVENTION.keys())
+
+    to_classify = []
+    now = datetime.now(timezone.utc)
+
+    for m in members:
+        name = m["name"]
+        if name in SKIP_NAMES:
+            continue  # Already handled by KNOWN_ANTI_INTERVENTION
+
+        # Check cache freshness
+        cached = cache.get(name)
+        if cached:
+            try:
+                age_h = (now - datetime.fromisoformat(cached["ts"])).total_seconds() / 3600
+                if age_h < cache_ttl_hours:
+                    continue  # Fresh cache hit — skip
+            except: pass
+
+        # Only review members currently flagged as anti-intervention
+        # (we don't want AI to discover new ones — that's a future feature)
+        if not m.get("antiArms"):
+            continue
+
+        # Check if they have hard evidence already
+        has_vote = bool(m.get("votes"))
+        has_bill = bool(m.get("bills"))
+        if has_vote or has_bill:
+            continue  # Verified by bill/vote data — skip AI
+
+        note = (m.get("note") or "").lower()
+        needs_review = any(w in note for w in WEAK_REASONS)
+        # Also review members with no note at all (only TrackAIPAC flag)
+        if not needs_review and not note:
+            needs_review = True
+
+        if needs_review:
+            to_classify.append({
+                "name":    name,
+                "party":   m.get("party","?"),
+                "chamber": m.get("chamber","?"),
+                "state":   m.get("state","?"),
+                "note":    m.get("note",""),
+                "source":  "TrackAIPAC endorsed" if not m.get("rlc_score") else f"RLC Liberty Index {m.get('rlc_score')}",
+            })
+
+    if not to_classify:
+        print(f"  AI classification: all {len(members)} members verified — nothing to review")
+        return members, cache
+
+    print(f"\n  AI classification: reviewing {len(to_classify)} members needing verification …")
+
+    # Batch into chunks of 20 to stay within token limits
+    BATCH_SIZE = 20
+    results_by_name = {}
+
+    for batch_start in range(0, len(to_classify), BATCH_SIZE):
+        batch = to_classify[batch_start:batch_start + BATCH_SIZE]
+        batch_names = [b["name"] for b in batch]
+        print(f"    Batch {batch_start//BATCH_SIZE + 1}: {', '.join(batch_names[:4])}{'...' if len(batch_names)>4 else ''}")
+
+        result = None
+
+        # Tier 1: Gemini
+        if GEMINI_KEY and result is None:
+            print("    → Trying Gemini 2.0 Flash …")
+            result = _call_gemini(batch)
+            if result: print(f"    ✓ Gemini: {len(result)} classifications")
+            else:      print("    ✗ Gemini failed")
+
+        # Tier 2: OpenRouter
+        if OPENROUTER_KEY and result is None:
+            print("    → Trying OpenRouter (llama-3.3-70b) …")
+            result = _call_openrouter(batch)
+            if result: print(f"    ✓ OpenRouter: {len(result)} classifications")
+            else:      print("    ✗ OpenRouter failed")
+
+        # Tier 3: Groq
+        if GROQ_KEY and result is None:
+            print("    → Trying Groq (llama-3.1-8b) …")
+            result = _call_groq(batch)
+            if result: print(f"    ✓ Groq: {len(result)} classifications")
+            else:      print("    ✗ Groq failed")
+
+        if not result:
+            print("    ✗ All AI providers failed for this batch — keeping existing classification")
+            continue
+
+        for item in result:
+            name = item.get("name","")
+            if name:
+                results_by_name[name] = item
+        time.sleep(1)  # rate limit courtesy pause
+
+    # Apply AI results to member list
+    changed = 0
+    for m in members:
+        name = m["name"]
+        if name in results_by_name:
+            ai = results_by_name[name]
+            old_anti = m["antiArms"]
+            new_anti = bool(ai.get("antiArms", old_anti))
+            confidence = ai.get("confidence","medium")
+            reason     = ai.get("reason","")
+
+            # Only demote if high confidence — low/medium keeps existing classification
+            if old_anti and not new_anti and confidence != "high":
+                new_anti = old_anti  # Keep — AI not confident enough to demote
+
+            if new_anti != old_anti:
+                print(f"    {'✓ Confirmed' if new_anti else '✗ Removed'} [{confidence}]: {name} — {reason[:70]}")
+                m["antiArms"] = new_anti
+                if not new_anti:
+                    m["antiArmsLevel"] = None
+                changed += 1
+
+            if reason and not m.get("note"):
+                m["note"] = reason
+
+            # Cache the result
+            cache[name] = {
+                "antiArms":   new_anti,
+                "confidence": confidence,
+                "reason":     reason,
+                "ts":         now.isoformat(),
+                "provider":   ai.get("_provider","unknown"),
+            }
+
+    print(f"  AI classification complete: {changed} members updated, {len(results_by_name)} reviewed")
+    return members, cache
+
+
 CONGRESS_BASE    = "https://api.congress.gov/v3"
 FEC_BASE         = "https://api.open.fec.gov/v1"
 POLY_BASE        = "https://gamma-api.polymarket.com"
@@ -91,7 +423,7 @@ KNOWN_ANTI_INTERVENTION = {
     "Thomas Tiffany":   {"level":"yes","party":"R","reason":"No on HR 8034 (Israel aid supplemental, Apr 2024)"},
     "Rand Paul":        {"level":"yes","party":"R","reason":"Led Senate holds on Israel arms sales; forced vote on FMS Joint Resolution of Disapproval (2024)"},
     "Eli Crane":        {"level":"yes","party":"R","reason":"No on HR 8034 (Israel aid supplemental, Apr 2024); RLC Liberty Index 97/100"},
-    "Lauren Boebert":   {"level":"yes","party":"R","reason":"No on HR 8034; positions inconsistent — classified soft"},
+    "Lauren Boebert":   {"level":"yes","party":"R","reason":"No on HR 8034 (Israel aid supplemental, Apr 2024); positions have shifted"},
     "Barry Moore":      {"level":"yes","party":"R","reason":"No on some Israel aid provisions; running for Senate 2026"},
     "Bob Good":         {"level":"yes","party":"R","reason":"RLC Liberty Index 92/100; consistent anti-interventionist votes"},
     "Andrew Ogles":     {"level":"yes","party":"R","reason":"RLC Liberty Index 95/100; voted against multiple foreign aid packages"},
@@ -102,10 +434,8 @@ KNOWN_ANTI_INTERVENTION = {
     "Jim McGovern":     {"level":"yes","party":"D","reason":"Co-sponsored HR 3565 Block the Bombs Act"},
     "Jan Schakowsky":   {"level":"yes","party":"D","reason":"Co-sponsored HR 3565 Block the Bombs Act"},
     "Maxine Waters":    {"level":"yes","party":"D","reason":"Co-sponsored HR 3565 Block the Bombs Act"},
-    "Jamie Raskin":     {"level":"yes","party":"D","reason":"Called for arms conditions; voting record mixed"},
     "Ed Markey":        {"level":"yes","party":"D","reason":"Co-sponsored Senate Joint Resolution of Disapproval on Israel FMS"},
-    "Brian Schatz":     {"level":"yes","party":"D","reason":"Signed letters on arms conditions; no JRD co-sponsorship yet"},
-    "Elizabeth Warren": {"level":"yes","party":"D","reason":"Called for arms review; no JRD co-sponsorship yet"},
+    # Warren/Schatz/Raskin removed — signed letters only, no qualifying vote or bill action
     "Bernie Sanders":   {"level":"yes","party":"I","reason":"Forced Senate floor vote on Joint Resolution of Disapproval on Israel FMS (2024)"},
 }
 
@@ -1568,6 +1898,13 @@ def main():
     bills        = discover_bills(members_by_id) or existing.get("bills", [])
     house_votes  = fetch_house_votes(members_by_id) if CONGRESS_KEY else existing.get("house_votes", {})
     members      = enrich_hard_classification(members, bills)
+
+    # ── AI classification pass ────────────────────────────────────────────────
+    # Verify TrackAIPAC/RLC-flagged members who have no vote or bill evidence.
+    # Uses Gemini → OpenRouter → Groq with cached results to avoid re-runs.
+    existing_ai_cache = existing.get("ai_cache", {})
+    members, ai_cache = ai_classify_members(members, existing_ai_cache)
+
     members_by_name = {m["name"].lower(): m for m in members}
     vote_records = fetch_legiscan_votes(members_by_name) or existing.get("vote_records", {})
     history      = detect_history_changes(old_members, members, ta_congress)
@@ -1587,14 +1924,11 @@ def main():
     races = wire_polymarket_to_races(races, poly)
 
     anti = sum(1 for m in members if m["antiArms"])
-    hard = sum(1 for m in members if m.get("antiArmsLevel")=="yes")
-
     data = {
         "meta": {
             "fetched_at":         datetime.now(timezone.utc).isoformat(),
             "trackaipac_scraped": datetime.now(timezone.utc).isoformat() if should_scrape else last_scraped,
             "member_count":       len(members),
-            "anti_intervention_count":    anti,
             "anti_intervention_count": anti,
             "bill_count":         len(bills),
             "challenger_count":   len(challengers),
@@ -1623,6 +1957,7 @@ def main():
         "congress_history":    CONGRESS_HISTORY,
         "races_2026":          races,
         "clerk_votes":         clerk_votes,
+        "ai_cache":            ai_cache,
     }
 
     with open("data.json","w") as f:
@@ -1630,7 +1965,7 @@ def main():
 
     print(f"""
 ✓ data.json written (v7)
-  Members:           {len(members)} ({anti} anti-intervention: {hard} {anti-hard} soft)
+  Members:           {len(members)} ({anti} anti-intervention)
   Bills:             {len(bills)}
   House votes:       {len(house_votes)} relevant roll calls
   Challengers:       {len(challengers)}
