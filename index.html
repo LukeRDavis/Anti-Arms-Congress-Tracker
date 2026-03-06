@@ -1695,7 +1695,7 @@ function App() {
 
           <!-- Progress bars -->
           <div style=${{width:"100%",maxWidth:610}}>
-            <${ProgressBars} chamber=${chamber} members=${members} allMembers=${allMembers} racesData=${races} polyData=${polyData}/>
+            <${ProgressBars} chamber=${chamber} members=${chMem} allMembers=${allMembers} racesData=${races} polyData=${polyData}/>
           </div>
 
           <!-- Legislation -->
@@ -1710,7 +1710,7 @@ function App() {
 
           <!-- Find My Rep -->
           <div style=${{width:"100%",maxWidth:610}}>
-            <${FindMyRep} members=${members} onHighlight=${setSelected}/>
+            <${FindMyRep} members=${chMem} onHighlight=${setSelected}/>
           </div>
         </div>
 
