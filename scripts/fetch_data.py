@@ -25,7 +25,7 @@ Challengers:
 GitHub Secrets:
   CONGRESS_KEY   api.congress.gov
   FEC_KEY        api.open.fec.gov
-  POLY_KEY       polymarket.com
+  POLY_KEY       polymarket.com (optional — Level 0 read is public, no key needed)
   LEGISCAN_KEY   legiscan.com (optional)
 """
 
@@ -341,6 +341,10 @@ def fetch_clerk_vote_xmls():
     return results
 
 # ── Utilities ─────────────────────────────────────────────────────────────────
+def _safe_url(url):
+    """Redact api_key values from URLs before printing to logs."""
+    return re.sub(r'(api_key=)[^&]+', r'\1***', url)
+
 def fetch_json(url, headers=None, retries=2):
     req = urllib.request.Request(url, headers=headers or {})
     for attempt in range(retries + 1):
@@ -348,13 +352,13 @@ def fetch_json(url, headers=None, retries=2):
             with urllib.request.urlopen(req, timeout=20) as r:
                 return json.loads(r.read().decode())
         except urllib.error.HTTPError as e:
-            print(f"  HTTP {e.code}: {url[:80]}")
+            print(f"  HTTP {e.code}: {_safe_url(url)[:90]}")
             if e.code == 429: time.sleep(10)
             elif e.code in (401, 403): return None
             else: return None
         except Exception as e:
             if attempt < retries: time.sleep(2)
-            else: print(f"  WARN: {url[:80]} → {e}"); return None
+            else: print(f"  WARN: {_safe_url(url)[:90]} → {e}"); return None
     return None
 
 def fetch_html(url):
@@ -367,7 +371,7 @@ def fetch_html(url):
         with urllib.request.urlopen(req, timeout=25) as r:
             return r.read().decode("utf-8", errors="replace")
     except Exception as e:
-        print(f"  HTML fetch failed: {url} → {e}")
+        print(f"  HTML fetch failed: {_safe_url(url)} → {e}")
         return ""
 
 def fetch_bytes(url):
@@ -377,7 +381,7 @@ def fetch_bytes(url):
         with urllib.request.urlopen(req, timeout=30) as r:
             return r.read()
     except Exception as e:
-        print(f"  Bytes fetch failed: {url} → {e}")
+        print(f"  Bytes fetch failed: {_safe_url(url)} → {e}")
         return b""
 
 def congress_url(path, params=None):
@@ -1008,7 +1012,8 @@ def fetch_fec(members):
     for name, cid in KNOWN_FEC_IDS.items():
         url = f"{FEC_BASE}/candidate/{cid}/totals/?api_key={FEC_KEY}&cycle=2024&per_page=1"
         d   = fetch_json(url)
-        t   = (d or {}).get("results",[None])[0]
+        res = (d or {}).get("results", [])
+        t   = res[0] if res else None
         if t:
             results[name] = {"raised":t.get("receipts"),"spent":t.get("disbursements"),
                              "cash":t.get("last_cash_on_hand_end_period"),"cid":cid}
@@ -1059,35 +1064,227 @@ def fetch_fec_candidates_2026(ta_endorsed, rlc_endorsed):
     return candidates
 
 
-def fetch_poly(members):
-    if not POLY_KEY: return {}
-    print("\nFetching Polymarket …")
+def fetch_poly(members, races=None):
+    """
+    Fetches Polymarket win probabilities for anti-arms members + 2026 races.
+
+    TWO-PASS STRATEGY (no API key required — all public endpoints):
+
+    Pass 1 — Catalog sweep:
+        GET gamma-api.polymarket.com/events?tag=elections&active=true&limit=200
+        GET gamma-api.polymarket.com/markets?tag=us-elections&active=true&limit=200
+        Builds a name→market dict covering all active election markets at once.
+
+    Pass 2 — Per-candidate fallback (only for those not found in pass 1):
+        GET gamma-api.polymarket.com/markets?q=<name>&limit=8
+        GET gamma-api.polymarket.com/events?q=<name>&limit=8
+
+    For each matched market we get the YES token_id, then:
+        GET clob.polymarket.com/midpoint?token_id=<yes_token>
+        → returns {"mid": "0.623"} — the live probability
+
+    Stored per candidate in data.json["poly"]:
+        prob          float   live win probability 0–1
+        token_id      str     YES-outcome token ID (browser uses this for batch refresh)
+        no_token_id   str     NO-outcome token ID
+        condition_id  str     market condition ID
+        question      str     market question text
+        slug          str     Polymarket event slug (for URL)
+        volume        float   total volume USD
+        volume_24h    float   24h volume USD
+        url           str     direct market URL
+        src           str     "polymarket_live" | "polymarket_gamma"
+        fetched_at    str     ISO timestamp
+    """
+    GAMMA = "https://gamma-api.polymarket.com"
+    CLOB  = "https://clob.polymarket.com"
+    print("\nFetching Polymarket (Gamma catalog + CLOB midpoint, no auth) …")
     results = {}
-    headers = {"Authorization":f"Bearer {POLY_KEY}","Content-Type":"application/json"}
-    for m in [m for m in members if m.get("antiArms")]:
-        last = m["name"].split()[-1]
-        d    = fetch_json(f"{POLY_BASE}/markets?q={urllib.parse.quote(last+' reelection congress')}&limit=5", headers=headers)
-        if not d: continue
-        for mk in (d if isinstance(d,list) else d.get("markets",[])):
-            title = (mk.get("question") or mk.get("title") or "").lower()
-            if last.lower() not in title: continue
-            if not any(kw in title for kw in ["reelect","win","congress","senate","house","primary"]): continue
-            prob = None
-            try:
-                p = mk.get("outcomePrices") or "[]"
-                if isinstance(p,str): p = json.loads(p)
-                if p: prob = float(p[0])
+
+    # Build candidate list: anti-arms incumbents + all race entries
+    candidates = {}  # name → {name, type}
+    for m in members:
+        if m.get("antiArms") and m["name"] not in candidates:
+            candidates[m["name"]] = {"name": m["name"], "type": "member"}
+    for r in (races or []):
+        if r.get("name") and r["name"] not in candidates:
+            candidates[r["name"]] = {"name": r["name"], "type": "race"}
+    if not candidates:
+        return {}
+
+    # ── PASS 1: catalog sweep across all election markets ─────────────────
+    catalog = {}  # last_name_lower → market dict
+
+    def ingest_markets(market_list):
+        """Index markets by candidate last name."""
+        for mk in market_list:
+            q = (mk.get("question") or mk.get("title") or "").lower()
+            if not any(kw in q for kw in ["win","elect","primary","congress","senate","house","seat","race","general"]):
+                continue
+            # Try to extract last name from question
+            for name, _ in candidates.items():
+                last = name.split()[-1].lower()
+                if last in q:
+                    if last not in catalog:
+                        catalog[last] = mk
+
+    catalog_tags = [
+        "elections", "us-elections", "politics", "us-politics",
+        "2026-elections", "congressional-elections",
+    ]
+    for tag in catalog_tags:
+        for endpoint in ["events", "markets"]:
+            url = f"{GAMMA}/{endpoint}?tag={urllib.parse.quote(tag)}&active=true&limit=200"
+            d = fetch_json(url) or {}
+            items = d if isinstance(d, list) else d.get(endpoint, d.get("data", []))
+            markets = []
+            for item in items:
+                if "markets" in item:
+                    markets.extend(item["markets"])
+                else:
+                    markets.append(item)
+            ingest_markets(markets)
+            time.sleep(0.3)
+
+    # Also search for "2026 congress" and "2026 senate" broadly
+    for broad_q in ["2026 congressional", "2026 senate election", "2026 house election", "midterm 2026"]:
+        for endpoint in ["markets", "events"]:
+            url = f"{GAMMA}/{endpoint}?q={urllib.parse.quote(broad_q)}&active=true&limit=50"
+            d = fetch_json(url) or {}
+            items = d if isinstance(d, list) else d.get(endpoint, d.get("markets", d.get("data", [])))
+            markets = []
+            for item in items:
+                if "markets" in item:
+                    markets.extend(item["markets"])
+                else:
+                    markets.append(item)
+            ingest_markets(markets)
+            time.sleep(0.3)
+
+    print(f"  Catalog: {len(catalog)} named candidates found in Gamma")
+
+    # ── PASS 2: per-candidate search for those not in catalog ─────────────
+    def gamma_search_candidate(name):
+        """Search Gamma for a specific candidate not found in catalog."""
+        last = name.split()[-1]
+        queries = [name, last + " 2026", last + " congress", last + " senate", last + " primary"]
+        for q in queries:
+            for endpoint in ["markets", "events"]:
+                url = f"{GAMMA}/{endpoint}?q={urllib.parse.quote(q)}&limit=10"
+                d = fetch_json(url) or {}
+                items = d if isinstance(d, list) else d.get(endpoint, d.get("markets", d.get("data", [])))
+                markets = []
+                for item in items:
+                    if "markets" in item:
+                        markets.extend(item["markets"])
+                    else:
+                        markets.append(item)
+                last_lower = last.lower()
+                for mk in markets:
+                    mq = (mk.get("question") or mk.get("title") or "").lower()
+                    if last_lower not in mq:
+                        continue
+                    if any(kw in mq for kw in ["win","elect","primary","congress","senate","house","seat","general"]):
+                        return mk
+            time.sleep(0.2)
+        return None
+
+    # ── Process each candidate ─────────────────────────────────────────────
+    def extract_tokens(mk):
+        """Extract YES/NO token IDs from a Gamma market object."""
+        tokens = mk.get("tokens") or mk.get("clobTokenIds") or []
+        yes_tok, no_tok = None, None
+        if isinstance(tokens, list):
+            for tok in tokens:
+                if isinstance(tok, dict):
+                    outcome = (tok.get("outcome") or "").upper()
+                    tid = tok.get("token_id") or tok.get("tokenId") or ""
+                    if outcome == "YES": yes_tok = tid
+                    if outcome == "NO":  no_tok  = tid
+                elif isinstance(tok, str):
+                    if not yes_tok: yes_tok = tok
+                    elif not no_tok: no_tok = tok
+        return yes_tok, no_tok
+
+    def get_midpoint(token_id):
+        """Live CLOB midpoint — the actual market probability."""
+        if not token_id:
+            return None
+        d = fetch_json(f"{CLOB}/midpoint?token_id={token_id}")
+        if d and "mid" in d:
+            try: return float(d["mid"])
             except: pass
-            results[m["name"]] = {"question":mk.get("question") or mk.get("title") or "","prob":prob,"url":mk.get("url") or "https://polymarket.com","volume":mk.get("volume")}
-            break
-        time.sleep(0.3)
-    print(f"  Polymarket: {len(results)} records")
+        d2 = fetch_json(f"{CLOB}/last-trade-price?token_id={token_id}")
+        if d2 and "price" in d2:
+            try: return float(d2["price"])
+            except: pass
+        return None
+
+    for name, cand in candidates.items():
+        last = name.split()[-1].lower()
+        try:
+            # Find market — catalog first, then search
+            mk = catalog.get(last)
+            if not mk:
+                mk = gamma_search_candidate(name)
+                if mk:
+                    print(f"  ↳ {name}: found via search")
+            if not mk:
+                continue
+
+            yes_tok, no_tok = extract_tokens(mk)
+            cond_id = mk.get("conditionId") or mk.get("condition_id") or ""
+            slug    = mk.get("slug") or ""
+
+            # Get live probability
+            prob = None
+            if yes_tok:
+                prob = get_midpoint(yes_tok)
+                if prob is None and no_tok:
+                    p_no = get_midpoint(no_tok)
+                    if p_no is not None:
+                        prob = round(1.0 - p_no, 4)
+
+            # Fallback: lastTradePrice from Gamma (snapshot, not live)
+            src = "polymarket_live"
+            if prob is None:
+                ltp = mk.get("lastTradePrice") or mk.get("last_trade_price") or mk.get("outcomePrices")
+                if ltp is not None:
+                    try:
+                        if isinstance(ltp, str) and ltp.startswith("["):
+                            ltp = json.loads(ltp)[0]
+                        prob = round(float(ltp), 4)
+                        src  = "polymarket_gamma"
+                    except: pass
+
+            if prob is None or not (0 <= prob <= 1):
+                continue
+
+            results[name] = {
+                "prob":          prob,
+                "src":           src,
+                "question":      mk.get("question") or mk.get("title") or "",
+                "condition_id":  cond_id,
+                "token_id":      yes_tok or "",
+                "no_token_id":   no_tok  or "",
+                "slug":          slug,
+                "volume":        float(mk.get("volume") or 0),
+                "volume_24h":    float(mk.get("volume24hr") or mk.get("volume_24hr") or 0),
+                "url":           f"https://polymarket.com/event/{slug}" if slug else "https://polymarket.com",
+                "fetched_at":    datetime.now(timezone.utc).isoformat(),
+            }
+            marker = "◉" if src == "polymarket_live" else "◎"
+            print(f"  {marker} {name}: {round(prob*100)}% ({src}) vol=${results[name]['volume']:,.0f}")
+
+        except Exception as e:
+            print(f"  WARN poly {name}: {e}")
+        time.sleep(0.25)
+
+    live  = sum(1 for v in results.values() if v.get("src") == "polymarket_live")
+    gamma = sum(1 for v in results.values() if v.get("src") == "polymarket_gamma")
+    print(f"  Polymarket total: {len(results)} ({live} live CLOB, {gamma} Gamma snapshot)")
     return results
 
-
-# ─────────────────────────────────────────────────────────────────────────────
-# 7. HISTORY DETECTION
-# ─────────────────────────────────────────────────────────────────────────────
 
 def load_history():
     try:
@@ -1379,7 +1576,7 @@ def main():
     challengers  = merge_challengers(ta_endorsed, rlc_endorsed, fec_cands)
 
     fec  = fetch_fec(members)  or existing.get("fec",  {})
-    poly = fetch_poly(members) or existing.get("poly", {})
+    poly = fetch_poly(members, races=races) or existing.get("poly", {})
 
     # Enrich race cards with live data
     races = [dict(r) for r in RACES_2026]   # deep copy so we can modify
