@@ -93,10 +93,15 @@ const THRESHOLDS = {
 // #991b1b           #e879f9                  #818cf8                #1e40af
 
 function dotColor(m) {
-  if (!m.antiArms) return "#1e2230";
-  if (m.party === "R") return "#e879f9";   // fuchsia — R anti-intervention
-  if (m.party === "I") return "#a3e635";   // lime    — Independent
-  return "#818cf8";                         // indigo  — D anti-intervention
+  if (m.antiArms) {
+    if (m.party === "R") return "#e879f9";  // fuchsia — R anti-intervention
+    if (m.party === "I") return "#a3e635";  // lime    — Independent
+    return "#818cf8";                        // indigo  — D anti-intervention
+  }
+  if (m.party === "R") return "#7f1d1d";   // dim red  — regular R
+  if (m.party === "D") return "#1e3a5f";   // dim blue — regular D
+  if (m.party === "I") return "#1a2e1a";   // dim green — other
+  return "#1e2230";                         // grey — unknown
 }
 
 
