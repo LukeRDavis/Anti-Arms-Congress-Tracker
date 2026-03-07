@@ -40,8 +40,10 @@ GitHub Secrets (optional — pipeline degrades gracefully without them):
 
 import os, io, json, re, time, hashlib, urllib.request, urllib.parse, urllib.error
 from datetime import datetime, timezone, timedelta
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 CONGRESS_KEY  = os.environ.get("CONGRESS_KEY",  "")
+XAI_KEY       = os.environ.get("XAI_API_KEY",   "")  # Grok web-search enrichment
 FEC_KEY       = os.environ.get("FEC_KEY",       "")
 POLY_KEY      = os.environ.get("POLY_KEY",      "")
 LEGISCAN_KEY  = os.environ.get("LEGISCAN_KEY",  "")
@@ -702,7 +704,10 @@ def _safe_url(url):
     """Redact api_key values from URLs before printing to logs."""
     return re.sub(r'(api_key=)[^&]+', r'\1***', url)
 
-def fetch_json(url, headers=None, retries=2):
+def fetch_json(url, headers=None, retries=2, circuit=None):
+    """Fetch JSON from url. If circuit= is set, trips that circuit on 403."""
+    if circuit and not _circuit_ok(circuit):
+        return None
     req = urllib.request.Request(url, headers=headers or {})
     for attempt in range(retries + 1):
         try:
@@ -710,9 +715,13 @@ def fetch_json(url, headers=None, retries=2):
                 return json.loads(r.read().decode())
         except urllib.error.HTTPError as e:
             print(f"  HTTP {e.code}: {_safe_url(url)[:90]}")
-            if e.code == 429: time.sleep(10)
-            elif e.code in (401, 403): return None
-            else: return None
+            if e.code == 429:
+                time.sleep(10)
+            elif e.code in (401, 403):
+                if circuit: _circuit_trip(circuit, url)
+                return None
+            else:
+                return None
         except Exception as e:
             if attempt < retries: time.sleep(2)
             else: print(f"  WARN: {_safe_url(url)[:90]} → {e}"); return None
@@ -1362,6 +1371,680 @@ def fetch_legiscan_votes(members_by_name):
 # 6. FEC + POLYMARKET
 # ─────────────────────────────────────────────────────────────────────────────
 
+# ─────────────────────────────────────────────────────────────────────────────
+# CIRCUIT BREAKERS — module-level; trip on first 403, skip rest of that service
+# ─────────────────────────────────────────────────────────────────────────────
+
+_CIRCUIT_OPEN = {}  # service_name → bool
+
+def _circuit_ok(service):
+    return not _CIRCUIT_OPEN.get(service, False)
+
+def _circuit_trip(service, url=""):
+    if not _CIRCUIT_OPEN.get(service):
+        _CIRCUIT_OPEN[service] = True
+        print(f"  ⚡ Circuit tripped: {service} — skipping remaining calls to this service")
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# GROKIPEDIA SCRAPER — free, no API key, Grok-written content
+#
+# Grokipedia (grokipedia.com) auto-generates and continuously updates
+# Wikipedia-style pages using Grok. No authentication required.
+#
+# URL patterns:
+#   Person:  https://grokipedia.com/page/First_Last
+#   Race:    https://grokipedia.com/page/2026_Statename_Xth_congressional_district_election
+#   Senate:  https://grokipedia.com/page/2026_United_States_Senate_election_in_State
+#
+# Data extracted:
+#   - description: first 2-3 substantive paragraphs (who they are, why they matter)
+#   - primary_result, primary_date, primary_opponent (from race page)
+#   - general_opponent, cook_rating (from race page)
+#   - news_headline: most recent notable sentence from page
+#
+# Cached 24h. Runs in parallel (8 workers). Zero API cost.
+# ─────────────────────────────────────────────────────────────────────────────
+
+GROKIPEDIA_BASE = "https://grokipedia.com/page"
+_GROKIPEDIA_HEADERS = {
+    "User-Agent":      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+    "Accept":          "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Accept-Encoding": "gzip, deflate",
+    "Referer":         "https://grokipedia.com/",
+    "DNT":             "1",
+}
+_GROKIPEDIA_CACHE_TTL_S = 86400  # 24 hours
+
+
+def _grokipedia_slug(name):
+    """Convert 'Thomas Massie' → 'Thomas_Massie' (Title_Case, underscores)."""
+    return "_".join(w.capitalize() for w in name.replace("'", "").replace(".", "").split())
+
+
+def _grokipedia_race_slug(name, state, chamber, district=None):
+    """
+    Build race page slug.
+    Examples:
+      Thomas Massie, KY, house, 4  →  2026_Kentuckys_4th_congressional_district_election
+      Ed Markey, MA, senate        →  2026_United_States_Senate_election_in_Massachusetts
+    """
+    state_names = {
+        "AL":"Alabama","AK":"Alaska","AZ":"Arizona","AR":"Arkansas","CA":"California",
+        "CO":"Colorado","CT":"Connecticut","DE":"Delaware","FL":"Florida","GA":"Georgia",
+        "HI":"Hawaii","ID":"Idaho","IL":"Illinois","IN":"Indiana","IA":"Iowa",
+        "KS":"Kansas","KY":"Kentucky","LA":"Louisiana","ME":"Maine","MD":"Maryland",
+        "MA":"Massachusetts","MI":"Michigan","MN":"Minnesota","MS":"Mississippi",
+        "MO":"Missouri","MT":"Montana","NE":"Nebraska","NV":"Nevada","NH":"New_Hampshire",
+        "NJ":"New_Jersey","NM":"New_Mexico","NY":"New_York","NC":"North_Carolina",
+        "ND":"North_Dakota","OH":"Ohio","OK":"Oklahoma","OR":"Oregon","PA":"Pennsylvania",
+        "RI":"Rhode_Island","SC":"South_Carolina","SD":"South_Dakota","TN":"Tennessee",
+        "TX":"Texas","UT":"Utah","VT":"Vermont","VA":"Virginia","WA":"Washington",
+        "WV":"West_Virginia","WI":"Wisconsin","WY":"Wyoming",
+    }
+    state_full = state_names.get(state.upper(), state)
+    # Possessive: "Kentucky" → "Kentuckys", "Texas" → "Texass" → fix edge cases
+    possessive = state_full.rstrip("s") + "s"  # Kentucky→Kentuckys, Texas→Texass
+    # Grokipedia seems to use just "Texass" etc — no apostrophe in URL slug
+
+    if chamber == "senate":
+        return f"2026_United_States_Senate_election_in_{state_full}"
+
+    ordinal = {1:"1st",2:"2nd",3:"3rd"}.get(district, f"{district}th") if district else ""
+    if ordinal:
+        return f"2026_{possessive}_{ordinal}_congressional_district_election"
+    else:
+        return f"2026_{possessive}_congressional_district_election"
+
+
+def _fetch_grokipedia(slug, circuit="grokipedia"):
+    """Fetch a Grokipedia page by slug. Returns HTML string or empty string."""
+    if not _circuit_ok(circuit):
+        return ""
+    url = f"{GROKIPEDIA_BASE}/{urllib.parse.quote(slug)}"
+    try:
+        req = urllib.request.Request(url, headers=_GROKIPEDIA_HEADERS)
+        with urllib.request.urlopen(req, timeout=20) as r:
+            raw = r.read()
+            # Handle gzip
+            if r.info().get("Content-Encoding") == "gzip":
+                import gzip
+                raw = gzip.decompress(raw)
+            return raw.decode("utf-8", errors="replace")
+    except urllib.error.HTTPError as e:
+        if e.code == 404:
+            return ""  # page doesn't exist yet, not a service failure
+        if e.code in (403, 429, 503):
+            _circuit_trip(circuit, url)
+        return ""
+    except Exception:
+        return ""
+
+
+def _extract_grokipedia_text(html):
+    """
+    Extract clean paragraph text from a Grokipedia HTML page.
+    Returns list of paragraph strings, longest/most substantive first.
+    """
+    if not html:
+        return []
+    # Strip script/style blocks
+    html = re.sub(r'<script[^>]*>.*?</script>', ' ', html, flags=re.DOTALL|re.IGNORECASE)
+    html = re.sub(r'<style[^>]*>.*?</style>',  ' ', html, flags=re.DOTALL|re.IGNORECASE)
+    # Extract <p> tag contents
+    paras = re.findall(r'<p[^>]*>(.*?)</p>', html, re.DOTALL|re.IGNORECASE)
+    result = []
+    for p in paras:
+        # Strip HTML tags
+        text = re.sub(r'<[^>]+>', ' ', p)
+        # Decode HTML entities
+        text = text.replace('&amp;', '&').replace('&lt;', '<').replace('&gt;', '>') \
+                   .replace('&quot;', '"').replace('&#39;', "'").replace('&nbsp;', ' ')
+        # Collapse whitespace
+        text = re.sub(r'\s+', ' ', text).strip()
+        # Skip nav/boilerplate paragraphs
+        if len(text) < 80:
+            continue
+        if any(skip in text.lower() for skip in ['cookie', 'privacy policy', 'terms of', 'copyright', 'all rights']):
+            continue
+        result.append(text)
+    return result
+
+
+def _extract_race_facts(html, name=""):
+    """
+    Parse race-specific facts from a Grokipedia race page.
+    Returns dict with primary_result, primary_date, primary_opponent,
+    general_opponent, cook_rating.
+    """
+    facts = {}
+    if not html:
+        return facts
+    text = re.sub(r'<[^>]+>', ' ', html)
+    text = re.sub(r'\s+', ' ', text)
+    tl = text.lower()
+
+    # Primary result — look for "won the primary" or "lost the primary"
+    if re.search(r'\b(won|advanced|won\s+the)\s+(republican|democratic)?\s*primary', tl):
+        facts["primary_result"] = "WON"
+    elif re.search(r'\b(lost|defeated\s+in|eliminated\s+in)\s+(the\s+)?(republican|democratic)?\s*primary', tl):
+        facts["primary_result"] = "LOST"
+
+    # Primary date — YYYY-MM-DD or "March 3" style
+    date_m = re.search(r'primary\s+(?:is\s+)?(?:set\s+for\s+|scheduled\s+(?:for\s+)?)?'
+                       r'((?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2}(?:,\s*\d{4})?)',
+                       text, re.IGNORECASE)
+    if date_m:
+        raw_date = date_m.group(1).strip()
+        # Try to parse to YYYY-MM-DD
+        for fmt in ("%B %d, %Y", "%B %d"):
+            try:
+                from datetime import datetime as _dt
+                d = _dt.strptime(raw_date, fmt)
+                year = d.year if d.year != 1900 else 2026
+                facts["primary_date"] = f"{year}-{d.month:02d}-{d.day:02d}"
+                break
+            except ValueError:
+                pass
+
+    # Cook rating
+    cook_m = re.search(
+        r'Cook\s+Political[^,\.]*[:\s]+(Safe\s+[DR](?:emocratic|epublican)?|Likely\s+[DR](?:emocratic|epublican)?|Lean\s+[DR](?:emocratic|epublican)?|Toss[- ]?up)',
+        text, re.IGNORECASE
+    )
+    if cook_m:
+        facts["cook_rating"] = cook_m.group(1).strip()
+
+    # General opponent — "faces [Name]" or "running against [Name]"
+    opp_m = re.search(
+        r'(?:faces|running against|opposed by|general election against)\s+([A-Z][a-zA-Z\s\-\.]{3,30}?)(?:\s*,|\s+in\s+the)',
+        text, re.IGNORECASE
+    )
+    if opp_m:
+        opp = opp_m.group(1).strip()
+        if len(opp.split()) <= 5:  # sanity check — names shouldn't be 6+ words
+            facts["general_opponent"] = opp
+
+    # Primary opponent — "challenger [Name]" or "challenged by [Name]"
+    primopp_m = re.search(
+        r'(?:challenger|challenged by|primary opponent|faces\s+(?:a\s+)?challenge\s+from)\s+([A-Z][a-zA-Z\s\-\.]{3,30}?)(?:\s*,|\s*\.|\s+a\s)',
+        text, re.IGNORECASE
+    )
+    if primopp_m:
+        opp = primopp_m.group(1).strip()
+        if len(opp.split()) <= 5:
+            facts["primary_opponent"] = opp
+
+    return facts
+
+
+def scrape_grokipedia_candidate(name, state, chamber, district=None, existing_cache=None):
+    """
+    Scrape Grokipedia for a candidate's person page and their race page.
+    Returns merged dict with description, race facts, and fetched_at.
+    Cached 24h in grokipedia_cache.
+    """
+    cache_key = f"{name}|{state}|{chamber}"
+    existing_cache = existing_cache or {}
+    cached = existing_cache.get(cache_key, {})
+    if _cache_fresh(cached):
+        return cache_key, cached
+
+    result = {}
+
+    # ── Person page ──────────────────────────────────────────────────────────
+    person_slug = _grokipedia_slug(name)
+    person_html = _fetch_grokipedia(person_slug)
+    paras = _extract_grokipedia_text(person_html)
+
+    if paras:
+        # First 2 substantive paragraphs, capped at 500 chars total
+        desc = " ".join(paras[:2])[:500].rsplit(".", 1)[0] + "."
+        result["description"] = desc
+        # Last paragraph as news headline (most recent info often at end)
+        if len(paras) >= 3:
+            result["news_headline"] = paras[-1][:200].rsplit(".", 1)[0] + "."
+
+    # ── Race page ─────────────────────────────────────────────────────────────
+    race_slug  = _grokipedia_race_slug(name, state, chamber, district)
+    race_html  = _fetch_grokipedia(race_slug)
+    race_facts = _extract_race_facts(race_html, name)
+    result.update(race_facts)
+
+    # Also try extracting description from race page if person page was empty
+    if not result.get("description") and race_html:
+        race_paras = _extract_grokipedia_text(race_html)
+        if race_paras:
+            result["description"] = race_paras[0][:400].rsplit(".", 1)[0] + "."
+
+    if result:
+        result["fetched_at"]   = datetime.now(timezone.utc).isoformat()
+        result["_source"]      = "grokipedia"
+        result["person_slug"]  = person_slug
+        result["race_slug"]    = race_slug
+        print(f"  📖 Grokipedia: {name}"
+              + (f" | cook: {result.get('cook_rating')}" if result.get("cook_rating") else "")
+              + (f" | {result.get('primary_result','')}" if result.get("primary_result") else "")
+              + (" | desc ✓" if result.get("description") else " | no desc"))
+    else:
+        print(f"  · Grokipedia: {name} — no page found yet")
+
+    return cache_key, result
+
+
+def scrape_grokipedia_all(priority_candidates, existing_cache):
+    """
+    Parallel Grokipedia scrape for all priority candidates.
+    priority_candidates: {name: {state, chamber, party, district}}
+    Returns updated grokipedia_cache dict.
+    """
+    print(f"\nGrokipedia scrape: {len(priority_candidates)} candidates (8 workers, no key needed) …")
+
+    new_cache = dict(existing_cache)
+
+    def _worker(item):
+        name, info = item
+        return scrape_grokipedia_candidate(
+            name,
+            info.get("state", ""),
+            info.get("chamber", "house"),
+            info.get("district"),
+            existing_cache,
+        )
+
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        futures = {pool.submit(_worker, item): item[0] for item in priority_candidates.items()}
+        for fut in as_completed(futures):
+            name = futures[fut]
+            try:
+                key, result = fut.result()
+                if result:
+                    new_cache[key] = result
+            except Exception as e:
+                print(f"  ✗ Grokipedia worker error ({name}): {e}")
+
+    found = sum(1 for k, v in new_cache.items() if v.get("description") and k not in existing_cache)
+    total = sum(1 for v in new_cache.values() if v.get("description"))
+    print(f"  Grokipedia: {found} new / {total} with descriptions / {len(new_cache)} total")
+    return new_cache
+
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# GROK API ENRICHMENT ENGINE (optional, additive)
+# Handles the one thing Grokipedia can't: win probability estimation.
+#
+# Grokipedia (above) covers descriptions + race facts for FREE.
+# This layer adds:
+#   A. grok_enrich_candidate() — win_prob estimate with reasoning via web_search
+#      Only called for candidates where Grokipedia returned no cook_rating and
+#      no market (Polymarket/PredictIt/Metaculus) exists yet.
+#   B. grok_batch_descriptions() — fallback batch descriptions for any candidate
+#      Grokipedia couldn't find (page doesn't exist yet).
+#
+# XAI_API_KEY is OPTIONAL. Pipeline degrades gracefully without it.
+# Parallelised with ThreadPoolExecutor(max_workers=8).
+# ─────────────────────────────────────────────────────────────────────────────
+
+XAI_BASE  = "https://api.x.ai/v1"
+GROK_MODEL_SEARCH  = "grok-4-1-fast"   # Responses API — has web_search
+GROK_MODEL_BATCH   = "grok-4"          # Chat Completions — no web search, cheaper
+
+_GROK_CACHE_TTL_S = 86400  # 24 hours
+
+
+def _grok_responses(prompt, use_web_search=True, max_tokens=600):
+    """
+    Call xAI /v1/responses (Grok Responses API).
+    Returns the assistant text content, or None on failure.
+    """
+    if not XAI_KEY or not _circuit_ok("xai"):
+        return None
+
+    payload = {
+        "model": GROK_MODEL_SEARCH,
+        "input": [{"role": "user", "content": prompt}],
+        "max_output_tokens": max_tokens,
+    }
+    if use_web_search:
+        payload["tools"] = [{"type": "web_search"}]
+
+    body = json.dumps(payload).encode()
+    headers = {
+        "Content-Type":  "application/json",
+        "Authorization": f"Bearer {XAI_KEY}",
+    }
+    try:
+        req = urllib.request.Request(
+            f"{XAI_BASE}/responses", data=body, headers=headers, method="POST"
+        )
+        with urllib.request.urlopen(req, timeout=45) as r:
+            d = json.loads(r.read().decode())
+            # Responses API: output is a list of content blocks
+            for block in d.get("output", []):
+                if block.get("type") == "message":
+                    for part in block.get("content", []):
+                        if part.get("type") == "output_text":
+                            return part.get("text", "")
+            return None
+    except urllib.error.HTTPError as e:
+        body_bytes = e.read()
+        msg = body_bytes.decode(errors="replace")[:200]
+        print(f"  Grok HTTP {e.code}: {msg}")
+        if e.code in (401, 403, 429):
+            _circuit_trip("xai", f"HTTP {e.code}")
+        return None
+    except Exception as ex:
+        print(f"  Grok error: {ex}")
+        return None
+
+
+def _grok_chat(messages, max_tokens=2000):
+    """
+    Call xAI /v1/chat/completions (OpenAI-compatible).
+    Used for batch description calls (no web search needed, cheaper).
+    """
+    if not XAI_KEY or not _circuit_ok("xai"):
+        return None
+
+    payload = {
+        "model": GROK_MODEL_BATCH,
+        "messages": messages,
+        "max_tokens": max_tokens,
+    }
+    body = json.dumps(payload).encode()
+    headers = {
+        "Content-Type":  "application/json",
+        "Authorization": f"Bearer {XAI_KEY}",
+    }
+    try:
+        req = urllib.request.Request(
+            f"{XAI_BASE}/chat/completions", data=body, headers=headers, method="POST"
+        )
+        with urllib.request.urlopen(req, timeout=60) as r:
+            d = json.loads(r.read().decode())
+            return d["choices"][0]["message"]["content"]
+    except urllib.error.HTTPError as e:
+        msg = e.read().decode(errors="replace")[:200]
+        print(f"  Grok chat HTTP {e.code}: {msg}")
+        if e.code in (401, 403, 429):
+            _circuit_trip("xai", f"HTTP {e.code}")
+        return None
+    except Exception as ex:
+        print(f"  Grok chat error: {ex}")
+        return None
+
+
+def _cache_fresh(entry):
+    """True if grok_cache entry was fetched within TTL."""
+    ts = entry.get("fetched_at", "")
+    if not ts:
+        return False
+    try:
+        age = (datetime.now(timezone.utc) - datetime.fromisoformat(ts)).total_seconds()
+        return age < _GROK_CACHE_TTL_S
+    except Exception:
+        return False
+
+
+def _parse_grok_json(text):
+    """
+    Extract and parse a JSON object from Grok's response text.
+    Grok sometimes wraps JSON in markdown fences — strip them.
+    """
+    if not text:
+        return {}
+    # Strip markdown code fences
+    text = re.sub(r"^```(?:json)?\s*", "", text.strip(), flags=re.MULTILINE)
+    text = re.sub(r"\s*```$", "", text.strip(), flags=re.MULTILINE)
+    # Find first { ... } block
+    m = re.search(r"\{.*\}", text, re.DOTALL)
+    if not m:
+        return {}
+    try:
+        return json.loads(m.group())
+    except Exception:
+        # Try to salvage partial JSON by truncating at last complete value
+        raw = m.group()
+        for end in range(len(raw), 0, -1):
+            try:
+                return json.loads(raw[:end] + "}")
+            except Exception:
+                continue
+        return {}
+
+
+def grok_enrich_candidate(name, info, existing_cache):
+    """
+    Web-search enrichment for a single candidate/race.
+    Returns a structured dict; cached 24h in grok_cache.
+
+    Fields returned:
+      primary_date, primary_result, primary_pct, primary_opponent,
+      general_date, general_opponent, cook_rating,
+      win_prob_estimate (float 0-1), win_prob_reasoning (str),
+      polymarket_slug (str or null),
+      description (2 sentences),
+      news_headline (1 sentence, most recent relevant news),
+      fetched_at (ISO timestamp)
+    """
+    cache_key = f"{name}|{info.get('state','')}|{info.get('chamber','')}"
+    cached = existing_cache.get(cache_key, {})
+    if _cache_fresh(cached):
+        return cached
+
+    # Skip win_prob estimation if Grokipedia already gave us a cook_rating
+    # (cook_rating is sufficient to derive a probability without an API call)
+    gk = info.get("_grokipedia", {})
+    if gk.get("cook_rating") and not info.get("needs_win_prob"):
+        return {}  # Grokipedia coverage is enough; don't burn API quota
+
+    if not XAI_KEY:
+        return {}
+
+    chamber_label = "US Senate" if info.get("chamber") == "senate" else "US House"
+    state = info.get("state", "")
+    party = info.get("party", "?")
+    district = info.get("district", "")
+    district_str = f" District {district}" if district else ""
+
+    prompt = f"""You are a US elections analyst. Research {name} ({party}, {state}{district_str}) — their 2026 {chamber_label} race.
+
+Search for: primary date and result, general election opponent, Cook Political Report rating, current betting market odds if any.
+
+Return ONLY a valid JSON object — no prose, no markdown fences:
+{{
+  "primary_date": "YYYY-MM-DD or null",
+  "primary_result": "WON or LOST or RUNOFF or PENDING or null",
+  "primary_pct": 0.0,
+  "primary_opponent": "Name or null",
+  "general_date": "YYYY-MM-DD or null",
+  "general_opponent": "Name (party) or null",
+  "cook_rating": "Safe D|Likely D|Lean D|Toss-up|Lean R|Likely R|Safe R or null",
+  "win_prob_estimate": 0.0,
+  "win_prob_reasoning": "1 sentence explaining the estimate",
+  "polymarket_slug": "exact-slug from polymarket.com/event/SLUG or null",
+  "description": "Sentence 1: who this person is politically. Sentence 2: what is electorally at stake for them in 2026.",
+  "news_headline": "Most recent relevant news about their 2026 race, 1 sentence, or null"
+}}"""
+
+    text = _grok_responses(prompt, use_web_search=True, max_tokens=700)
+    result = _parse_grok_json(text)
+
+    if result:
+        result["fetched_at"] = datetime.now(timezone.utc).isoformat()
+        result["_source"] = "grok_web_search"
+        # Clamp win_prob
+        wp = result.get("win_prob_estimate")
+        if wp is not None:
+            try:
+                result["win_prob_estimate"] = max(0.01, min(0.99, float(wp)))
+            except Exception:
+                result.pop("win_prob_estimate", None)
+        print(f"  ✓ Grok enriched: {name}"
+              + (f" (cook: {result.get('cook_rating')}, p={result.get('win_prob_estimate')})" if result.get('cook_rating') else ""))
+    else:
+        print(f"  ✗ Grok no data: {name}")
+
+    return result
+
+
+def grok_enrich_all(priority_candidates, existing_cache):
+    """
+    Parallel Grok web-search enrichment for priority candidates.
+    priority_candidates: dict of name → {state, chamber, party, district}
+    Returns: {cache_key → enriched_dict}
+    """
+    if not XAI_KEY:
+        print("  Grok enrichment: XAI_API_KEY not set — skipping")
+        return existing_cache
+
+    print(f"\nGrok web enrichment: {len(priority_candidates)} priority candidates (8 workers) …")
+
+    new_cache = dict(existing_cache)
+
+    def _worker(item):
+        name, info = item
+        cache_key = f"{name}|{info.get('state','')}|{info.get('chamber','')}"
+        result = grok_enrich_candidate(name, info, existing_cache)
+        return cache_key, result
+
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        futures = {pool.submit(_worker, item): item[0] for item in priority_candidates.items()}
+        for fut in as_completed(futures):
+            name = futures[fut]
+            try:
+                key, result = fut.result()
+                if result:
+                    new_cache[key] = result
+            except Exception as e:
+                print(f"  ✗ Grok worker error ({name}): {e}")
+
+    matched = sum(1 for k, v in new_cache.items() if v.get("description") and k not in existing_cache)
+    print(f"  Grok enrichment: {matched} new / {len(new_cache)} total in cache")
+    return new_cache
+
+
+def grok_batch_descriptions(members, existing_descriptions):
+    """
+    Single Grok call (no web search, cheap) to generate a 2-sentence
+    political description for every anti-intervention member who lacks one.
+
+    Returns: {name: "description text"}
+    """
+    need = [m for m in members
+            if m.get("antiArms") and m["name"] not in existing_descriptions]
+    if not need:
+        return existing_descriptions
+    if not XAI_KEY:
+        return existing_descriptions
+
+    print(f"\nGrok batch descriptions: {len(need)} members without descriptions …")
+
+    # Process in batches of 20 to stay within token limits
+    result = dict(existing_descriptions)
+    BATCH = 20
+    for i in range(0, len(need), BATCH):
+        batch = need[i:i+BATCH]
+        member_list = "\n".join(
+            f"- {m['name']} ({m.get('party','?')}-{m.get('state','?')}, "
+            f"{'Senate' if m.get('chamber')=='senate' else 'House'},"
+            f" anti-intervention {'incumbent' if m.get('level') else ''})"
+            for m in batch
+        )
+        prompt = f"""You are a concise political analyst. For each US politician below, write exactly 2 sentences:
+Sentence 1: who they are and their key policy positions.
+Sentence 2: why they matter to anti-intervention / anti-arms-sales advocates.
+
+Return ONLY a JSON object: {{"name": "description", ...}}
+
+Members:
+{member_list}"""
+
+        text = _grok_chat([{"role": "user", "content": prompt}], max_tokens=BATCH * 80)
+        parsed = _parse_grok_json(text)
+        for name, desc in (parsed or {}).items():
+            if isinstance(desc, str) and len(desc) > 20:
+                result[name] = desc
+
+    print(f"  Grok descriptions: {len(result) - len(existing_descriptions)} new")
+    return result
+
+
+def apply_grok_enrichment_to_races(races, grok_cache):
+    """
+    Merge Grok-enriched race data into RACES_2026 entries.
+    Only fills fields that are None/missing — never overwrites confirmed data.
+    Also adds win_prob if Grok has an estimate and no market exists.
+    """
+    enriched = 0
+    for race in races:
+        name    = race["name"]
+        state   = race.get("state", "")
+        chamber = race.get("chamber", "house")
+        key     = f"{name}|{state}|{chamber}"
+        g = grok_cache.get(key, {})
+        if not g:
+            continue
+
+        changed = False
+        # Fill in missing fields from Grok
+        fill_map = [
+            ("primary_date",    "primary_date"),
+            ("primary_result",  "primary_result"),
+            ("primary_pct",     "primary_pct"),
+            ("primary_opponent","primary_opponent"),
+            ("general_date",    "general_date"),
+            ("general_opponent","general_opponent"),
+            ("cook_rating",     "cook_rating"),
+            ("note",            "news_headline"),   # Grok headline → note if missing
+        ]
+        for race_field, grok_field in fill_map:
+            if race.get(race_field) is None and g.get(grok_field) is not None:
+                race[race_field] = g[grok_field]
+                changed = True
+
+        # Description
+        if not race.get("description") and g.get("description"):
+            race["description"] = g["description"]
+            changed = True
+
+        # Polymarket slug hint from Grok
+        if not race.get("polymarket_url") and g.get("polymarket_slug"):
+            race["polymarket_slug_hint"] = g["polymarket_slug"]
+            changed = True
+
+        # Win probability — only if no market has assigned one
+        if race.get("win_prob") is None and g.get("win_prob_estimate") is not None:
+            race["win_prob"]         = g["win_prob_estimate"]
+            race["win_prob_src"]     = "grok_estimate"
+            race["win_prob_reasoning"] = g.get("win_prob_reasoning", "")
+            changed = True
+
+        if changed:
+            enriched += 1
+            print(f"  ↳ Grok→race: {name} (cook={g.get('cook_rating')}, p={race.get('win_prob')})")
+
+    print(f"  Grok enriched {enriched}/{len(races)} race entries")
+    return races
+
+
+def apply_grok_descriptions_to_members(members, descriptions):
+    """Copy Grok-generated descriptions into each member dict."""
+    applied = 0
+    for m in members:
+        if m.get("antiArms") and not m.get("description"):
+            desc = descriptions.get(m["name"])
+            if desc:
+                m["description"] = desc
+                applied += 1
+    if applied:
+        print(f"  Applied {applied} Grok descriptions to members")
+    return members
+
+
+
 # ── Market validation helper (module-level — used by all three fetchers) ──────
 _MARKET_DISQUALIFY_TERMS = [
     "president","presidential","white house","governor","gubernatorial",
@@ -1502,6 +2185,10 @@ def fetch_poly(members, races=None):
         src           str     "polymarket_live" | "polymarket_gamma"
         fetched_at    str     ISO timestamp
     """
+    if not _circuit_ok("polymarket"):
+        print("  Polymarket circuit open — skipping")
+        return {}
+
     GAMMA = "https://gamma-api.polymarket.com"
     CLOB  = "https://clob.polymarket.com"
     # Gamma API blocks CI/datacenter IPs with HTTP 403. Use CLOB /markets as
@@ -1553,7 +2240,7 @@ def fetch_poly(members, races=None):
         url = CLOB_MARKETS + "?active=true&closed=false&limit=100"
         if next_cursor:
             url += f"&next_cursor={urllib.parse.quote(next_cursor)}"
-        d = fetch_json(url, headers=POLY_HEADERS) or {}
+        d = fetch_json(url, headers=POLY_HEADERS, circuit="polymarket") or {}
         items = d.get("data") or (d if isinstance(d, list) else [])
         if not items:
             break
@@ -1616,7 +2303,7 @@ def fetch_poly(members, races=None):
         """Live CLOB midpoint — the actual market probability."""
         if not token_id:
             return None
-        d = fetch_json(f"{CLOB}/midpoint?token_id={token_id}", headers=POLY_HEADERS)
+        d = fetch_json(f"{CLOB}/midpoint?token_id={token_id}", headers=POLY_HEADERS, circuit="polymarket")
         if d and "mid" in d:
             try: return float(d["mid"])
             except: pass
@@ -1719,6 +2406,10 @@ def fetch_predictit(candidates, existing_poly):
     Returns dict keyed by candidate name:
         { prob, src, question, url, fetched_at }
     """
+    if not _circuit_ok("predictit"):
+        print("  PredictIt circuit open — skipping")
+        return {}
+
     PREDICTIT_ALL = "https://www.predictit.org/api/marketdata/all/"
     results = {}
 
@@ -1731,7 +2422,7 @@ def fetch_predictit(candidates, existing_poly):
 
     print(f"\nFetching PredictIt (public, no auth) for {len(need)} candidates …")
 
-    data = fetch_json(PREDICTIT_ALL)
+    data = fetch_json(PREDICTIT_ALL, circuit="predictit")
     if not data or "markets" not in data:
         print("  PredictIt: no data returned")
         return {}
@@ -1850,6 +2541,10 @@ def fetch_metaculus(candidates, existing_poly, existing_predictit):
     Returns dict keyed by candidate name:
         { prob, src, question, url, metaculus_id, fetched_at }
     """
+    if not _circuit_ok("metaculus"):
+        print("  Metaculus circuit open — skipping")
+        return {}
+
     BASE = "https://www.metaculus.com/api2"
     results = {}
 
@@ -1905,7 +2600,7 @@ def fetch_metaculus(candidates, existing_poly, existing_predictit):
     def search_questions(query, limit=10):
         """Search Metaculus questions by text."""
         url = f"{BASE}/questions/?search={urllib.parse.quote(query)}&status=open&type=forecast&limit={limit}"
-        d = fetch_json(url) or {}
+        d = fetch_json(url, circuit="metaculus") or {}
         return d.get("results", [])
 
     # ── Pass 1: 2026 Midterms tournament bulk fetch ─────────────────────────
@@ -1926,7 +2621,7 @@ def fetch_metaculus(candidates, existing_poly, existing_predictit):
     # Bulk-fetch tournament
     for project_search in ["midterms-2026", "2026 midterm", "2026 congressional"]:
         url = f"{BASE}/questions/?search={urllib.parse.quote(project_search)}&status=open&type=forecast&limit=100"
-        d   = fetch_json(url) or {}
+        d   = fetch_json(url, circuit="metaculus") or {}
         ingest_questions(d.get("results", []))
         time.sleep(0.5)
 
@@ -2339,45 +3034,132 @@ def main():
     fec_cands    = fetch_fec_candidates_2026(ta_endorsed, rlc_endorsed) if FEC_KEY else []
     challengers  = merge_challengers(ta_endorsed, rlc_endorsed, fec_cands)
 
-    fec  = fetch_fec(members)  or existing.get("fec",  {})
+    fec  = fetch_fec(members) or existing.get("fec", {})
 
-    # Build race cards BEFORE fetch_poly so we can pass them in for matching
+    # ── Phase 2: Priority candidate list (used by both Grokipedia + Grok API) ──
+    priority_candidates = {}
+    for r in RACES_2026:
+        if r.get("name") and r.get("status") not in ("safe",):
+            priority_candidates[r["name"]] = {
+                "state": r.get("state",""), "chamber": r.get("chamber","house"),
+                "party": r.get("party","D"), "district": r.get("district"),
+            }
+    for c in challengers:
+        n = c.get("name","")
+        if n and (c.get("primary_date") or c.get("anti_intervention")):
+            priority_candidates[n] = {
+                "state": c.get("state",""), "chamber": c.get("chamber","house"),
+                "party": c.get("party","D"), "district": c.get("district"),
+            }
+    for m in members:
+        if m.get("antiArms") and m["name"] not in priority_candidates:
+            priority_candidates[m["name"]] = {
+                "state": m.get("state",""), "chamber": m.get("chamber","house"),
+                "party": m.get("party","D"), "district": m.get("district"),
+            }
+
+    # ── Phase 2a: Grokipedia — free, no key, runs first ──────────────────────
+    existing_grokipedia_cache = existing.get("grokipedia_cache", {})
+    grokipedia_cache = scrape_grokipedia_all(priority_candidates, existing_grokipedia_cache)
+
+    # Inject grokipedia data into priority_candidates for Grok API to check
+    for name, info in priority_candidates.items():
+        ck = f"{name}|{info.get('state','')}|{info.get('chamber','')}"
+        gk = grokipedia_cache.get(ck, {})
+        info["_grokipedia"] = gk
+        # If Grokipedia has no cook_rating, flag for Grok API win_prob estimation
+        if not gk.get("cook_rating") and not gk.get("win_prob_estimate"):
+            info["needs_win_prob"] = True
+
+    # ── Phase 2b: Grok API — only for win_prob where Grokipedia has nothing ──
+    # Also used as description fallback for candidates with no Grokipedia page.
+    existing_grok_cache = existing.get("grok_cache", {})
+    grok_cache = grok_enrich_all(priority_candidates, existing_grok_cache)
+
+    # ── Phase 2c: Batch descriptions fallback ────────────────────────────────
+    # For incumbents not covered by Grokipedia or Grok individual enrichment.
+    existing_descriptions = existing.get("descriptions", {})
+    # Pre-fill descriptions from Grokipedia cache before calling batch API
+    for name in list(priority_candidates.keys()):
+        ck = f"{name}|{priority_candidates[name].get('state','')}|{priority_candidates[name].get('chamber','')}"
+        gk_desc = grokipedia_cache.get(ck, {}).get("description")
+        if gk_desc and name not in existing_descriptions:
+            existing_descriptions[name] = gk_desc
+    descriptions = grok_batch_descriptions(members, existing_descriptions)
+
+    # ── Phase 3: Build race cards, merge Grokipedia + Grok data ─────────────
     races = [dict(r) for r in RACES_2026]
-    races = enrich_races_with_ballotpedia(races)
+    races = enrich_races_with_ballotpedia(races)            # fills what it can
+    races = apply_grok_enrichment_to_races(races, grokipedia_cache)  # Grokipedia first
+    races = apply_grok_enrichment_to_races(races, grok_cache)        # Grok API fills gaps
+    members = apply_grok_descriptions_to_members(members, descriptions)
 
-    poly  = fetch_poly(members, races=races) or existing.get("poly", {})
-
-    # ── Forecast fallback chain: PredictIt → Metaculus ─────────────────────
-    # Build candidate lookup for the fetchers
+    # ── Phase 4: Financial odds — circuit-broken, circuit resets per run ──────
+    # forecast_candidates: all anti-intervention members + races + challengers
     forecast_candidates = {}
     for m in members:
         if m.get("antiArms"):
-            forecast_candidates[m["name"]] = {"state": m.get("state",""), "party": m.get("party","D"), "chamber": m.get("chamber","house")}
+            forecast_candidates[m["name"]] = {
+                "state": m.get("state",""), "party": m.get("party","D"),
+                "chamber": m.get("chamber","house"),
+            }
     for r in races:
         if r.get("name"):
-            forecast_candidates[r["name"]] = {"state": r.get("state",""), "party": r.get("party","D"), "chamber": r.get("chamber","house")}
+            forecast_candidates[r["name"]] = {
+                "state": r.get("state",""), "party": r.get("party","D"),
+                "chamber": r.get("chamber","house"),
+            }
     for c in challengers:
         if c.get("name"):
-            forecast_candidates[c["name"]] = {"state": c.get("state",""), "party": c.get("party","D"), "chamber": c.get("chamber","house")}
+            forecast_candidates[c["name"]] = {
+                "state": c.get("state",""), "party": c.get("party","D"),
+                "chamber": c.get("chamber","house"),
+            }
 
+    # Use Grok-discovered Polymarket slugs as hints for fetch_poly
+    for name, info in forecast_candidates.items():
+        cache_key = f"{name}|{info.get('state','')}|{info.get('chamber','')}"
+        slug = grok_cache.get(cache_key, {}).get("polymarket_slug")
+        if slug:
+            info["polymarket_slug_hint"] = slug
+
+    poly            = fetch_poly(members, races=races) or existing.get("poly", {})
     predictit_data  = fetch_predictit(forecast_candidates, poly)
     metaculus_data  = fetch_metaculus(forecast_candidates, poly, predictit_data)
-    poly            = merge_forecast_sources(poly, predictit_data, metaculus_data, races)
 
-    # Wire all odds into race cards (Polymarket already wired above in merge)
+    # Overlay Grok win_prob_estimate as lowest-priority source
+    for name, info in forecast_candidates.items():
+        if name not in poly and name not in predictit_data and name not in metaculus_data:
+            cache_key = f"{name}|{info.get('state','')}|{info.get('chamber','')}"
+            g = grok_cache.get(cache_key, {})
+            if g.get("win_prob_estimate") is not None:
+                poly[name] = {
+                    "prob":      g["win_prob_estimate"],
+                    "src":       "grok_estimate",
+                    "question":  g.get("win_prob_reasoning", ""),
+                    "url":       "",
+                    "fetched_at": g.get("fetched_at",""),
+                }
+
+    poly  = merge_forecast_sources(poly, predictit_data, metaculus_data, races)
     races = wire_polymarket_to_races(races, poly)
 
     anti = sum(1 for m in members if m["antiArms"])
+    grok_matched  = sum(1 for v in grok_cache.values() if v.get("description"))
+    odds_covered  = sum(1 for v in poly.values() if v.get("prob") is not None)
+
     data = {
         "meta": {
-            "fetched_at":         datetime.now(timezone.utc).isoformat(),
-            "trackaipac_scraped": datetime.now(timezone.utc).isoformat() if should_scrape else last_scraped,
-            "member_count":       len(members),
-            "anti_intervention_count": anti,
-            "bill_count":         len(bills),
-            "challenger_count":   len(challengers),
-            "history_events":     len(history.get("events",[])),
-            "version":            7,
+            "fetched_at":               datetime.now(timezone.utc).isoformat(),
+            "trackaipac_scraped":        datetime.now(timezone.utc).isoformat() if should_scrape else last_scraped,
+            "member_count":              len(members),
+            "anti_intervention_count":   anti,
+            "bill_count":                len(bills),
+            "challenger_count":          len(challengers),
+            "history_events":            len(history.get("events",[])),
+            "grok_enriched":             grok_matched,
+            "odds_covered":              odds_covered,
+            "version":                   8,
             "sources": {
                 "members":     "trackaipac.com + rlc.org Liberty Index",
                 "bills":       "api.congress.gov (auto-discovered)",
@@ -2385,7 +3167,9 @@ def main():
                 "challengers": "trackaipac.com + rlc.org endorsements + FEC",
                 "votes":       "legiscan.com" if LEGISCAN_KEY else "pending key",
                 "fec":         "api.open.fec.gov",
-                "polymarket":  "polymarket.com",
+                "enrichment":  "grokipedia.com (free scrape) + xai Grok (win_prob fallback)",
+                "descriptions":"xai Grok (batch, no web search)",
+                "polymarket":  "polymarket.com CLOB",
                 "predictit":   "predictit.org (public API, no auth)",
                 "metaculus":   "metaculus.com (public API, no auth)",
             },
@@ -2404,19 +3188,23 @@ def main():
         "races_2026":          races,
         "clerk_votes":         clerk_votes,
         "ai_cache":            ai_cache,
+        "grok_cache":          grok_cache,
+        "grokipedia_cache":    grokipedia_cache,
+        "descriptions":        descriptions,
     }
 
     with open("data.json","w") as f:
         json.dump(data, f, indent=2)
 
     print(f"""
-✓ data.json written (v7)
+✓ data.json written (v8)
   Members:           {len(members)} ({anti} anti-intervention)
   Bills:             {len(bills)}
   House votes:       {len(house_votes)} relevant roll calls
   Challengers:       {len(challengers)}
-  History events:    {len(history.get('events',[]))}
-  Sources: TrackAIPAC + RLC Liberty Index + Congress.gov + FEC + Polymarket
+  Grokipedia:        {sum(1 for v in grokipedia_cache.values() if v.get("description"))} descriptions from free scrape
+  Odds covered:      {odds_covered} candidates (Poly/PredictIt/Metaculus/Grok)
+  History events:    {len(history.get("events",[]))}
 """)
 
 
