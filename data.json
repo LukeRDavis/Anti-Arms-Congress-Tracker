@@ -1,7 +1,7 @@
 {
   "meta": {
-    "fetched_at": "2026-03-07T02:45:29.738367+00:00",
-    "trackaipac_scraped": "2026-03-07T02:45:29.738382+00:00",
+    "fetched_at": "2026-03-07T04:27:46.061579+00:00",
+    "trackaipac_scraped": "2026-03-07T04:27:46.061590+00:00",
     "member_count": 532,
     "anti_intervention_count": 38,
     "bill_count": 0,
@@ -11606,579 +11606,201 @@
     }
   },
   "poly": {
-    "Bernard Taylor": {
-      "prob": 0.03,
-      "src": "predictit_contract",
-      "question": "Who will win the 2028 Republican presidential nomination? \u2192 M. Taylor Greene",
-      "url": "https://www.predictit.org/markets/detail/8152/Who-will-win-the-2028-Republican-presidential-nomination",
-      "fetched_at": "2026-03-07T02:41:21.253186+00:00"
+    "Lateefah Simon": {
+      "prob": 0.5,
+      "src": "polymarket_live",
+      "question": "Will Lateefah Simon replace Feinstein?",
+      "condition_id": "0x1cd82a00d2f787c3b5a610e9ec3ef79ed3824b4574800ca71f3ac2bf01584d2f",
+      "token_id": "8262803659068169380232336842949634545931635307070965515155776339189316973008",
+      "no_token_id": "99369733527309143495634055137263171857804569152205824135528077303959169501910",
+      "slug": "",
+      "volume": 0.0,
+      "volume_24h": 0.0,
+      "url": "https://polymarket.com",
+      "fetched_at": "2026-03-07T04:15:01.675781+00:00"
     },
-    "Barry Moore": {
-      "prob": 0.03,
-      "src": "predictit_contract",
-      "question": "Who will win the 2028 Democratic presidential nomination? \u2192 Wes Moore",
-      "url": "https://www.predictit.org/markets/detail/8153/Who-will-win-the-2028-Democratic-presidential-nomination",
-      "fetched_at": "2026-03-07T02:41:21.253307+00:00"
-    },
-    "Ro Khanna": {
-      "prob": 0.03,
-      "src": "predictit_contract",
-      "question": "Who will win the 2028 Democratic presidential nomination? \u2192 Ro Khanna",
-      "url": "https://www.predictit.org/markets/detail/8153/Who-will-win-the-2028-Democratic-presidential-nomination",
-      "fetched_at": "2026-03-07T02:41:21.253327+00:00"
-    },
-    "Alexandria Ocasio-Cortez": {
-      "prob": 0.12,
-      "src": "predictit_contract",
-      "question": "Who will win the 2028 Democratic presidential nomination? \u2192 A. Ocasio-Cortez",
-      "url": "https://www.predictit.org/markets/detail/8153/Who-will-win-the-2028-Democratic-presidential-nomination",
-      "fetched_at": "2026-03-07T02:41:21.253378+00:00"
-    },
-    "Jeff Merkley": {
-      "prob": 0.86,
-      "src": "predictit_party",
-      "question": "Which party will win the 2026 US Senate election in Georgia? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8156/Which-party-will-win-the-2026-US-Senate-election-in-Georgia",
-      "fetched_at": "2026-03-07T02:41:21.253680+00:00"
-    },
-    "Delia Ramirez": {
-      "prob": 0.82,
-      "src": "predictit_party",
-      "question": "Which party will win the House in the 2026 election? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8157/Which-party-will-win-the-House-in-the-2026-election",
-      "fetched_at": "2026-03-07T02:41:21.253750+00:00"
-    },
-    "Jes\u00fas Chuy Garc\u00eda": {
-      "prob": 0.82,
-      "src": "predictit_party",
-      "question": "Which party will win the House in the 2026 election? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8157/Which-party-will-win-the-House-in-the-2026-election",
-      "fetched_at": "2026-03-07T02:41:21.253755+00:00"
-    },
-    "Jan Schakowsky": {
-      "prob": 0.82,
-      "src": "predictit_party",
-      "question": "Which party will win the House in the 2026 election? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8157/Which-party-will-win-the-House-in-the-2026-election",
-      "fetched_at": "2026-03-07T02:41:21.253761+00:00"
-    },
-    "Andr\u00e9 Carson": {
-      "prob": 0.82,
-      "src": "predictit_party",
-      "question": "Which party will win the House in the 2026 election? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8157/Which-party-will-win-the-House-in-the-2026-election",
-      "fetched_at": "2026-03-07T02:41:21.253765+00:00"
-    },
-    "Scott Perry": {
-      "prob": 0.2,
-      "src": "predictit_party",
-      "question": "Which party will win the House in the 2026 election? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8157/Which-party-will-win-the-House-in-the-2026-election",
-      "fetched_at": "2026-03-07T02:41:21.253777+00:00"
-    },
-    "Summer Lee": {
-      "prob": 0.82,
-      "src": "predictit_party",
-      "question": "Which party will win the House in the 2026 election? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8157/Which-party-will-win-the-House-in-the-2026-election",
-      "fetched_at": "2026-03-07T02:41:21.253785+00:00"
-    },
-    "Mark Pocan": {
-      "prob": 0.82,
-      "src": "predictit_party",
-      "question": "Which party will win the House in the 2026 election? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8157/Which-party-will-win-the-House-in-the-2026-election",
-      "fetched_at": "2026-03-07T02:41:21.253793+00:00"
-    },
-    "Robb Ryerse": {
-      "prob": 0.82,
-      "src": "predictit_party",
-      "question": "Which party will win the House in the 2026 election? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8157/Which-party-will-win-the-House-in-the-2026-election",
-      "fetched_at": "2026-03-07T02:41:21.253799+00:00"
-    },
-    "Andrew Rice": {
-      "prob": 0.82,
-      "src": "predictit_party",
-      "question": "Which party will win the House in the 2026 election? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8157/Which-party-will-win-the-House-in-the-2026-election",
-      "fetched_at": "2026-03-07T02:41:21.253808+00:00"
-    },
-    "Anabel Mendoza": {
-      "prob": 0.82,
-      "src": "predictit_party",
-      "question": "Which party will win the House in the 2026 election? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8157/Which-party-will-win-the-House-in-the-2026-election",
-      "fetched_at": "2026-03-07T02:41:21.253816+00:00"
-    },
-    "Bushra Amiwala": {
-      "prob": 0.82,
-      "src": "predictit_party",
-      "question": "Which party will win the House in the 2026 election? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8157/Which-party-will-win-the-House-in-the-2026-election",
-      "fetched_at": "2026-03-07T02:41:21.253820+00:00"
-    },
-    "Daniel Biss": {
-      "prob": 0.82,
-      "src": "predictit_party",
-      "question": "Which party will win the House in the 2026 election? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8157/Which-party-will-win-the-House-in-the-2026-election",
-      "fetched_at": "2026-03-07T02:41:21.253823+00:00"
-    },
-    "Dylan Blaha": {
-      "prob": 0.82,
-      "src": "predictit_party",
-      "question": "Which party will win the House in the 2026 election? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8157/Which-party-will-win-the-House-in-the-2026-election",
-      "fetched_at": "2026-03-07T02:41:21.253827+00:00"
-    },
-    "Joey Ruzevich": {
-      "prob": 0.82,
-      "src": "predictit_party",
-      "question": "Which party will win the House in the 2026 election? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8157/Which-party-will-win-the-House-in-the-2026-election",
-      "fetched_at": "2026-03-07T02:41:21.253834+00:00"
-    },
-    "Junaid Ahmed": {
-      "prob": 0.82,
-      "src": "predictit_party",
-      "question": "Which party will win the House in the 2026 election? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8157/Which-party-will-win-the-House-in-the-2026-election",
-      "fetched_at": "2026-03-07T02:41:21.253837+00:00"
-    },
-    "Kat Abughazaleh": {
-      "prob": 0.82,
-      "src": "predictit_party",
-      "question": "Which party will win the House in the 2026 election? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8157/Which-party-will-win-the-House-in-the-2026-election",
-      "fetched_at": "2026-03-07T02:41:21.253841+00:00"
-    },
-    "Kina Collins": {
-      "prob": 0.82,
-      "src": "predictit_party",
-      "question": "Which party will win the House in the 2026 election? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8157/Which-party-will-win-the-House-in-the-2026-election",
-      "fetched_at": "2026-03-07T02:41:21.253845+00:00"
-    },
-    "Matt Conroy": {
-      "prob": 0.82,
-      "src": "predictit_party",
-      "question": "Which party will win the House in the 2026 election? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8157/Which-party-will-win-the-House-in-the-2026-election",
-      "fetched_at": "2026-03-07T02:41:21.253849+00:00"
-    },
-    "Mike Simmons": {
-      "prob": 0.82,
-      "src": "predictit_party",
-      "question": "Which party will win the House in the 2026 election? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8157/Which-party-will-win-the-House-in-the-2026-election",
-      "fetched_at": "2026-03-07T02:41:21.253853+00:00"
-    },
-    "Morgan Coghill": {
-      "prob": 0.82,
-      "src": "predictit_party",
-      "question": "Which party will win the House in the 2026 election? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8157/Which-party-will-win-the-House-in-the-2026-election",
-      "fetched_at": "2026-03-07T02:41:21.253857+00:00"
-    },
-    "Paul Nolley": {
-      "prob": 0.82,
-      "src": "predictit_party",
-      "question": "Which party will win the House in the 2026 election? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8157/Which-party-will-win-the-House-in-the-2026-election",
-      "fetched_at": "2026-03-07T02:41:21.253861+00:00"
-    },
-    "Reed Showalter": {
-      "prob": 0.82,
-      "src": "predictit_party",
-      "question": "Which party will win the House in the 2026 election? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8157/Which-party-will-win-the-House-in-the-2026-election",
-      "fetched_at": "2026-03-07T02:41:21.253867+00:00"
-    },
-    "Robert Peters": {
-      "prob": 0.82,
-      "src": "predictit_party",
-      "question": "Which party will win the House in the 2026 election? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8157/Which-party-will-win-the-House-in-the-2026-election",
-      "fetched_at": "2026-03-07T02:41:21.253871+00:00"
-    },
-    "Jackson Franklin": {
-      "prob": 0.82,
-      "src": "predictit_party",
-      "question": "Which party will win the House in the 2026 election? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8157/Which-party-will-win-the-House-in-the-2026-election",
-      "fetched_at": "2026-03-07T02:41:21.253875+00:00"
-    },
-    "Aaron Wojciechowski": {
-      "prob": 0.82,
-      "src": "predictit_party",
-      "question": "Which party will win the House in the 2026 election? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8157/Which-party-will-win-the-House-in-the-2026-election",
-      "fetched_at": "2026-03-07T02:41:21.253903+00:00"
-    },
-    "Ed Markey": {
-      "prob": 0.72,
-      "src": "predictit_party",
-      "question": "Which party will win the 2026 US Senate election in Maine? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8159/Which-party-will-win-the-2026-US-Senate-election-in-Maine",
-      "fetched_at": "2026-03-07T02:41:21.253969+00:00"
-    },
-    "Jack Schlossberg": {
-      "prob": 0.72,
-      "src": "predictit_party",
-      "question": "Which party will win the 2026 US Senate election in Maine? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8159/Which-party-will-win-the-2026-US-Senate-election-in-Maine",
-      "fetched_at": "2026-03-07T02:41:21.253994+00:00"
+    "Rand Paul": {
+      "prob": 0.003,
+      "src": "polymarket_live",
+      "question": "Will Robert F. Kennedy Jr. announce Rand Paul as running mate?",
+      "condition_id": "0x51e4a3563e101f109e68a2a696657969a2a05766f5ae2983c5a7146e86973b43",
+      "token_id": "101852993648465647675003028179239627362912354347897530499412573462303490168812",
+      "no_token_id": "65593457439886227563649138302384041818610143665007921488695723133978218514847",
+      "slug": "",
+      "volume": 0.0,
+      "volume_24h": 0.0,
+      "url": "https://polymarket.com",
+      "fetched_at": "2026-03-07T04:15:10.569285+00:00"
     },
     "Rashida Tlaib": {
+      "prob": 0.999,
+      "src": "polymarket_live",
+      "question": "Will Rashida Tlaib win the MI-12 Democratic House Primary?",
+      "condition_id": "0xd269c384f710cde817f4f208d9087f596de60d27524d2ca509e0ef3be7dd6cc3",
+      "token_id": "25491089964121722344719134360803511771456784438578152766540435022759519437633",
+      "no_token_id": "29301355847034909776744569693424408117136664094600142695093229084575572656605",
+      "slug": "",
+      "volume": 0.0,
+      "volume_24h": 0.0,
+      "url": "https://polymarket.com",
+      "fetched_at": "2026-03-07T04:15:16.136509+00:00"
+    },
+    "Ilhan Omar": {
+      "prob": 0.014,
+      "src": "polymarket_live",
+      "question": "Ilhan Omar expelled from Congress before March?",
+      "condition_id": "0xb9562403498631638145e360d4d1e6c0b4d6329409fe9a383909efe9eda9a6a0",
+      "token_id": "52838408921259159549809322779999227630902882249550180925252857926168976828295",
+      "no_token_id": "104923974957155608789575548127385678789551334224239155681423361332958116304284",
+      "slug": "",
+      "volume": 0.0,
+      "volume_24h": 0.0,
+      "url": "https://polymarket.com",
+      "fetched_at": "2026-03-07T04:15:16.763973+00:00"
+    },
+    "Alexandria Ocasio-Cortez": {
+      "prob": 0.999,
+      "src": "polymarket_live",
+      "question": "Will Alexandria Ocasio-Cortez win the NY-14 Democratic House Primary?",
+      "condition_id": "0x9a908da8bad60c32c8aad3cef0d65cd3770519160468ab1502032439fe3aa0ff",
+      "token_id": "74641241111783994342552887105743406230865382168624478156559910340948157055558",
+      "no_token_id": "78607463845919840116035422021664137752992391871644445751889987324841562790598",
+      "slug": "",
+      "volume": 0.0,
+      "volume_24h": 0.0,
+      "url": "https://polymarket.com",
+      "fetched_at": "2026-03-07T04:15:19.234361+00:00"
+    },
+    "Chip Roy": {
       "prob": 0.01,
-      "src": "predictit_contract",
-      "question": "Who will win the 2026 Michigan Democratic Senate nomination? \u2192 Rashida Tlaib",
-      "url": "https://www.predictit.org/markets/detail/8167/Who-will-win-the-2026-Michigan-Democratic-Senate-nomination",
-      "fetched_at": "2026-03-07T02:41:21.254549+00:00"
+      "src": "polymarket_live",
+      "question": "Will Royce Kinniebrew win the MI-12 Democratic House Primary?",
+      "condition_id": "0x65e20e8a7129820960a86c87e956e710829804eb762ed2238e4af300ccd4fd31",
+      "token_id": "38111551012857195743187080267709834801593949458745830546663152982051154103987",
+      "no_token_id": "23759512077253666858125384568898377783804755497925422033114617874899140502127",
+      "slug": "",
+      "volume": 0.0,
+      "volume_24h": 0.0,
+      "url": "https://polymarket.com",
+      "fetched_at": "2026-03-07T04:15:24.989555+00:00"
+    },
+    "Bernie Sanders": {
+      "prob": 0.999,
+      "src": "polymarket_live",
+      "question": "Will Bernie Sanders speak at the DNC?",
+      "condition_id": "0xe05e70ff34019ed5d03f86f3ae83e69f80d902ae1854c2740122688dfa55c543",
+      "token_id": "68049881232457946755999085625755133693113314392750886011680736257188449819058",
+      "no_token_id": "107985871626224673025512950000646003306685877852993252974702047686501469684553",
+      "slug": "",
+      "volume": 0.0,
+      "volume_24h": 0.0,
+      "url": "https://polymarket.com",
+      "fetched_at": "2026-03-07T04:15:27.173301+00:00"
     },
     "Abdul el-Sayed": {
       "prob": 0.19,
       "src": "predictit_contract",
       "question": "Who will win the 2026 Michigan Democratic Senate nomination? \u2192 Abdul El-Sayed",
       "url": "https://www.predictit.org/markets/detail/8167/Who-will-win-the-2026-Michigan-Democratic-Senate-nomination",
-      "fetched_at": "2026-03-07T02:41:21.254589+00:00"
+      "fetched_at": "2026-03-07T04:15:35.556611+00:00"
     },
-    "Jim McGovern": {
-      "prob": 0.46,
-      "src": "predictit_party",
-      "question": "Which party will win the 2026 US House election in Maine's 2nd District? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8177/Which-party-will-win-the-2026-US-House-election-in-Maine's-2nd-District",
-      "fetched_at": "2026-03-07T02:41:21.254973+00:00"
+    "Ed Markey": {
+      "prob": 0.76,
+      "src": "predictit_contract",
+      "question": "Who will win the 2026 Massachusetts Democratic Senate nomination? \u2192 Ed Markey",
+      "url": "https://www.predictit.org/markets/detail/8359/Who-will-win-the-2026-Massachusetts-Democratic-Senate-nomination",
+      "fetched_at": "2026-03-07T04:15:35.624527+00:00"
     },
     "Ayanna Pressley": {
-      "prob": 0.46,
-      "src": "predictit_party",
-      "question": "Which party will win the 2026 US House election in Maine's 2nd District? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8177/Which-party-will-win-the-2026-US-House-election-in-Maine's-2nd-District",
-      "fetched_at": "2026-03-07T02:41:21.254977+00:00"
-    },
-    "Jeromie Whalen": {
-      "prob": 0.46,
-      "src": "predictit_party",
-      "question": "Which party will win the 2026 US House election in Maine's 2nd District? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8177/Which-party-will-win-the-2026-US-House-election-in-Maine's-2nd-District",
-      "fetched_at": "2026-03-07T02:41:21.255001+00:00"
-    },
-    "Lateefah Simon": {
-      "prob": 0.37,
-      "src": "predictit_party",
-      "question": "Which party will win the 2026 US House race in North Carolina's 1st District? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8184/Which-party-will-win-the-2026-US-House-race-in-North-Carolina's-1st-District",
-      "fetched_at": "2026-03-07T02:41:21.255316+00:00"
-    },
-    "Maxine Waters": {
-      "prob": 0.37,
-      "src": "predictit_party",
-      "question": "Which party will win the 2026 US House race in North Carolina's 1st District? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8184/Which-party-will-win-the-2026-US-House-race-in-North-Carolina's-1st-District",
-      "fetched_at": "2026-03-07T02:41:21.255320+00:00"
-    },
-    "Angela Gonzales-Torres": {
-      "prob": 0.37,
-      "src": "predictit_party",
-      "question": "Which party will win the 2026 US House race in North Carolina's 1st District? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8184/Which-party-will-win-the-2026-US-House-race-in-North-Carolina's-1st-District",
-      "fetched_at": "2026-03-07T02:41:21.255343+00:00"
-    },
-    "Chris Ahuja": {
-      "prob": 0.37,
-      "src": "predictit_party",
-      "question": "Which party will win the 2026 US House race in North Carolina's 1st District? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8184/Which-party-will-win-the-2026-US-House-race-in-North-Carolina's-1st-District",
-      "fetched_at": "2026-03-07T02:41:21.255347+00:00"
-    },
-    "Chris Bennett": {
-      "prob": 0.37,
-      "src": "predictit_party",
-      "question": "Which party will win the 2026 US House race in North Carolina's 1st District? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8184/Which-party-will-win-the-2026-US-House-race-in-North-Carolina's-1st-District",
-      "fetched_at": "2026-03-07T02:41:21.255351+00:00"
-    },
-    "Mai Vang": {
-      "prob": 0.37,
-      "src": "predictit_party",
-      "question": "Which party will win the 2026 US House race in North Carolina's 1st District? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8184/Which-party-will-win-the-2026-US-House-race-in-North-Carolina's-1st-District",
-      "fetched_at": "2026-03-07T02:41:21.255355+00:00"
-    },
-    "Randy Villegas": {
-      "prob": 0.37,
-      "src": "predictit_party",
-      "question": "Which party will win the 2026 US House race in North Carolina's 1st District? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8184/Which-party-will-win-the-2026-US-House-race-in-North-Carolina's-1st-District",
-      "fetched_at": "2026-03-07T02:41:21.255360+00:00"
-    },
-    "Saikat Chakrabarti": {
-      "prob": 0.37,
-      "src": "predictit_party",
-      "question": "Which party will win the 2026 US House race in North Carolina's 1st District? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8184/Which-party-will-win-the-2026-US-House-race-in-North-Carolina's-1st-District",
-      "fetched_at": "2026-03-07T02:41:21.255364+00:00"
-    },
-    "Jessica Salas": {
-      "prob": 0.37,
-      "src": "predictit_party",
-      "question": "Which party will win the 2026 US House race in North Carolina's 1st District? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8184/Which-party-will-win-the-2026-US-House-race-in-North-Carolina's-1st-District",
-      "fetched_at": "2026-03-07T02:41:21.255389+00:00"
-    },
-    "Lauren Boebert": {
-      "prob": 0.17,
-      "src": "predictit_party",
-      "question": "Which party will win the 2026 US House election in New Mexico's 2nd District? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8185/Which-party-will-win-the-2026-US-House-election-in-New-Mexico's-2nd-District",
-      "fetched_at": "2026-03-07T02:41:21.255407+00:00"
-    },
-    "John Padora": {
-      "prob": 0.89,
-      "src": "predictit_party",
-      "question": "Which party will win the 2026 US House election in New Mexico's 2nd District? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8185/Which-party-will-win-the-2026-US-House-election-in-New-Mexico's-2nd-District",
-      "fetched_at": "2026-03-07T02:41:21.255423+00:00"
-    },
-    "Melat Kiros": {
-      "prob": 0.89,
-      "src": "predictit_party",
-      "question": "Which party will win the 2026 US House election in New Mexico's 2nd District? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8185/Which-party-will-win-the-2026-US-House-election-in-New-Mexico's-2nd-District",
-      "fetched_at": "2026-03-07T02:41:21.255427+00:00"
-    },
-    "Pramila Jayapal": {
-      "prob": 0.84,
-      "src": "predictit_party",
-      "question": "Which party will win the 2026 US House election in Washington's 3rd District? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8188/Which-party-will-win-the-2026-US-House-election-in-Washington's-3rd-District",
-      "fetched_at": "2026-03-07T02:41:21.255562+00:00"
-    },
-    "Brent Hennrich": {
-      "prob": 0.84,
-      "src": "predictit_party",
-      "question": "Which party will win the 2026 US House election in Washington's 3rd District? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8188/Which-party-will-win-the-2026-US-House-election-in-Washington's-3rd-District",
-      "fetched_at": "2026-03-07T02:41:21.255593+00:00"
-    },
-    "Kshama Sawant": {
-      "prob": 0.28,
-      "src": "predictit_party",
-      "question": "Which party will win the 2026 US House election in Washington's 3rd District? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8188/Which-party-will-win-the-2026-US-House-election-in-Washington's-3rd-District",
-      "fetched_at": "2026-03-07T02:41:21.255604+00:00"
-    },
-    "Summer Shelton": {
-      "prob": 0.71,
-      "src": "predictit_party",
-      "question": "Which party will win the 2026 US House election in Michigan's 7th District? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8193/Which-party-will-win-the-2026-US-House-election-in-Michigan's-7th-District",
-      "fetched_at": "2026-03-07T02:41:21.255778+00:00"
-    },
-    "Aisha Farooqi": {
-      "prob": 0.71,
-      "src": "predictit_party",
-      "question": "Which party will win the 2026 US House election in Michigan's 7th District? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8193/Which-party-will-win-the-2026-US-House-election-in-Michigan's-7th-District",
-      "fetched_at": "2026-03-07T02:41:21.255785+00:00"
-    },
-    "Donavan McKinney": {
-      "prob": 0.71,
-      "src": "predictit_party",
-      "question": "Which party will win the 2026 US House election in Michigan's 7th District? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8193/Which-party-will-win-the-2026-US-House-election-in-Michigan's-7th-District",
-      "fetched_at": "2026-03-07T02:41:21.255789+00:00"
-    },
-    "Kyle Blomquist": {
-      "prob": 0.71,
-      "src": "predictit_party",
-      "question": "Which party will win the 2026 US House election in Michigan's 7th District? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8193/Which-party-will-win-the-2026-US-House-election-in-Michigan's-7th-District",
-      "fetched_at": "2026-03-07T02:41:21.255795+00:00"
-    },
-    "William Lawrence": {
-      "prob": 0.71,
-      "src": "predictit_party",
-      "question": "Which party will win the 2026 US House election in Michigan's 7th District? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8193/Which-party-will-win-the-2026-US-House-election-in-Michigan's-7th-District",
-      "fetched_at": "2026-03-07T02:41:21.255799+00:00"
-    },
-    "Mo Seifeldein": {
-      "prob": 0.82,
-      "src": "predictit_party",
-      "question": "Which party will win the 2026 US House election in Pennsylvania's 7th District? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8194/Which-party-will-win-the-2026-US-House-election-in-Pennsylvania's-7th-District",
-      "fetched_at": "2026-03-07T02:41:21.255854+00:00"
-    },
-    "Salaam Bhatti": {
-      "prob": 0.82,
-      "src": "predictit_party",
-      "question": "Which party will win the 2026 US House election in Pennsylvania's 7th District? [party proxy]",
-      "url": "https://www.predictit.org/markets/detail/8194/Which-party-will-win-the-2026-US-House-election-in-Pennsylvania's-7th-District",
-      "fetched_at": "2026-03-07T02:41:21.255858+00:00"
-    },
-    "Andy Biggs": {
-      "prob": 0.93,
-      "src": "predictit_contract",
-      "question": "Who will win the 2026 Arizona Republican nomination for governor? \u2192 Andy Biggs",
-      "url": "https://www.predictit.org/markets/detail/8202/Who-will-win-the-2026-Arizona-Republican-nomination-for-governor",
-      "fetched_at": "2026-03-07T02:41:21.256020+00:00"
-    },
-    "Jakeya Johnson": {
-      "prob": 0.34,
-      "src": "predictit_contract",
-      "question": "Who will win the 2026 Michigan Republican nomination for governor? \u2192 Perry Johnson",
-      "url": "https://www.predictit.org/markets/detail/8204/Who-will-win-the-2026-Michigan-Republican-nomination-for-governor",
-      "fetched_at": "2026-03-07T02:41:21.256151+00:00"
-    },
-    "Cori Bush": {
-      "prob": 0.35,
-      "src": "predictit_contract",
-      "question": "Who will win the 2026 Maine Republican nomination for governor? \u2192 Jonathan Bush",
-      "url": "https://www.predictit.org/markets/detail/8205/Who-will-win-the-2026-Maine-Republican-nomination-for-governor",
-      "fetched_at": "2026-03-07T02:41:21.256214+00:00"
-    },
-    "Chip Roy": {
-      "prob": 0.37,
-      "src": "predictit_contract",
-      "question": "Who will win the 2026 Maine Democratic nomination for governor? \u2192 Troy Jackson",
-      "url": "https://www.predictit.org/markets/detail/8207/Who-will-win-the-2026-Maine-Democratic-nomination-for-governor",
-      "fetched_at": "2026-03-07T02:41:21.256293+00:00"
-    },
-    "Ashley Bell": {
-      "prob": 0.16,
-      "src": "predictit_contract",
-      "question": "Who will win the 2026 Maine Democratic nomination for governor? \u2192 Shenna Bellows",
-      "url": "https://www.predictit.org/markets/detail/8207/Who-will-win-the-2026-Maine-Democratic-nomination-for-governor",
-      "fetched_at": "2026-03-07T02:41:21.256345+00:00"
-    },
-    "Frederick Haynes III": {
-      "prob": 0.16,
-      "src": "predictit_contract",
-      "question": "Who will win the 2026 Maine Democratic nomination for governor? \u2192 Angus King III",
-      "url": "https://www.predictit.org/markets/detail/8207/Who-will-win-the-2026-Maine-Democratic-nomination-for-governor",
-      "fetched_at": "2026-03-07T02:41:21.256364+00:00"
-    },
-    "John Mills": {
-      "prob": 0.22,
-      "src": "predictit_contract",
-      "question": "Who will win the 2026 Maine Democratic Senate nomination? \u2192 Janet Mills",
-      "url": "https://www.predictit.org/markets/detail/8256/Who-will-win-the-2026-Maine-Democratic-Senate-nomination",
-      "fetched_at": "2026-03-07T02:41:21.257459+00:00"
-    },
-    "Bonnie Watson Coleman": {
       "prob": 0.01,
       "src": "predictit_contract",
-      "question": "Who will win the 2026 Minnesota Republican nomination for governor? \u2192 Julia Coleman",
-      "url": "https://www.predictit.org/markets/detail/8298/Who-will-win-the-2026-Minnesota-Republican-nomination-for-governor",
-      "fetched_at": "2026-03-07T02:41:21.257914+00:00"
+      "question": "Who will win the 2026 Massachusetts Democratic Senate nomination? \u2192 Ayanna Pressley",
+      "url": "https://www.predictit.org/markets/detail/8359/Who-will-win-the-2026-Massachusetts-Democratic-Senate-nomination",
+      "fetched_at": "2026-03-07T04:15:35.624571+00:00"
     },
-    "Mark Conway": {
-      "prob": 0.05,
+    "Jack Schlossberg": {
+      "prob": 0.26,
       "src": "predictit_contract",
-      "question": "Who will win the Democratic nomination in the NY-12 House primary? \u2192 George Conway",
+      "question": "Who will win the Democratic nomination in the NY-12 House primary? \u2192 Jack Schlossberg",
       "url": "https://www.predictit.org/markets/detail/8364/Who-will-win-the-Democratic-nomination-in-the-NY-12-House-primary",
-      "fetched_at": "2026-03-07T02:41:21.258501+00:00"
-    },
-    "Mussab Ali": {
-      "prob": 0.03,
-      "src": "predictit_contract",
-      "question": "Who will be elected Los Angeles mayor in 2026? \u2192 Vincent Wali",
-      "url": "https://www.predictit.org/markets/detail/8370/Who-will-be-elected-Los-Angeles-mayor-in-2026",
-      "fetched_at": "2026-03-07T02:41:21.258774+00:00"
-    },
-    "Anna Paulina Luna": {
-      "prob": 0.04,
-      "src": "predictit_contract",
-      "question": "Who will win the 2026 Peruvian presidential election? \u2192 Jos\u00e9 Luna",
-      "url": "https://www.predictit.org/markets/detail/8373/Who-will-win-the-2026-Peruvian-presidential-election",
-      "fetched_at": "2026-03-07T02:41:21.258832+00:00"
-    },
-    "Rand Paul": {
-      "prob": 0.02,
-      "src": "predictit_contract",
-      "question": "Who will win the 2026 Florida Republican nomination for governor? \u2192 Paul Renner",
-      "url": "https://www.predictit.org/markets/detail/8374/Who-will-win-the-2026-Florida-Republican-nomination-for-governor",
-      "fetched_at": "2026-03-07T02:41:21.259018+00:00"
-    },
-    "James Talarico": {
-      "prob": 0.78,
-      "src": "predictit_contract",
-      "question": "What will be the matchup in the 2026 US Senate election in Texas? \u2192 Talarico v. Cornyn",
-      "url": "https://www.predictit.org/markets/detail/8429/What-will-be-the-matchup-in-the-2026-US-Senate-election-in-Texas",
-      "fetched_at": "2026-03-07T02:41:21.261191+00:00"
+      "fetched_at": "2026-03-07T04:15:35.629798+00:00"
     },
     "Brandon Herrera": {
       "prob": 0.99,
       "src": "predictit_contract",
       "question": "Who will win the Republican nomination in the TX-23 House primary? \u2192 Brandon Herrera",
       "url": "https://www.predictit.org/markets/detail/8432/Who-will-win-the-Republican-nomination-in-the-TX-23-House-primary",
-      "fetched_at": "2026-03-07T02:41:21.261349+00:00"
+      "fetched_at": "2026-03-07T04:15:35.681596+00:00"
     },
-    "Jerrad Christian": {
-      "prob": 0.98,
+    "Robert Peters": {
+      "prob": 0.62,
       "src": "predictit_contract",
-      "question": "Who will win the Democratic nomination in the TX-18 House primary? \u2192 Christian Menefee",
-      "url": "https://www.predictit.org/markets/detail/8443/Who-will-win-the-Democratic-nomination-in-the-TX-18-House-primary",
-      "fetched_at": "2026-03-07T02:41:21.261917+00:00"
+      "question": "Who will win the Democratic nomination in the IL-02 House primary? \u2192 Robert Peters",
+      "url": "https://www.predictit.org/markets/detail/8434/Who-will-win-the-Democratic-nomination-in-the-IL-02-House-primary",
+      "fetched_at": "2026-03-07T04:15:35.685482+00:00"
     },
-    "Heath Howard": {
-      "prob": 0.01,
+    "Joey Ruzevich": {
+      "prob": 0.64,
       "src": "predictit_contract",
-      "question": "Who will be the first Cabinet member to leave office? \u2192 Howard Lutnick",
-      "url": "https://www.predictit.org/markets/detail/8482/Who-will-be-the-first-Cabinet-member-to-leave-office",
-      "fetched_at": "2026-03-07T02:41:21.263306+00:00"
+      "question": "Who will win the Democratic nomination in the IL-06 House primary? \u2192 Joey Ruzevich",
+      "url": "https://www.predictit.org/markets/detail/8435/Who-will-win-the-Democratic-nomination-in-the-IL-06-House-primary",
+      "fetched_at": "2026-03-07T04:15:35.687117+00:00"
+    },
+    "Junaid Ahmed": {
+      "prob": 0.24,
+      "src": "predictit_contract",
+      "question": "Who will win the Democratic nomination in the IL-08 House primary? \u2192 Junaid Ahmed",
+      "url": "https://www.predictit.org/markets/detail/8437/Who-will-win-the-Democratic-nomination-in-the-IL-08-House-primary",
+      "fetched_at": "2026-03-07T04:15:35.691691+00:00"
+    },
+    "Daniel Biss": {
+      "prob": 0.71,
+      "src": "predictit_contract",
+      "question": "Who will win the Democratic nomination in the IL-09 House primary? \u2192 Daniel Biss",
+      "url": "https://www.predictit.org/markets/detail/8438/Who-will-win-the-Democratic-nomination-in-the-IL-09-House-primary",
+      "fetched_at": "2026-03-07T04:15:35.694039+00:00"
+    },
+    "Kat Abughazaleh": {
+      "prob": 0.33,
+      "src": "predictit_contract",
+      "question": "Who will win the Democratic nomination in the IL-09 House primary? \u2192 Kat Abughazaleh",
+      "url": "https://www.predictit.org/markets/detail/8438/Who-will-win-the-Democratic-nomination-in-the-IL-09-House-primary",
+      "fetched_at": "2026-03-07T04:15:35.694078+00:00"
     },
     "Thomas Massie": {
       "prob": 0.66,
       "src": "predictit_contract",
       "question": "Who will win the Republican nomination in the KY-04 House primary? \u2192 Thomas Massie",
       "url": "https://www.predictit.org/markets/detail/8487/Who-will-win-the-Republican-nomination-in-the-KY-04-House-primary",
-      "fetched_at": "2026-03-07T02:41:21.263597+00:00"
+      "fetched_at": "2026-03-07T04:15:35.733834+00:00"
     },
     "Congressman Thomas Massie": {
       "prob": 0.66,
       "src": "predictit_contract",
       "question": "Who will win the Republican nomination in the KY-04 House primary? \u2192 Thomas Massie",
       "url": "https://www.predictit.org/markets/detail/8487/Who-will-win-the-Republican-nomination-in-the-KY-04-House-primary",
-      "fetched_at": "2026-03-07T02:41:21.263626+00:00"
-    },
-    "Hartzell Gray": {
-      "prob": 0.09,
-      "src": "predictit_contract",
-      "question": "Who will replace Marjorie Taylor Greene in GA-14? \u2192 Tom Gray",
-      "url": "https://www.predictit.org/markets/detail/8489/Who-will-replace-Marjorie-Taylor-Greene-in-GA-14",
-      "fetched_at": "2026-03-07T02:41:21.263751+00:00"
+      "fetched_at": "2026-03-07T04:15:35.734346+00:00"
     },
     "Claire Valdez": {
       "prob": 0.82,
       "src": "predictit_contract",
       "question": "Who will win the Democratic nomination in the NY-07 House primary? \u2192 Claire Valdez",
       "url": "https://www.predictit.org/markets/detail/8534/Who-will-win-the-Democratic-nomination-in-the-NY-07-House-primary",
-      "fetched_at": "2026-03-07T02:41:21.265321+00:00"
+      "fetched_at": "2026-03-07T04:15:35.770207+00:00"
     },
     "Valerie Foushee": {
       "prob": 0.99,
       "src": "predictit_contract",
       "question": "Who will win the Democratic nomination in the NC-04 House primary? \u2192 Valerie Foushee",
       "url": "https://www.predictit.org/markets/detail/8579/Who-will-win-the-Democratic-nomination-in-the-NC-04-House-primary",
-      "fetched_at": "2026-03-07T02:41:21.266321+00:00"
+      "fetched_at": "2026-03-07T04:15:35.794467+00:00"
     },
     "Nida Allam": {
       "prob": 0.01,
       "src": "predictit_contract",
       "question": "Who will win the Democratic nomination in the NC-04 House primary? \u2192 Nida Allam",
       "url": "https://www.predictit.org/markets/detail/8579/Who-will-win-the-Democratic-nomination-in-the-NC-04-House-primary",
-      "fetched_at": "2026-03-07T02:41:21.266342+00:00"
-    },
-    "Warren Davidson": {
-      "prob": 0.09,
-      "src": "predictit_contract",
-      "question": "Who will win the Democratic nomination in the NY-17 House primary? \u2192 Beth Davidson",
-      "url": "https://www.predictit.org/markets/detail/8598/Who-will-win-the-Democratic-nomination-in-the-NY-17-House-primary",
-      "fetched_at": "2026-03-07T02:41:21.266855+00:00"
+      "fetched_at": "2026-03-07T04:15:35.794920+00:00"
     }
   },
   "trackaipac_congress": {
@@ -21571,120 +21193,7 @@
     }
   ],
   "rlc_index": {},
-  "rlc_endorsed": [
-    {
-      "name": "Paul Rojas",
-      "state": "",
-      "district": null,
-      "party": "R",
-      "chamber": "house",
-      "antiArms": true,
-      "antiArmsLevel": "yes",
-      "ps": "UPCOMING",
-      "primaryDate": "",
-      "website": "",
-      "source": "rlc_endorsed",
-      "note": "Endorsed by Republican Liberty Caucus for TX CD-21\" >",
-      "opponent": "",
-      "incumbentParty": ""
-    },
-    {
-      "name": "Congressman Thomas Massie",
-      "state": "KY",
-      "district": 4,
-      "party": "R",
-      "chamber": "house",
-      "antiArms": true,
-      "antiArmsLevel": "yes",
-      "ps": "UPCOMING",
-      "primaryDate": "",
-      "website": "",
-      "source": "rlc_endorsed",
-      "note": "Endorsed by Republican Liberty Caucus for Kentucky\u2019s 4th Congressional District",
-      "opponent": "",
-      "incumbentParty": ""
-    },
-    {
-      "name": "Alex Mooney",
-      "state": "VA",
-      "district": null,
-      "party": "R",
-      "chamber": "senate",
-      "antiArms": true,
-      "antiArmsLevel": "yes",
-      "ps": "UPCOMING",
-      "primaryDate": "",
-      "website": "",
-      "source": "rlc_endorsed",
-      "note": "Endorsed by Republican Liberty Caucus for U.S. Senate in West Virginia\" >",
-      "opponent": "",
-      "incumbentParty": ""
-    },
-    {
-      "name": "Andy Biggs",
-      "state": "",
-      "district": null,
-      "party": "R",
-      "chamber": "house",
-      "antiArms": true,
-      "antiArmsLevel": "yes",
-      "ps": "UPCOMING",
-      "primaryDate": "",
-      "website": "",
-      "source": "rlc_endorsed",
-      "note": "Endorsed by Republican Liberty Caucus for House Speaker\" >",
-      "opponent": "",
-      "incumbentParty": ""
-    },
-    {
-      "name": "John Mills",
-      "state": "FL",
-      "district": 1,
-      "party": "R",
-      "chamber": "house",
-      "antiArms": true,
-      "antiArmsLevel": "yes",
-      "ps": "UPCOMING",
-      "primaryDate": "",
-      "website": "",
-      "source": "rlc_endorsed",
-      "note": "Endorsed by Republican Liberty Caucus for Florida&#8217;s 1st Congressional District\" >",
-      "opponent": "",
-      "incumbentParty": ""
-    },
-    {
-      "name": "Willie J Montague",
-      "state": "FL",
-      "district": 10,
-      "party": "R",
-      "chamber": "house",
-      "antiArms": true,
-      "antiArmsLevel": "yes",
-      "ps": "UPCOMING",
-      "primaryDate": "",
-      "website": "",
-      "source": "rlc_endorsed",
-      "note": "Endorsed by Republican Liberty Caucus for Florida&#8217;s 10th Congressional District\" >",
-      "opponent": "",
-      "incumbentParty": ""
-    },
-    {
-      "name": "Kat Cammack",
-      "state": "FL",
-      "district": 3,
-      "party": "R",
-      "chamber": "house",
-      "antiArms": true,
-      "antiArmsLevel": "yes",
-      "ps": "UPCOMING",
-      "primaryDate": "",
-      "website": "",
-      "source": "rlc_endorsed",
-      "note": "Endorsed by Republican Liberty Caucus for Florida&#8217;s 3rd Congressional District\" >",
-      "opponent": "",
-      "incumbentParty": ""
-    }
-  ],
+  "rlc_endorsed": [],
   "congress_history": {
     "117": {
       "congress": 117,
@@ -21742,13 +21251,11 @@
       "general_date": "2026-11-03",
       "general_opponent": "John Cornyn or Ken Paxton (R runoff May 26)",
       "cook_rating": null,
-      "win_prob": 0.78,
+      "win_prob": 0.22,
       "impact_if_wins": "+1 soft-D Senate (major historic upset)",
       "impact_if_loses": "No change (seat stays R)",
       "note": "Won D primary 53% vs Crockett 46% (Mar 3). Supports banning offensive weapons to Israel. Will face Cornyn or Paxton after May 26 runoff.",
-      "polymarket_url": "https://www.predictit.org/markets/detail/8429/What-will-be-the-matchup-in-the-2026-US-Senate-election-in-Texas",
-      "win_prob_src": "polymarket",
-      "forecast_url": "https://www.predictit.org/markets/detail/8429/What-will-be-the-matchup-in-the-2026-US-Senate-election-in-Texas"
+      "polymarket_url": null
     },
     {
       "id": "foushee-nc04",
@@ -21815,13 +21322,13 @@
       "general_date": null,
       "general_opponent": null,
       "cook_rating": null,
-      "win_prob": 0.02,
+      "win_prob": 0.003,
       "impact_if_wins": null,
       "impact_if_loses": null,
       "note": "Term ends Jan 2029 \u2014 not on 2026 ballot. Safe for this cycle.",
       "win_prob_src": "polymarket",
-      "forecast_url": "https://www.predictit.org/markets/detail/8374/Who-will-win-the-2026-Florida-Republican-nomination-for-governor",
-      "polymarket_url": "https://www.predictit.org/markets/detail/8374/Who-will-win-the-2026-Florida-Republican-nomination-for-governor"
+      "forecast_url": "https://polymarket.com",
+      "polymarket_url": "https://polymarket.com"
     },
     {
       "id": "casar-tx37",
@@ -21857,13 +21364,13 @@
       "primary_opponent": "TBD",
       "general_date": "2026-11-03",
       "cook_rating": "Safe Democratic",
-      "win_prob": 0.01,
+      "win_prob": 0.999,
       "impact_if_wins": "+1 soft-D retained",
       "impact_if_loses": "Likely -1 if defeated by AIPAC-backed primary challenger",
       "note": "Won 2024 primary 58% vs AIPAC-backed challenger. May face renewed challenge in 2026.",
       "win_prob_src": "polymarket",
-      "forecast_url": "https://www.predictit.org/markets/detail/8167/Who-will-win-the-2026-Michigan-Democratic-Senate-nomination",
-      "polymarket_url": "https://www.predictit.org/markets/detail/8167/Who-will-win-the-2026-Michigan-Democratic-Senate-nomination"
+      "forecast_url": "https://polymarket.com",
+      "polymarket_url": "https://polymarket.com"
     },
     {
       "id": "omar-mn05",
@@ -21879,9 +21386,39 @@
       "primary_date": "2026-08-11",
       "general_date": "2026-11-03",
       "cook_rating": "Safe Democratic",
-      "win_prob": 0.78,
+      "win_prob": 0.014,
       "impact_if_wins": "+1 soft-D retained",
-      "note": "Survived close 2024 primary 56%. AIPAC spent heavily against her. May face challenge again."
+      "note": "Survived close 2024 primary 56%. AIPAC spent heavily against her. May face challenge again.",
+      "win_prob_src": "polymarket",
+      "forecast_url": "https://polymarket.com",
+      "polymarket_url": "https://polymarket.com"
+    },
+    {
+      "id": "herrera-tx23",
+      "name": "Brandon Herrera",
+      "party": "R",
+      "state": "TX",
+      "chamber": "house",
+      "district": 23,
+      "anti_intervention": true,
+      "anti_intervention_level": "yes",
+      "type": "challenger",
+      "status": "pending_general",
+      "primary_date": "2026-03-03",
+      "primary_result": "WON",
+      "primary_pct": 43.0,
+      "primary_opponent_pct": 41.0,
+      "primary_opponent": "Tony Gonzales (withdrew Mar 5 amid ethics scandal)",
+      "general_date": "2026-11-03",
+      "general_opponent": "Katy Padilla Stout (D)",
+      "cook_rating": "Solid Republican",
+      "win_prob": 0.99,
+      "impact_if_wins": "+1 anti-foreign-aid R in Congress (TX-23 open seat)",
+      "impact_if_loses": "No change \u2014 seat stays R, Stout not anti-intervention",
+      "note": "YouTube gun influencer 'The AK Guy'. Anti-AIPAC: 'I'm not anti-Israel, I'm anti-Israel buying US elections.' Lost TX-23 primary by 354 votes in 2024. Won 2026 primary 43%-41%; Gonzales withdrew Mar 5 amid sexual coercion scandal involving a staffer who died by suicide. AIPAC did not intervene this cycle. Cook: Solid R. General vs Katy Padilla Stout (D).",
+      "polymarket_url": "https://www.predictit.org/markets/detail/8432/Who-will-win-the-Republican-nomination-in-the-TX-23-House-primary",
+      "win_prob_src": "polymarket",
+      "forecast_url": "https://www.predictit.org/markets/detail/8432/Who-will-win-the-Republican-nomination-in-the-TX-23-House-primary"
     }
   ],
   "clerk_votes": {
