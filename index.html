@@ -614,7 +614,7 @@ function DetailPanel({member, fecData, polyData, bills, chamber}) {
 
         ${poly?html`
           <div style=${{flex:"1 1 130px",borderRadius:7,border:"1px solid #1a1d27",overflow:"hidden"}}>
-            <div style=${{padding:"3px 7px",background:"#090b0e",fontSize:8,color:"#a78bfa",fontFamily:"monospace"}}>POLYMARKET</div>
+            <div style=${{padding:"3px 7px",background:"#090b0e",fontSize:8,color:"#a78bfa",fontFamily:"monospace"}}>${(s=>(s==="predictit_contract"||s==="predictit_party"?"PREDICTIT":s==="metaculus"?"METACULUS":"POLYMARKET"))(poly.src||"")}</div>
             <div style=${{padding:"4px 7px",borderTop:"1px solid #0e1016",fontSize:9,color:"#6b7280",lineHeight:1.4}}>${poly.question}</div>
             ${poly.prob!=null?html`
               <div style=${{padding:"4px 7px",borderTop:"1px solid #0e1016",display:"flex",alignItems:"center",gap:6}}>
@@ -625,7 +625,7 @@ function DetailPanel({member, fecData, polyData, bills, chamber}) {
               </div>`:null}
             ${poly.url?html`<div style=${{padding:"3px 7px",borderTop:"1px solid #0e1016"}}>
               <a href=${poly.url} target="_blank" rel="noreferrer"
-                style=${{fontSize:8,color:"#374151",fontFamily:"monospace",textDecoration:"none"}}>→ Polymarket ↗</a>
+                style=${{fontSize:8,color:"#374151",fontFamily:"monospace",textDecoration:"none"}}>${(s=>(s==="predictit_contract"||s==="predictit_party"?"→ PredictIt ↗":s==="metaculus"?"→ Metaculus ↗":"→ Polymarket ↗"))(poly.src||"")}</a>
             </div>`:null}
           </div>`:null}
       </div>
@@ -1397,10 +1397,14 @@ function CandidateTimeline({allMembers, challengers, racesData, polyData}) {
     });
   });
 
-  // Overlay live Polymarket odds
+  // Overlay odds from data.json poly dict — preserve the actual source tag
   allCands.forEach(c => {
     const pd = polyData && (polyData[c.name] || polyData[normName(c.name)]);
-    if (pd && pd.prob != null) { c.win_prob = pd.prob; c.win_prob_src = "polymarket"; }
+    if (pd && pd.prob != null) {
+      c.win_prob     = pd.prob;
+      c.win_prob_src = pd.src || "polymarket";  // keep real source (polymarket/predictit/metaculus)
+      c.forecast_url = pd.url || "";
+    }
   });
 
   // ── Status tag ─────────────────────────────────────────────────────────────
@@ -1481,11 +1485,23 @@ function CandidateTimeline({allMembers, challengers, racesData, polyData}) {
   });
 
   function WinGauge({prob, src}) {
+    // Only display if we have a validated, source-attributed probability.
+    // "no % data" shown by parent when prob == null.
     if (prob == null) return null;
     const pct = Math.round(prob*100);
     const col = prob>=0.6 ? "#4ade80" : prob>=0.35 ? "#fbbf24" : "#f87171";
     const r=16, circ=Math.PI*r, dash=Math.min(1,prob)*circ;
     const w=44, h=24;
+    // Source label — must accurately reflect the data origin
+    const srcLabel = src==="polymarket_live" || src==="polymarket_gamma" || src==="polymarket"
+      ? html`<span style=${{fontSize:6,color:"#4ade80",fontFamily:"monospace",lineHeight:1}}>◉ Poly</span>`
+      : src==="predictit_contract"
+      ? html`<span style=${{fontSize:6,color:"#f59e0b",fontFamily:"monospace",lineHeight:1}}>◈ PI</span>`
+      : src==="predictit_party"
+      ? html`<span style=${{fontSize:6,color:"#6b7280",fontFamily:"monospace",lineHeight:1}}>◇ PI~</span>`
+      : src==="metaculus"
+      ? html`<span style=${{fontSize:6,color:"#a78bfa",fontFamily:"monospace",lineHeight:1}}>△ Meta</span>`
+      : null;
     return html`
       <div style=${{display:"flex",flexDirection:"column",alignItems:"center",gap:1,width:44}}>
         <svg width=${w} height=${h} viewBox=${"0 0 "+w+" "+h}>
@@ -1497,7 +1513,7 @@ function CandidateTimeline({allMembers, challengers, racesData, polyData}) {
           <text x=${w/2} y=${h-5} text-anchor="middle" font-size="8"
             font-family="monospace" fill=${col} font-weight="700">${pct}%</text>
         </svg>
-        ${src==="polymarket" ? html`<span style=${{fontSize:6,color:"#4ade80",fontFamily:"monospace",lineHeight:1}}>◉ live</span>` : null}
+        ${srcLabel}
       </div>`;
   }
 
@@ -1521,7 +1537,7 @@ function CandidateTimeline({allMembers, challengers, racesData, polyData}) {
           background: exp?"#0a0c10":"transparent",
         }}>
           <${WinGauge} prob=${c.win_prob} src=${c.win_prob_src}/>
-          ${c.win_prob == null ? html`<div style=${{width:44,flexShrink:0,textAlign:"center",fontSize:6,color:"#1e2230",fontFamily:"monospace"}}>–</div>` : null}
+          ${c.win_prob == null ? html`<div style=${{width:44,flexShrink:0,textAlign:"center",fontSize:7,color:"#374151",fontFamily:"monospace",lineHeight:1.2}}>no %<br/>data</div>` : null}
 
           <div style=${{flex:"0 0 148px",minWidth:0}}>
             <div style=${{fontSize:10,fontWeight:700,color:"#f0ebe0",fontFamily:"monospace",
@@ -1560,7 +1576,7 @@ function CandidateTimeline({allMembers, challengers, racesData, polyData}) {
   }
 
   const wonCount  = allCands.filter(c => c.primary_result==="WON"||c.ps==="GENERAL").length;
-  const liveCount = allCands.filter(c => c.win_prob_src==="polymarket").length;
+  const liveCount = allCands.filter(c => c.win_prob != null && c.win_prob_src).length;
 
   return html`
     <div style=${{width:"100%",maxWidth:610}}>
@@ -1604,7 +1620,7 @@ function CandidateTimeline({allMembers, challengers, racesData, polyData}) {
       </div>
 
       <div style=${{marginTop:6,fontSize:7,color:"#374151",fontFamily:"monospace",lineHeight:1.7}}>
-        ◉ Polymarket live odds where available · TrackAIPAC = Citizens Against AIPAC Corruption endorsees · RLC = Republican Liberty Caucus endorsees
+        ◉ Poly = Polymarket live · ◈ PI = PredictIt direct · ◇ PI~ = PredictIt party proxy · △ Meta = Metaculus crowd forecast · no % data = no validated market found · TrackAIPAC/RLC = endorsing orgs
       </div>
     </div>`;
 }
