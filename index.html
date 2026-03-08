@@ -162,39 +162,55 @@ function computeHemicycle(allMembers, chamber, cx, cy) {
   }
   total = rowCounts.reduce((s,v) => s+v, 0);
 
-  // ── Anti-bloc allocation per row (proportional with rounding correction) ─
-  const antiPerRow = rowCounts.map(c => Math.round(antiCount * c / total));
-  let antiDiff = antiCount - antiPerRow.reduce((s,n) => s+n, 0);
-  for (let i = antiPerRow.length-1; i >= 0 && antiDiff !== 0; i--) {
-    if (antiDiff > 0 && antiPerRow[i] < rowCounts[i]) { antiPerRow[i]++; antiDiff--; }
-    else if (antiDiff < 0 && antiPerRow[i] > 0)        { antiPerRow[i]--; antiDiff++; }
+  // ── Per-row allocation: [antiD | restD | restR | antiR] ─────────────────
+  // Anti-establishment members sit at the OUTER EDGE of their own party's side:
+  // Anti-D far left, regular D inner-left, regular R inner-right, Anti-R far right.
+  // Each group gets seats proportional to its share of total, with a correction
+  // loop so each group sums to exactly its real count.
+  const nAntiD = antiD.length, nAntiR = antiR.length;
+  const nRestD = restD.length + restOther.length, nRestR = restR.length;
+
+  function allocGroup(groupSize, rowCount, rowTotal) {
+    return Math.round(groupSize * rowCount / rowTotal);
+  }
+  function correctionPass(perRow, target) {
+    let diff = target - perRow.reduce((s,v) => s+v, 0);
+    for (let i = perRow.length-1; i >= 0 && diff !== 0; i--) {
+      if (diff > 0) { perRow[i]++; diff--; }
+      else if (perRow[i] > 0) { perRow[i]--; diff++; }
+    }
   }
 
-  let antiDq = [...antiD], antiRq = [...antiR];
-  let restDq  = [...restD, ...restOther], restRq = [...restR];
+  const antiDPerRow = rowCounts.map(c => allocGroup(nAntiD, c, total));
+  const restDPerRow = rowCounts.map(c => allocGroup(nRestD, c, total));
+  const restRPerRow = rowCounts.map(c => allocGroup(nRestR, c, total));
+  const antiRPerRow = rowCounts.map(c => allocGroup(nAntiR, c, total));
+  correctionPass(antiDPerRow, nAntiD);
+  correctionPass(restDPerRow, nRestD);
+  correctionPass(restRPerRow, nRestR);
+  correctionPass(antiRPerRow, nAntiR);
+
+  let antiDq = [...antiD], restDq = [...restD, ...restOther];
+  let restRq = [...restR],  antiRq = [...antiR];
 
   const result = [];
   for (let ri = 0; ri < nRows; ri++) {
-    const count  = rowCounts[ri];
-    const r      = radii[ri];
-    const aN     = antiPerRow[ri];
-    // Center the anti bloc: equal D seats left, R seats right
-    const leftN  = Math.floor((count - aN) / 2);
-    const rightN = count - aN - leftN;
+    const count = rowCounts[ri];
+    const r     = radii[ri];
 
+    // Build row left→right: antiD | restD | restR | antiR
     const row = [];
-    for (let s = 0; s < leftN; s++)
-      row.push(restDq.length  ? restDq.shift()  : filler);
-    for (let s = 0; s < aN; s++) {
-      // antiD-first within bloc (D side of center)
-      if (antiDq.length && s < Math.ceil(aN * antiD.length / (antiCount || 1)))
-        row.push(antiDq.shift());
-      else if (antiRq.length) row.push(antiRq.shift());
-      else if (antiDq.length) row.push(antiDq.shift());
-      else                    row.push(filler);
-    }
-    for (let s = 0; s < rightN; s++)
-      row.push(restRq.length  ? restRq.shift()  : filler);
+    const aDn = antiDPerRow[ri], rDn = restDPerRow[ri];
+    const rRn = restRPerRow[ri], aRn = antiRPerRow[ri];
+
+    // If row total doesn't match due to rounding, pad/trim restD (largest group)
+    const rowSum = aDn + rDn + rRn + aRn;
+    const pad    = count - rowSum;  // usually 0, occasionally ±1
+
+    for (let s = 0; s < aDn; s++)        row.push(antiDq.length  ? antiDq.shift()  : filler);
+    for (let s = 0; s < rDn + pad; s++)  row.push(restDq.length  ? restDq.shift()  : filler);
+    for (let s = 0; s < rRn; s++)        row.push(restRq.length  ? restRq.shift()  : filler);
+    for (let s = 0; s < aRn; s++)        row.push(antiRq.length  ? antiRq.shift()  : filler);
 
     // Seat positions: equal angular spacing across the semicircle
     for (let s = 0; s < count; s++) {
@@ -1796,10 +1812,10 @@ function App() {
               <line x1=${cx} y1=${cy} x2=${cx} y2=${cy-(chamber==="senate"?164:228)-20} stroke="#1e2230" stroke-width="1" stroke-dasharray="3,3"/>
               <rect x=${cx-10} y=${cy-(chamber==="senate"?164:228)-29} width="20" height="11" rx="3" fill="#0e1016" stroke="#1e2230" stroke-width="0.5"/>
               <text x=${cx} y=${cy-(chamber==="senate"?164:228)-23} font-size="6" font-family="monospace" fill="#4b5563" text-anchor="middle" dominant-baseline="middle">${chamber==="senate"?"51":"218"}</text>
-              <text x=${cx-100} y="11" fill="#991b1b" font-size="7" font-family="monospace" text-anchor="middle" opacity=".5">R</text>
-              <text x=${cx-40}  y="11" fill="#e879f9" font-size="6" font-family="monospace" text-anchor="middle" opacity=".8">Anti-R</text>
-              <text x=${cx+40}  y="11" fill="#818cf8" font-size="6" font-family="monospace" text-anchor="middle" opacity=".8">Anti-D</text>
-              <text x=${cx+100} y="11" fill="#1e40af" font-size="7" font-family="monospace" text-anchor="middle" opacity=".5">D</text>
+              <text x=${cx-100} y="11" fill="#818cf8" font-size="6" font-family="monospace" text-anchor="middle" opacity=".8">Anti-D</text>
+              <text x=${cx-45}  y="11" fill="#1e40af" font-size="7" font-family="monospace" text-anchor="middle" opacity=".5">D</text>
+              <text x=${cx+45}  y="11" fill="#991b1b" font-size="7" font-family="monospace" text-anchor="middle" opacity=".5">R</text>
+              <text x=${cx+100} y="11" fill="#e879f9" font-size="6" font-family="monospace" text-anchor="middle" opacity=".8">Anti-R</text>
               <ellipse cx=${cx} cy=${cy+6} rx="18" ry="6" fill="#0f1117"/>
               <rect x=${cx-3} y=${cy-7} width="6" height="13" fill="#0f1117" rx="2"/>
             </svg>
