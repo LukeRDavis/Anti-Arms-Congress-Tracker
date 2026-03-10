@@ -261,7 +261,7 @@ function ProgressBars({chamber, members, allMembers, challengers, racesData, pol
   const current = members.filter(m => m.antiArms).length;
   const ch = chamber;
 
-  const races = (racesData && racesData.length > 0) ? racesData : KEY_RACES_2026;
+  const races = racesData || [];
 
   const trials = [];
 
@@ -335,7 +335,7 @@ function ProgressBars({chamber, members, allMembers, challengers, racesData, pol
         </span>
         ${challCount>0 ? html`
           <span style=${{color:"#4b5563"}}>+</span>
-          <span style=${{color:"#a78bfa"}}>${challCount} challengers</span>` : null}
+          <span style=${{color:"#a78bfa"}}>${challCount} candidates</span>` : null}
         <span style=${{color:"#4b5563"}}>·</span>
         <span style=${{color:"#374151"}}>Expected Nov 2026:
           <span style=${{color:"#a5b4fc",fontWeight:600}}> μ=${mu.toFixed(1)}</span>
@@ -437,12 +437,32 @@ function BillsPanel({bills}) {
         ${pro.map((b,i)=>html`<${BillRow} key=${i} b=${b}/>`)}`:null}
     </div>`;
 }
-function MemberBox({title, color, members, challengers, fecData, polyData, onSelect}) {
+function MemberBox({title, color, members, challengers, racesData, fecData, polyData, onSelect}) {
   const [tab, setTab] = useState("members");
 
   const active   = members.filter(m => !["RETIRED","RESIGNED","DEFEATED","RETIRING","FLIPPED"].includes(m.ps));
   const departed = members.filter(m => ["RETIRED","RESIGNED","DEFEATED","FLIPPED","RETIRING"].includes(m.ps));
 
+  // Build a combined candidates list: anti-establishment incumbents (with odds)
+  // + all non-incumbent candidates (challengers from TrackAIPAC/RLC/races_2026)
+  const DEPARTED = ["RETIRED","RESIGNED","DEFEATED","RETIRING","FLIPPED"];
+  const incumbentCands = active.map(m => {
+    const race = (racesData||[]).find(r => r.name === m.name);
+    const pm   = polyData[m.name];
+    return {
+      ...m,
+      ps:          m.ps || "INCUMBENT",
+      primaryDate: race?.primary_date || "",
+      win_prob:    pm?.prob != null ? pm.prob : (race?.win_prob ?? null),
+      win_prob_src: pm ? (pm.src||"polymarket") : (race?.win_prob_src||""),
+      source:      "incumbent",
+      opponent:    race?.primary_opponent || race?.general_opponent || "",
+    };
+  });
+  const candidates = [
+    ...incumbentCands,
+    ...challengers,
+  ];
   const groups = {
     RECOUNT:  challengers.filter(c=>c.ps==="RECOUNT"),
     PENDING:  challengers.filter(c=>c.ps==="RESULTS_PENDING"),
@@ -463,7 +483,15 @@ function MemberBox({title, color, members, challengers, fecData, polyData, onSel
         onMouseLeave=${e=>{e.currentTarget.style.background="transparent";}}>
         <div style=${{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:4,marginBottom:2}}>
           <span style=${{fontSize:11,color:"#e8e4dc",fontWeight:600,lineHeight:1.2,flex:1}}>${m.name}</span>
-          <${StatusBadge} ps=${m.ps||"INCUMBENT"} prob=${poly?.prob}/>
+          <div style=${{display:"flex",gap:4,alignItems:"center",flexShrink:0}}>
+            ${poly && poly.prob != null ? html`<span style=${{fontSize:9,fontFamily:FM,fontWeight:700,
+              padding:"1px 6px",borderRadius:4,
+              background:(poly.prob>=0.65?"#4ade8018":poly.prob>=0.35?"#fbbf2418":"#f8717118"),
+              color:(poly.prob>=0.65?"#4ade80":poly.prob>=0.35?"#fbbf24":"#f87171"),
+              border:"1px solid "+(poly.prob>=0.65?"#4ade8040":poly.prob>=0.35?"#fbbf2440":"#f8717140")
+            }}>${Math.round(poly.prob*100)}%</span>` : null}
+            <${StatusBadge} ps=${m.ps||"INCUMBENT"} prob=${poly?.prob}/>
+          </div>
         </div>
         <div style=${{display:"flex",gap:5,flexWrap:"wrap",marginBottom:2}}>
           <span style=${_SB}>${loc}${isChallenger&&m.primaryDate?" · "+m.primaryDate:""}</span>
@@ -492,11 +520,11 @@ function MemberBox({title, color, members, challengers, fecData, polyData, onSel
       <div style=${{background:"linear-gradient(135deg,"+color+"16,"+color+"05)",borderBottom:"1px solid "+color+"22",padding:"9px 11px"}}>
         <div style=${{fontSize:9,fontWeight:700,letterSpacing:"0.14em",textTransform:"uppercase",color,fontFamily:FM}}>${title}</div>
         <div style=${_SM}>
-          ${active.length} active · ${departed.length} departed · ${challengers.length} challengers
+          ${active.length} active · ${departed.length} departed · ${candidates.length} candidates
         </div>
       </div>
       <div style=${{display:"flex",borderBottom:"1px solid #0e1016"}}>
-        ${[["members","Members"],["challengers","Challengers"]].map(([k,l])=>html`
+        ${[["members","Members"],["candidates","Candidates"]].map(([k,l])=>html`
           <button key=${k} onClick=${()=>setTab(k)} style=${{
             flex:1,padding:"5px",border:"none",cursor:"pointer",fontFamily:FM,fontSize:9,
             background:tab===k?"#161920":"transparent",color:tab===k?color:"#374151",
@@ -510,13 +538,19 @@ function MemberBox({title, color, members, challengers, fecData, polyData, onSel
           <${Section} items=${active}/>
           <${Section} label="Departed" items=${departed}/>
         `:html`
-          ${challengers.length===0?html`<div style=${{padding:16,fontSize:10,color:"#374151",textAlign:"center"}}>No challengers tracked.</div>`:null}
-          <${Section} label="Recount"        items=${groups.RECOUNT}   isChallenger/>
-          <${Section} label="Results Pending" items=${groups.PENDING}  isChallenger/>
-          <${Section} label="Runoff"         items=${groups.RUNOFF}    isChallenger/>
-          <${Section} label="Won Primary"    items=${groups.WON}       isChallenger/>
-          <${Section} label="Upcoming"       items=${groups.UPCOMING}  isChallenger/>
-          <${Section} label="Defeated"       items=${groups.DEFEATED}  isChallenger/>
+          ${candidates.length===0?html`<div style=${{padding:16,fontSize:10,color:"#374151",textAlign:"center"}}>No candidates tracked.</div>`:null}
+          ${incumbentCands.length>0?html`
+            <div style=${{padding:"3px 9px",background:"#090b0e",fontSize:8,color:"#4b5563",fontFamily:FM,letterSpacing:"0.1em",textTransform:"uppercase"}}>
+              ◈ Incumbents Running · Reelection Odds
+            </div>
+            ${incumbentCands.map((m,i)=>html`<${Row} key=${i} m=${m} isChallenger=${false}/>`)}
+          `:null}
+          <${Section} label="Recount"        items=${groups.RECOUNT}   isChallenger=${true}/>
+          <${Section} label="Results Pending" items=${groups.PENDING}  isChallenger=${true}/>
+          <${Section} label="Runoff"         items=${groups.RUNOFF}    isChallenger=${true}/>
+          <${Section} label="Won Primary"    items=${groups.WON}       isChallenger=${true}/>
+          <${Section} label="Upcoming"       items=${groups.UPCOMING}  isChallenger=${true}/>
+          <${Section} label="Defeated"       items=${groups.DEFEATED}  isChallenger=${true}/>
         `}
       </div>
     </div>`;
@@ -797,6 +831,7 @@ function useData() {
   const [fetchedAt,    setFetchedAt] = useState(null);
   const [status,       setStatus]    = useState("Loading…");
   const [loaded,       setLoaded]    = useState(false);
+  const [congressHistory, setCongressHistory] = useState({});
 
   const GAMMA = "https://gamma-api.polymarket.com";
   const CLOB  = "https://clob.polymarket.com";
@@ -1081,40 +1116,7 @@ function useData() {
               lobby_total: m.lobby_total || 0, pacs: m.pacs || [], note: m.note || "",
             }));
         }
-        const KNOWN_ANTI_INTERVENTION = {
-          "Thomas Massie":    {reason:"Co-sponsored HR 3565"},
-          "Warren Davidson":  {reason:"Voted No on HR 8034 (Israel aid supplemental, Apr 2024)"},
-          "Andy Biggs":       {reason:"Voted No on HR 8034 and HR 8035 (Israel/Ukraine aid, Ap"},
-          "Scott Perry":      {reason:"Voted No on HR 8034 (Israel aid supplemental, Apr 2024)"},
-          "Paul Gosar":       {reason:"Voted No on HR 8034 (Israel aid supplemental, Apr 2024)"},
-          "Chip Roy":         {reason:"Voted No on HR 8034 (Israel aid supplemental, Apr 2024)"},
-          "Thomas Tiffany":   {reason:"Voted No on HR 8034 (Israel aid supplemental, Apr 2024)"},
-          "Rand Paul":        {reason:"Led Senate holds on Israel arms sales"},
-          "Lauren Boebert":   {reason:"Voted No on HR 8034; positions have shifted"},
-          "Barry Moore":      {reason:"Voted No on some Israel aid provisions"},
-          "Eli Crane":        {reason:"No on HR 8034; RLC Liberty Index 97/100"},
-          "Bob Good":         {reason:"RLC Liberty Index 92/100"},
-          "Andrew Ogles":     {reason:"RLC Liberty Index 95/100"},
-          "Anna Paulina Luna":{reason:"RLC Liberty Index 94/100"},
-          "Mike Lee":         {reason:"RLC Liberty Index 88/100"},
-          "Ro Khanna":        {reason:"Co-sponsored HR 3565"},
-          "Lloyd Doggett":    {reason:"Co-sponsored HR 3565 Block the Bombs Act"},
-          "Jim McGovern":     {reason:"Co-sponsored HR 3565 Block the Bombs Act"},
-          "Jan Schakowsky":   {reason:"Co-sponsored HR 3565 Block the Bombs Act"},
-          "Maxine Waters":    {reason:"Co-sponsored HR 3565 Block the Bombs Act"},
-          "Ed Markey":        {reason:"Co-sponsored Senate JRD on Israel FMS"},
-          "Bernie Sanders":   {reason:"Forced Senate vote on JRD on Israel FMS (2024)"},
-        };
-        memberList = memberList.map(m => {
-          const ka = KNOWN_ANTI_INTERVENTION[m.name];
-          return ka ? {...m, antiArms:true, note:m.note||ka.reason} : m;
-        });
-        const REMOVE_FROM_ANTI = new Set([
-          "Elizabeth Warren","Brian Schatz","Chris Van Hollen","Peter Welch",
-        ]);
-        memberList = memberList.map(m =>
-          REMOVE_FROM_ANTI.has(m.name) ? {...m, antiArms:false} : m
-        );
+        // antiArms set by fetch_data.py pipeline (TrackAIPAC + RLC + clerk votes). No frontend overrides.
         memberList = memberList.map(m => ({
           ...m,
           note: (m.note||"").replace(/[-–—]?\s*classified soft\.?/gi,"").trim(),
@@ -1122,6 +1124,9 @@ function useData() {
 
         setMembers(memberList);
         setBills(d.bills || []);
+        if (d.congress_history && Object.keys(d.congress_history).length > 0) {
+          setCongressHistory(d.congress_history);
+        }
 
         const taEndorsed  = (d.trackaipac_endorsed || []).map(c => ({
           ...c, ps: c.ps || "UPCOMING", chamber: c.chamber || "house",
@@ -1219,7 +1224,7 @@ function useData() {
 
   const descriptions = (typeof window !== "undefined" && window._appData && window._appData.descriptions) || {};
   return {
-    allMembers, bills, challengers, history, races, fecData,
+    allMembers, bills, challengers, history, races, congressHistory, fecData,
     polyData:    mergedPoly,
     polyLive,
     polyUpdated: polyUpdated,
@@ -1229,105 +1234,9 @@ function useData() {
   };
 }
 
-const CONGRESS_HISTORY = [
-  {congress:"115th", years:"2017-19", D:0, R:2,
-   note:"Pre-Gaza. Only anti-interventionist libertarian-R: Massie (House) + Rand Paul (Senate)."},
-  {congress:"116th", years:"2019-21", D:4, R:2,
-   note:"The Squad enters — Tlaib, Omar, AOC, Pressley join opposing arms and foreign entanglement."},
-  {congress:"117th", years:"2021-23", D:9, R:3,
-   note:"Block the Bombs Act (HR 3565) introduced. Markey + Sanders force Senate JRD vote."},
-  {congress:"118th", years:"2023-25", D:14, R:7,
-   note:"Post-Oct 7. HR 8034 vote. Peak anti-intervention organising; Bowman and Bush unseated."},
-  {congress:"119th", years:"2025-27", isLive:true,
-   note:"Current Congress. Live TrackAIPAC + RLC Liberty Index tracking."},
-  {congress:"120th", years:"2027-29", isProjected:true,
-   note:"Projected — expected value from win probabilities of key 2026 races."},
-];
+// congress_history loaded dynamically from data.json
 
-const KEY_RACES_2026 = [
-  {
-    name:"Thomas Massie", party:"R", state:"KY-04", chamber:"house",
-    raceType:"PRIMARY RISK", raceColor:"#f59e0b",
-    electionLabel:"Primary — May 19, 2026",
-    opponent:"Ed Gallrein (R, Trump-endorsed)",
-    status:"Trump endorsed Gallrein Oct 2025.",
-    winProb:0.60, probNote:"Cook: Solid R general if primary won",
-    impact:"-1 Anti-R if lost", impactDir:-1, departing:false,
-  },
-  {
-    name:"Brandon Herrera", party:"R", state:"TX-23", chamber:"house",
-    raceType:"CHALLENGER", raceColor:"#4ade80",
-    electionLabel:"Primary — May 2026",
-    opponent:"Tony Gonzales (R, incumbent)",
-    status:"2A YouTuber (3.4M subs).",
-    winProb:0.38, probNote:"Rematch — closed gap 2024",
-    impact:"+1 Anti-R House if wins", impactDir:1, departing:false,
-  },
-  {
-    name:"James Talarico", party:"D", state:"TX-Senate", chamber:"senate",
-    raceType:"CHALLENGER", raceColor:"#4ade80",
-    electionLabel:"General — Nov 3, 2026",
-    opponent:"Cornyn or Paxton (R runoff May 26)",
-    status:"Won Democratic primary Mar 3, 2026 (53% vs Crockett 46%).",
-    winProb:0.14, probNote:"Texas: Trump +13 in 2024",
-    impact:"+1 Anti-D Senate if wins", impactDir:1, departing:false,
-    justWonPrimary:true,
-  },
-  {
-    name:"Chip Roy", party:"R", state:"TX-21", chamber:"house",
-    raceType:"DEPARTING", raceColor:"#9ca3af",
-    electionLabel:"Running for TX Attorney General",
-    opponent:"Mayes Middleton (R) — TX AG primary",
-    status:"Left House to run for Texas AG.",
-    winProb:0.42, probNote:"TX-21 House: -1 Anti-R regardless",
-    impact:"-1 Anti-R regardless", impactDir:-1, departing:true,
-  },
-  {
-    name:"Summer Lee", party:"D", state:"PA-12", chamber:"house",
-    raceType:"AIPAC TARGET", raceColor:"#f87171",
-    electionLabel:"Primary — May 2026",
-    opponent:"TBD — AIPAC testing challengers",
-    status:"Introduced bill to ban AIPAC-style super PACs.",
-    winProb:0.76, probNote:"Survived AIPAC challenge before",
-    impact:"+1 Anti-D retained", impactDir:1, departing:false,
-  },
-  {
-    name:"Rashida Tlaib", party:"D", state:"MI-12", chamber:"house",
-    raceType:"AIPAC TARGET", raceColor:"#f87171",
-    electionLabel:"Primary — Aug 2026",
-    opponent:"TBD — no major challenger yet",
-    status:"Only Palestinian-American in Congress.",
-    winProb:0.84, probNote:"Ran unopposed in 2024 primary",
-    impact:"+1 Anti-D retained", impactDir:1, departing:false,
-  },
-  {
-    name:"Ilhan Omar", party:"D", state:"MN-05", chamber:"house",
-    raceType:"AIPAC TARGET", raceColor:"#f87171",
-    electionLabel:"Primary — Aug 2026",
-    opponent:"Don Samuels (D, expected rematch)",
-    status:"Beat Samuels by wide margin in 2024.",
-    winProb:0.80, probNote:"Widened margin in 2024",
-    impact:"+1 Anti-D retained", impactDir:1, departing:false,
-  },
-  {
-    name:"Andy Biggs", party:"R", state:"AZ-05", chamber:"house",
-    raceType:"SAFE SEAT", raceColor:"#6b7280",
-    electionLabel:"Primary — Aug 2026",
-    opponent:"No Trump challenge expected",
-    status:"RLC Liberty Index 102/100.",
-    winProb:0.88, probNote:"Cook Political: Solid R",
-    impact:"+1 Anti-R retained", impactDir:1, departing:false,
-  },
-  {
-    name:"Rand Paul", party:"R", state:"KY-Senate", chamber:"senate",
-    raceType:"NOT UP 2026", raceColor:"#6b7280",
-    electionLabel:"Up for reelection: 2028",
-    opponent:"No 2026 race",
-    status:"Term ends Jan 2029. Not on 2026 ballot. Currently the lone Anti-R anti-intervention Senator. Camp…",
-    winProb:null, probNote:"Safe — 2028 race",
-    impact:"Stays in 120th Congress", impactDir:0, departing:false,
-  },
-];
+// KEY_RACES_2026 removed — race data comes from data.json races_2026
 
 function CandidateTimeline({allMembers, challengers, racesData, polyData, descriptions}) {
   descriptions = (descriptions && typeof descriptions === 'object') ? descriptions : {};
@@ -1399,6 +1308,33 @@ function CandidateTimeline({allMembers, challengers, racesData, polyData, descri
       win_prob: null, win_prob_src: "",
       note: c.note||"",
       source: c.source === "rlc_endorsed" ? "rlc" : "trackaipac",
+    });
+  });
+
+  // Add anti-establishment INCUMBENTS who are actively running
+  (allMembers||[]).filter(m =>
+    m.antiArms &&
+    !["RETIRED","RESIGNED","DEFEATED","RETIRING","FLIPPED"].includes(m.ps)
+  ).forEach(m => {
+    const race = (racesData||[]).find(r => r.name === m.name);
+    addCand({
+      name:             m.name,
+      party:            m.party || "?",
+      state:            m.state || "",
+      district:         m.district,
+      chamber:          m.chamber || "house",
+      primary_date:     race?.primary_date || "",
+      general_date:     race?.general_date || "2026-11-03",
+      primary_result:   race?.primary_result || "",
+      primary_pct:      race?.primary_pct || null,
+      primary_opponent: race?.primary_opponent || "",
+      general_opponent: race?.general_opponent || "",
+      win_prob:         race?.win_prob ?? null,
+      win_prob_src:     race?.win_prob_src || "",
+      cook_rating:      race?.cook_rating || "",
+      note:             race?.note || m.note || "",
+      source:           "incumbent",
+      ps:               m.ps,
     });
   });
 
@@ -1531,7 +1467,7 @@ function CandidateTimeline({allMembers, challengers, racesData, polyData, descri
       : c.state+(c.chamber==="senate"?" Senate":"");
     const won = c.primary_result==="WON" || c.ps==="GENERAL";
     const opp = won ? c.general_opponent : c.primary_opponent;
-    const srcLabel = c.source==="rlc" ? "RLC" : c.source==="tracked" ? "Tracked" : "TrackAIPAC";
+    const srcLabel = c.source==="rlc" ? "RLC" : c.source==="tracked" ? "Tracked" : c.source==="incumbent" ? "Incumbent" : "TrackAIPAC";
 
     return html`
       <div style=${{borderBottom:"1px solid #0d1018"}}>
@@ -1640,7 +1576,7 @@ function App() {
   const [showAnti, setShowAnti] = useState(false);
   const [showTimeline, setShowTimeline] = useState(false);
 
-  const {allMembers, bills, challengers, history, races, fecData, polyData, polyLive, polyUpdated, polyLoading, fetchedAt, status, loaded, descriptions} = useData();
+  const {allMembers, bills, challengers, history, races, congressHistory, fecData, polyData, polyLive, polyUpdated, polyLoading, fetchedAt, status, loaded, descriptions} = useData();
 
   useEffect(() => {
     const p = new URLSearchParams(window.location.search);
@@ -1767,7 +1703,7 @@ function App() {
       <div class="three-col" style=${{display:"flex",gap:10,alignItems:"flex-start",flexWrap:"wrap",justifyContent:"center",width:"100%",maxWidth:1080}}>
 
         <${MemberBox} title="Anti-Intervention Republicans" color="#a855f7"
-          members=${sideR} challengers=${challR}
+          members=${sideR} challengers=${challR} racesData=${races}
           fecData=${fecData} polyData=${polyData}
           onSelect=${m=>setSelected(m.name===selected?null:m.name)}/>
 
@@ -1848,7 +1784,7 @@ function App() {
         </div>
 
         <${MemberBox} title="Anti-Intervention Democrats" color="#7c3aed"
-          members=${sideD} challengers=${challD}
+          members=${sideD} challengers=${challD} racesData=${races}
           fecData=${fecData} polyData=${polyData}
           onSelect=${m=>setSelected(m.name===selected?null:m.name)}/>
 
