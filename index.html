@@ -94,6 +94,49 @@ const MARKET_DISQUALIFY = [
 ];
 const FM = "monospace";
 
+// Central odds validation — call instead of raw polyData[name] everywhere.
+// races is optional; pass it when available for election-year gating.
+function getValidatedPoly(member, polyData, races) {
+  if (!member || !polyData) return null;
+  const pd = polyData[member.name];
+  if (!pd || pd.prob == null) return null;
+  const q   = (pd.question || "").toLowerCase();
+  const src = pd.src || "";
+
+  // 1. Disqualified market topics
+  if (MARKET_DISQUALIFY.some(b => q.includes(b))) return null;
+
+  // 2. Wrong election year (past or future cycle)
+  if (/20(2[0-4]|2[7-9]|3\d)/.test(q)) return null;
+
+  // 3. Last name must appear as a WHOLE WORD in the question
+  //    (substring check caused "Roy" to match "Royce", etc.)
+  //    Skip this check for predictit_contract whose questions are market-level
+  //    (shared across multiple candidates — no individual name in text).
+  if (src !== "predictit_contract") {
+    const last = member.name.split(" ").pop().toLowerCase();
+    if (last.length > 1) {
+      const wordRe = new RegExp("(?:^|[^a-z])" + last + "(?:[^a-z]|$)");
+      if (!wordRe.test(q)) return null;
+    }
+  }
+
+  // 4. Departed / not-running members — suppress odds entirely
+  if (["RETIRING", "RESIGNED", "RETIRED", "FLIPPED"].includes(member.ps)) return null;
+
+  // 5. Not on this cycle's ballot: race entry exists but has no election dates
+  //    (e.g. Rand Paul — Senate class 3, up 2028, not 2026)
+  //    Hide until Jan 1 of the year their actual race begins.
+  if (races) {
+    const race = races.find(r => r.name === member.name);
+    if (race && !race.primary_date && !race.general_date && src !== "grok_estimate") {
+      return null;
+    }
+  }
+
+  return pd;
+}
+
 function dotColor(m) {
   if (m.antiArms) {
     if (m.party === "R") return "#e879f9";  // fuchsia — R anti-intervention
@@ -267,7 +310,7 @@ function ProgressBars({chamber, members, allMembers, challengers, racesData, pol
 
   members.filter(m => m.antiArms).forEach(m => {
     const race   = races.find(r => r.name === m.name && r.chamber === ch);
-    const pm     = polyData && polyData[m.name];
+    const pm     = getValidatedPoly(m, polyData, races);
     let p;
     if (pm && pm.prob != null)              p = pm.prob;
     else if (race && race.win_prob != null) p = race.win_prob;
@@ -286,7 +329,7 @@ function ProgressBars({chamber, members, allMembers, challengers, racesData, pol
     const key = (r.name||"").toLowerCase();
     if (challSeen.has(key)) return;
     challSeen.add(key);
-    const pm = polyData && polyData[r.name];
+    const pm = getValidatedPoly(r, polyData, races);
     const ps = r.ps || r.status || "";
     if (["LOST","WITHDREW","DEFEATED","FAILED_PRIMARY"].includes(ps)) return;
     const p = pm && pm.prob != null ? pm.prob
@@ -448,7 +491,7 @@ function MemberBox({title, color, members, challengers, racesData, fecData, poly
   const DEPARTED = ["RETIRED","RESIGNED","DEFEATED","RETIRING","FLIPPED"];
   const incumbentCands = active.map(m => {
     const race = (racesData||[]).find(r => r.name === m.name);
-    const pm   = polyData[m.name];
+    const pm   = getValidatedPoly(m, polyData, racesData);
     return {
       ...m,
       ps:          m.ps || "INCUMBENT",
@@ -474,7 +517,7 @@ function MemberBox({title, color, members, challengers, racesData, fecData, poly
 
   const Row = ({m, isChallenger}) => {
     const fec  = fecData[m.name];
-    const poly = polyData[m.name];
+    const poly = getValidatedPoly(m, polyData, racesData);
     const loc  = m.state+(m.district!=null?"-"+m.district:m.chamber==="senate"?" · S":"");
     return html`
       <div onClick=${()=>onSelect&&onSelect(m)}
@@ -555,7 +598,7 @@ function MemberBox({title, color, members, challengers, racesData, fecData, poly
       </div>
     </div>`;
 }
-function DetailPanel({member, fecData, polyData, bills, chamber}) {
+function DetailPanel({member, fecData, polyData, bills, chamber, races}) {
   if (!member||member._filler) return html`
     <div style=${{color:"#1f2937",fontSize:11,textAlign:"center",paddingTop:20}}>
       <div style=${{fontSize:16,marginBottom:4,opacity:.2}}>○</div>
@@ -563,16 +606,7 @@ function DetailPanel({member, fecData, polyData, bills, chamber}) {
     </div>`;
 
   const fec    = fecData[member.name];
-  const poly   = (() => {
-    const pd = polyData[member.name];
-    if (!pd || pd.prob == null) return null;
-    const q = (pd.question || "").toLowerCase();
-    if (MARKET_DISQUALIFY.some(b => q.includes(b))) return null;
-    if (/20(2[0-4]|2[7-9]|3\d)/.test(q)) return null;
-    const last = member.name.split(" ").pop().toLowerCase();
-    if (last.length > 3 && !q.includes(last)) return null;
-    return pd;
-  })();
+  const poly   = getValidatedPoly(member, polyData, races);
   const color  = dotColor(member);
   const mBills = (member.bills||[]).map(id=>bills.find(b=>b.id===id)).filter(Boolean);
   const votes  = member.votes||[];
@@ -858,6 +892,58 @@ function useData() {
     return {yes, no};
   }
 
+  async function refreshPredictIt(basePolyData) {
+    // PredictIt has a public REST API — no auth, no token needed.
+    // Group entries by market ID, then fetch each market once.
+    const piEntries = Object.entries(basePolyData).filter(
+      ([,pd]) => pd.src === "predictit_contract" && pd.url && pd.url.includes("/markets/detail/")
+    );
+    if (!piEntries.length) return {};
+
+    const markets = {};
+    for (const [name, pd] of piEntries) {
+      const m = pd.url.match(/\/markets\/detail\/(\d+)\//);
+      if (!m) continue;
+      if (!markets[m[1]]) markets[m[1]] = [];
+      markets[m[1]].push({name, pd});
+    }
+
+    const fresh = {};
+    for (const [marketId, entries] of Object.entries(markets)) {
+      try {
+        const r = await fetch("https://www.predictit.org/api/marketdata/markets/" + marketId);
+        if (!r.ok) continue;
+        const data = await r.json();
+        const contracts = data.Contracts || [];
+        for (const {name, pd} of entries) {
+          // question format from fetch_data.py: "Market question? → Candidate Name"
+          const arrow = (pd.question || "").split("→").pop().trim().toLowerCase();
+          const last  = name.split(" ").pop().toLowerCase();
+          const first = name.split(" ")[0].toLowerCase();
+          const contract = contracts.find(c => {
+            const cn = (c.Name || c.ShortName || "").toLowerCase();
+            return arrow ? cn.includes(arrow.split(" ").pop()) :
+                           (cn.includes(last) || cn.includes(first));
+          }) || (contracts.length === 1 ? contracts[0] : null);
+          if (!contract) continue;
+          // BestYesPrice = current market best ask; LastTradePrice = last trade
+          const price = parseFloat(contract.BestYesPrice ?? contract.LastTradePrice ?? "");
+          if (isNaN(price) || price < 0 || price > 1) continue;
+          fresh[name] = {
+            ...pd,
+            prob:       price,
+            src:        "predictit_contract",
+            fetched_at: new Date().toISOString(),
+          };
+        }
+      } catch {}
+      await new Promise(r => setTimeout(r, 200));
+    }
+    if (Object.keys(fresh).length > 0)
+      console.log("PredictIt refresh: " + Object.keys(fresh).length + "/" + piEntries.length + " updated");
+    return fresh;
+  }
+
   async function batchRefreshCLOB(basePolyData) {
     const tokenMap = {};  // token_id → candidate name
     for (const [name, pd] of Object.entries(basePolyData)) {
@@ -1067,12 +1153,15 @@ function useData() {
   async function refreshPoly(memberList, racesList, basePolyData) {
     setPolyLoad(true);
     try {
-      const batchFresh = await batchRefreshCLOB(basePolyData);
+      const [batchFresh, piFresh] = await Promise.all([
+        batchRefreshCLOB(basePolyData),
+        refreshPredictIt(basePolyData),
+      ]);
 
-      const merged = {...basePolyData, ...batchFresh};
+      const merged = {...basePolyData, ...batchFresh, ...piFresh};
       const newFresh = await searchGammaForNew(memberList, racesList, merged);
 
-      const allFresh = {...batchFresh, ...newFresh};
+      const allFresh = {...batchFresh, ...piFresh, ...newFresh};
       if (Object.keys(allFresh).length > 0) {
         setPolyLive(prev => ({...prev, ...allFresh}));
         setPolyUpd(new Date().toISOString());
@@ -1205,13 +1294,16 @@ function useData() {
 
   useEffect(() => {
     if (allMembers.length === 0) return;
-    const id = setInterval(() => {
-      batchRefreshCLOB(polyBase).then(fresh => {
-        if (Object.keys(fresh).length > 0) {
-          setPolyLive(prev => ({...prev, ...fresh}));
-          setPolyUpd(new Date().toISOString());
-        }
-      });
+    const id = setInterval(async () => {
+      const [bFresh, pFresh] = await Promise.all([
+        batchRefreshCLOB(polyBase),
+        refreshPredictIt(polyBase),
+      ]);
+      const combined = {...bFresh, ...pFresh};
+      if (Object.keys(combined).length > 0) {
+        setPolyLive(prev => ({...prev, ...combined}));
+        setPolyUpd(new Date().toISOString());
+      }
     }, 5 * 60 * 1000);
     return () => clearInterval(id);
   }, [allMembers.length, polyBase]);
@@ -1339,7 +1431,7 @@ function CandidateTimeline({allMembers, challengers, racesData, polyData, descri
   });
 
   allCands.forEach(c => {
-    const pd = polyData && (polyData[c.name] || polyData[normName(c.name)]);
+    const pd = getValidatedPoly(c, polyData);
     if (pd && pd.prob != null) {
       c.win_prob     = pd.prob;
       c.win_prob_src = pd.src || "polymarket";
@@ -1721,7 +1813,7 @@ function App() {
                 const isSel  = selected === pos.name;
                 const isHov  = hovered  === pos.name;
                 const color  = dotColor(pos);
-                const poly   = polyData[pos.name];
+                const poly   = getValidatedPoly(pos, polyData, races);
                 const atRisk = poly && poly.prob < 0.65 && pos.antiArms;
                 const r      = isHov ? dotR+1.5 : dotR;
                 return html`<g key=${i}>
@@ -1759,7 +1851,7 @@ function App() {
 
           <!-- Detail panel -->
           <div style=${{width:"100%",maxWidth:610,background:"#0f1117",border:"1px solid #1a1d27",borderRadius:11,padding:"10px 13px",minHeight:70}}>
-            <${DetailPanel} member=${selMember} fecData=${fecData} polyData=${polyData} bills=${bills} chamber=${chamber}/>
+            <${DetailPanel} member=${selMember} fecData=${fecData} polyData=${polyData} bills=${bills} chamber=${chamber} races=${races}/>
           </div>
 
           <!-- Progress bars -->
