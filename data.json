@@ -1,12 +1,12 @@
 {
   "meta": {
-    "fetched_at": "2026-03-12T20:47:29.285697+00:00",
-    "trackaipac_scraped": "2026-03-12T20:47:29.285711+00:00",
+    "fetched_at": "2026-03-13T02:47:19.697121+00:00",
+    "trackaipac_scraped": "2026-03-13T02:47:19.697137+00:00",
     "member_count": 532,
     "anti_intervention_count": 38,
     "bill_count": 0,
     "challenger_count": 82,
-    "history_events": 314,
+    "history_events": 352,
     "grok_enriched": 0,
     "odds_covered": 19,
     "version": 8,
@@ -10670,7 +10670,8 @@
       "ps": "INCUMBENT",
       "bills": [],
       "votes": [],
-      "note": "Forced Senate floor vote on Joint Resolution of Disapproval on Israel FMS (2024)"
+      "note": "Forced Senate floor vote on Joint Resolution of Disapproval on Israel FMS (2024)",
+      "description": "Search \u2318K Suggest Article Sign in Sign in Early Life and Education Childhood and Family Background Youth Activism and Influences College Years and Early Ideological Formation Early Political Involvement Liberty Union Party Campaigns Professional Roles and Vermont Relocation Initial Electoral Challenges Mayoral Tenure in Burlington (1981-1989) Election Victories and Style Policy Initiatives and Local Impacts Criticisms and Administrative Disputes U.S."
     },
     {
       "bioguide_id": "",
@@ -11650,7 +11651,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-03-12T20:45:00.998207+00:00"
+      "fetched_at": "2026-03-13T02:44:50.950835+00:00"
     },
     "Rand Paul": {
       "prob": 0.003,
@@ -11663,7 +11664,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-03-12T20:45:08.320129+00:00"
+      "fetched_at": "2026-03-13T02:44:57.552778+00:00"
     },
     "Rashida Tlaib": {
       "prob": 0.999,
@@ -11676,7 +11677,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-03-12T20:45:12.467616+00:00"
+      "fetched_at": "2026-03-13T02:45:01.708029+00:00"
     },
     "Ilhan Omar": {
       "prob": 0.014,
@@ -11689,7 +11690,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-03-12T20:45:13.042214+00:00"
+      "fetched_at": "2026-03-13T02:45:02.242481+00:00"
     },
     "Alexandria Ocasio-Cortez": {
       "prob": 0.999,
@@ -11702,7 +11703,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-03-12T20:45:15.115066+00:00"
+      "fetched_at": "2026-03-13T02:45:04.511648+00:00"
     },
     "Chip Roy": {
       "prob": 0.01,
@@ -11715,7 +11716,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-03-12T20:45:18.529447+00:00"
+      "fetched_at": "2026-03-13T02:45:08.012184+00:00"
     },
     "Bernie Sanders": {
       "prob": 0.999,
@@ -11728,91 +11729,91 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-03-12T20:45:20.594217+00:00"
+      "fetched_at": "2026-03-13T02:45:09.902894+00:00"
     },
     "Abdul el-Sayed": {
-      "prob": 0.2,
+      "prob": 0.19,
       "src": "predictit_contract",
       "question": "Who will win the 2026 Michigan Democratic Senate nomination? \u2192 Abdul El-Sayed",
       "url": "https://www.predictit.org/markets/detail/8167/Who-will-win-the-2026-Michigan-Democratic-Senate-nomination",
-      "fetched_at": "2026-03-12T20:45:26.110385+00:00"
+      "fetched_at": "2026-03-13T02:45:16.468505+00:00"
     },
     "Ed Markey": {
       "prob": 0.75,
       "src": "predictit_contract",
       "question": "Who will win the 2026 Massachusetts Democratic Senate nomination? \u2192 Ed Markey",
       "url": "https://www.predictit.org/markets/detail/8359/Who-will-win-the-2026-Massachusetts-Democratic-Senate-nomination",
-      "fetched_at": "2026-03-12T20:45:26.181011+00:00"
+      "fetched_at": "2026-03-13T02:45:16.539310+00:00"
     },
     "Ayanna Pressley": {
       "prob": 0.01,
       "src": "predictit_contract",
       "question": "Who will win the 2026 Massachusetts Democratic Senate nomination? \u2192 Ayanna Pressley",
       "url": "https://www.predictit.org/markets/detail/8359/Who-will-win-the-2026-Massachusetts-Democratic-Senate-nomination",
-      "fetched_at": "2026-03-12T20:45:26.181083+00:00"
+      "fetched_at": "2026-03-13T02:45:16.539362+00:00"
     },
     "Jack Schlossberg": {
-      "prob": 0.26,
+      "prob": 0.24,
       "src": "predictit_contract",
       "question": "Who will win the Democratic nomination in the NY-12 House primary? \u2192 Jack Schlossberg",
       "url": "https://www.predictit.org/markets/detail/8364/Who-will-win-the-Democratic-nomination-in-the-NY-12-House-primary",
-      "fetched_at": "2026-03-12T20:45:26.186534+00:00"
+      "fetched_at": "2026-03-13T02:45:16.544852+00:00"
     },
     "Robert Peters": {
       "prob": 0.57,
       "src": "predictit_contract",
       "question": "Who will win the Democratic nomination in the IL-02 House primary? \u2192 Robert Peters",
       "url": "https://www.predictit.org/markets/detail/8434/Who-will-win-the-Democratic-nomination-in-the-IL-02-House-primary",
-      "fetched_at": "2026-03-12T20:45:26.243056+00:00"
+      "fetched_at": "2026-03-13T02:45:16.601821+00:00"
     },
     "Joey Ruzevich": {
       "prob": 0.29,
       "src": "predictit_contract",
       "question": "Who will win the Democratic nomination in the IL-06 House primary? \u2192 Joey Ruzevich",
       "url": "https://www.predictit.org/markets/detail/8435/Who-will-win-the-Democratic-nomination-in-the-IL-06-House-primary",
-      "fetched_at": "2026-03-12T20:45:26.244797+00:00"
+      "fetched_at": "2026-03-13T02:45:16.603560+00:00"
     },
     "Junaid Ahmed": {
-      "prob": 0.39,
+      "prob": 0.38,
       "src": "predictit_contract",
       "question": "Who will win the Democratic nomination in the IL-08 House primary? \u2192 Junaid Ahmed",
       "url": "https://www.predictit.org/markets/detail/8437/Who-will-win-the-Democratic-nomination-in-the-IL-08-House-primary",
-      "fetched_at": "2026-03-12T20:45:26.249599+00:00"
+      "fetched_at": "2026-03-13T02:45:16.608400+00:00"
     },
     "Daniel Biss": {
       "prob": 0.74,
       "src": "predictit_contract",
       "question": "Who will win the Democratic nomination in the IL-09 House primary? \u2192 Daniel Biss",
       "url": "https://www.predictit.org/markets/detail/8438/Who-will-win-the-Democratic-nomination-in-the-IL-09-House-primary",
-      "fetched_at": "2026-03-12T20:45:26.252079+00:00"
+      "fetched_at": "2026-03-13T02:45:16.610938+00:00"
     },
     "Kat Abughazaleh": {
       "prob": 0.33,
       "src": "predictit_contract",
       "question": "Who will win the Democratic nomination in the IL-09 House primary? \u2192 Kat Abughazaleh",
       "url": "https://www.predictit.org/markets/detail/8438/Who-will-win-the-Democratic-nomination-in-the-IL-09-House-primary",
-      "fetched_at": "2026-03-12T20:45:26.252119+00:00"
+      "fetched_at": "2026-03-13T02:45:16.610982+00:00"
     },
     "Thomas Massie": {
-      "prob": 0.84,
+      "prob": 0.72,
       "src": "predictit_contract",
       "question": "Who will win the Republican nomination in the KY-04 House primary? \u2192 Thomas Massie",
       "url": "https://www.predictit.org/markets/detail/8487/Who-will-win-the-Republican-nomination-in-the-KY-04-House-primary",
-      "fetched_at": "2026-03-12T20:45:26.294401+00:00"
+      "fetched_at": "2026-03-13T02:45:16.653694+00:00"
     },
     "Congressman Thomas Massie": {
-      "prob": 0.84,
+      "prob": 0.72,
       "src": "predictit_contract",
       "question": "Who will win the Republican nomination in the KY-04 House primary? \u2192 Thomas Massie",
       "url": "https://www.predictit.org/markets/detail/8487/Who-will-win-the-Republican-nomination-in-the-KY-04-House-primary",
-      "fetched_at": "2026-03-12T20:45:26.294958+00:00"
+      "fetched_at": "2026-03-13T02:45:16.654250+00:00"
     },
     "Claire Valdez": {
       "prob": 0.82,
       "src": "predictit_contract",
       "question": "Who will win the Democratic nomination in the NY-07 House primary? \u2192 Claire Valdez",
       "url": "https://www.predictit.org/markets/detail/8534/Who-will-win-the-Democratic-nomination-in-the-NY-07-House-primary",
-      "fetched_at": "2026-03-12T20:45:26.331942+00:00"
+      "fetched_at": "2026-03-13T02:45:16.691457+00:00"
     }
   },
   "trackaipac_congress": {
@@ -21491,7 +21492,7 @@
       "general_date": "2026-11-03",
       "general_opponent": "TBD (D)",
       "cook_rating": "Solid Republican (general)",
-      "win_prob": 0.84,
+      "win_prob": 0.72,
       "impact_if_wins": "Retains 1 hard-R anti-intervention vote (most consistent in Congress)",
       "impact_if_loses": "-1 hard-R (Gallrein would vote pro-arms with Trump)",
       "note": "Trump endorsed Gallrein Oct 2025. Massie claims +17 lead in own internal polling. Rand Paul campaigning with him. Cook: Solid R general. Primary May 19.",
@@ -22769,6 +22770,13 @@
       "_source": "grokipedia",
       "person_slug": "Scott_Perry",
       "race_slug": "2026_Pennsylvanias_10th_congressional_district_election"
+    },
+    "Bernie Sanders|VT|senate": {
+      "description": "Search \u2318K Suggest Article Sign in Sign in Early Life and Education Childhood and Family Background Youth Activism and Influences College Years and Early Ideological Formation Early Political Involvement Liberty Union Party Campaigns Professional Roles and Vermont Relocation Initial Electoral Challenges Mayoral Tenure in Burlington (1981-1989) Election Victories and Style Policy Initiatives and Local Impacts Criticisms and Administrative Disputes U.S.",
+      "fetched_at": "2026-03-13T02:44:32.054972+00:00",
+      "_source": "grokipedia",
+      "person_slug": "Bernie_Sanders",
+      "race_slug": "2026_United_States_Senate_election_in_Vermont"
     }
   },
   "descriptions": {
@@ -22801,6 +22809,7 @@
     "Pramila Jayapal": "Search \u2318K Suggest Article Sign in Sign in Early life and education Immigration from India and family background Academic and early professional experiences Advocacy and nonprofit career Founding of OneAmerica and immigrant rights work Other activism and organizational roles State legislative career Election to Washington State Senate Key bills sponsored and legislative record U.S.",
     "Mark Pocan": "Search \u2318K Suggest Article Sign in Sign in Background Early life and education Early career and business ventures Wisconsin State Assembly Service Elections and campaigns Legislative tenure Key committee roles and assignments U.S.",
     "James Talarico": "Search \u2318K Suggest Article Sign in Sign in Early life and education Family background and childhood Academic and early professional influences Pre-political career Teaching in public schools Seminarian training and religious studies Political career 2018 election to Texas House Re-elections and legislative tenure (2019\u20132025) Committee roles and bill sponsorships Political positions Education and school funding Religion, faith, and opposition to Christian nationalism Immigration, guns, and other p.",
-    "Thomas Massie": "Search \u2318K Suggest Article Sign in Sign in Early Life and Education Upbringing in Kentucky Academic Achievements at MIT Pre-Congressional Career Entrepreneurial Ventures and Inventions Service as Lewis County Judge Executive U.S."
+    "Thomas Massie": "Search \u2318K Suggest Article Sign in Sign in Early Life and Education Upbringing in Kentucky Academic Achievements at MIT Pre-Congressional Career Entrepreneurial Ventures and Inventions Service as Lewis County Judge Executive U.S.",
+    "Bernie Sanders": "Search \u2318K Suggest Article Sign in Sign in Early Life and Education Childhood and Family Background Youth Activism and Influences College Years and Early Ideological Formation Early Political Involvement Liberty Union Party Campaigns Professional Roles and Vermont Relocation Initial Electoral Challenges Mayoral Tenure in Burlington (1981-1989) Election Victories and Style Policy Initiatives and Local Impacts Criticisms and Administrative Disputes U.S."
   }
 }
