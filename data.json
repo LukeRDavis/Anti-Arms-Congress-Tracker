@@ -1,7 +1,7 @@
 {
   "meta": {
-    "fetched_at": "2026-07-27T14:55:57.965707+00:00",
-    "trackaipac_scraped": "2026-07-27T14:55:57.965725+00:00",
+    "fetched_at": "2026-07-27T17:54:18.613678+00:00",
+    "trackaipac_scraped": "2026-07-27T17:54:18.613696+00:00",
     "member_count": 531,
     "anti_intervention_count": 39,
     "bill_count": 0,
@@ -5465,7 +5465,7 @@
       "antiArms": false,
       "antiArmsLevel": null,
       "rlc_score": null,
-      "lobby_total": 25019077,
+      "lobby_total": 30417674,
       "pacs": [
         "AIPAC",
         "AUSD",
@@ -5925,7 +5925,7 @@
       "antiArms": false,
       "antiArmsLevel": null,
       "rlc_score": null,
-      "lobby_total": 15548267,
+      "lobby_total": 16466692,
       "pacs": [
         "AIPAC",
         "DMFI",
@@ -11564,24 +11564,9 @@
   "vote_records": {},
   "fec": {
     "Alexandria Ocasio-Cortez": {
-      "raised": 15299235.57,
-      "spent": 16716492.89,
-      "cash": 3734646.88,
       "cid": "H8NY15148",
       "ie_against": 104404.0,
       "ie_support": 0
-    },
-    "Elizabeth Warren": {
-      "raised": 9039537.78,
-      "spent": 7914065.93,
-      "cash": 3450046.67,
-      "cid": "S2MA00170"
-    },
-    "Jeff Merkley": {
-      "raised": 1508836.04,
-      "spent": 1480339.6,
-      "cash": 4266998.65,
-      "cid": "S8OR00207"
     }
   },
   "poly": {
@@ -11596,7 +11581,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-07-27T14:52:26.295662+00:00"
+      "fetched_at": "2026-07-27T17:50:42.501248+00:00"
     },
     "Rand Paul": {
       "prob": 0.003,
@@ -11609,7 +11594,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-07-27T14:52:34.626619+00:00"
+      "fetched_at": "2026-07-27T17:50:52.272267+00:00"
     },
     "Rashida Tlaib": {
       "prob": 0.999,
@@ -11622,7 +11607,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-07-27T14:52:39.257682+00:00"
+      "fetched_at": "2026-07-27T17:50:57.755510+00:00"
     },
     "Ilhan Omar": {
       "prob": 0.014,
@@ -11635,7 +11620,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-07-27T14:52:39.872508+00:00"
+      "fetched_at": "2026-07-27T17:50:58.382212+00:00"
     },
     "Alexandria Ocasio-Cortez": {
       "prob": 0.999,
@@ -11648,7 +11633,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-07-27T14:52:43.003517+00:00"
+      "fetched_at": "2026-07-27T17:51:01.832664+00:00"
     },
     "Chip Roy": {
       "prob": 0.01,
@@ -11661,7 +11646,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-07-27T14:52:47.056123+00:00"
+      "fetched_at": "2026-07-27T17:51:06.241373+00:00"
     },
     "Bernie Sanders": {
       "prob": 0.999,
@@ -11674,35 +11659,35 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-07-27T14:52:49.394875+00:00"
+      "fetched_at": "2026-07-27T17:51:08.950260+00:00"
     },
     "Abdul el-Sayed": {
-      "prob": 0.63,
+      "prob": 0.64,
       "src": "predictit_contract",
       "question": "Who will win the 2026 Michigan Democratic Senate nomination? \u2192 Abdul El-Sayed",
       "url": "https://www.predictit.org/markets/detail/8167/Who-will-win-the-2026-Michigan-Democratic-Senate-nomination",
-      "fetched_at": "2026-07-27T14:52:55.953050+00:00"
+      "fetched_at": "2026-07-27T17:51:16.542688+00:00"
     },
     "Ed Markey": {
       "prob": 0.81,
       "src": "predictit_contract",
       "question": "Who will win the 2026 Massachusetts Democratic Senate nomination? \u2192 Ed Markey",
       "url": "https://www.predictit.org/markets/detail/8359/Who-will-win-the-2026-Massachusetts-Democratic-Senate-nomination",
-      "fetched_at": "2026-07-27T14:52:56.020074+00:00"
+      "fetched_at": "2026-07-27T17:51:16.593380+00:00"
     },
     "Ayanna Pressley": {
       "prob": 0.01,
       "src": "predictit_contract",
       "question": "Who will win the 2026 Massachusetts Democratic Senate nomination? \u2192 Ayanna Pressley",
       "url": "https://www.predictit.org/markets/detail/8359/Who-will-win-the-2026-Massachusetts-Democratic-Senate-nomination",
-      "fetched_at": "2026-07-27T14:52:56.020126+00:00"
+      "fetched_at": "2026-07-27T17:51:16.593426+00:00"
     },
     "Jack Schlossberg": {
       "prob": 0.99,
       "src": "predictit_contract",
       "question": "Will Jack Schlossberg get over 10% of the vote in the NY-12 Dem primary? \u2192 Will Jack Schlossberg get over 10% of the vote in the NY-12 Dem primary?",
       "url": "https://www.predictit.org/markets/detail/8542/Will-Jack-Schlossberg-get-over-10-of-the-vote-in-the-NY-12-Dem-primary",
-      "fetched_at": "2026-07-27T14:52:56.118597+00:00"
+      "fetched_at": "2026-07-27T17:51:16.668420+00:00"
     }
   },
   "trackaipac_congress": {
@@ -15644,7 +15629,7 @@
       "party": "D",
       "chamber": "house",
       "approved": false,
-      "lobby_total": 25019077,
+      "lobby_total": 30417674,
       "pacs": [
         "AIPAC",
         "AUSD",
@@ -15976,7 +15961,7 @@
       "party": "?",
       "chamber": "house",
       "approved": false,
-      "lobby_total": 15548267,
+      "lobby_total": 16466692,
       "pacs": [
         "AIPAC",
         "DMFI",
