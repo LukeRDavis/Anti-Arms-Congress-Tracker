@@ -1,7 +1,7 @@
 {
   "meta": {
-    "fetched_at": "2026-08-01T10:09:58.063234+00:00",
-    "trackaipac_scraped": "2026-08-01T10:09:58.063252+00:00",
+    "fetched_at": "2026-08-01T13:47:23.246471+00:00",
+    "trackaipac_scraped": "2026-08-01T13:47:23.246518+00:00",
     "member_count": 531,
     "anti_intervention_count": 39,
     "bill_count": 0,
@@ -11596,7 +11596,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-01T10:06:31.741790+00:00"
+      "fetched_at": "2026-08-01T13:43:57.297181+00:00"
     },
     "Rand Paul": {
       "prob": 0.003,
@@ -11609,7 +11609,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-01T10:06:39.369785+00:00"
+      "fetched_at": "2026-08-01T13:44:04.566832+00:00"
     },
     "Rashida Tlaib": {
       "prob": 0.999,
@@ -11622,7 +11622,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-01T10:06:43.380733+00:00"
+      "fetched_at": "2026-08-01T13:44:08.593990+00:00"
     },
     "Ilhan Omar": {
       "prob": 0.014,
@@ -11635,7 +11635,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-01T10:06:43.900514+00:00"
+      "fetched_at": "2026-08-01T13:44:09.091188+00:00"
     },
     "Alexandria Ocasio-Cortez": {
       "prob": 0.999,
@@ -11648,7 +11648,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-01T10:06:46.489838+00:00"
+      "fetched_at": "2026-08-01T13:44:11.619372+00:00"
     },
     "Chip Roy": {
       "prob": 0.01,
@@ -11661,7 +11661,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-01T10:06:49.816879+00:00"
+      "fetched_at": "2026-08-01T13:44:14.955703+00:00"
     },
     "Bernie Sanders": {
       "prob": 0.999,
@@ -11674,42 +11674,42 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-01T10:06:51.743457+00:00"
+      "fetched_at": "2026-08-01T13:44:16.805762+00:00"
     },
     "Abdul el-Sayed": {
-      "prob": 0.96,
+      "prob": 0.97,
       "src": "predictit_contract",
       "question": "Who will win the 2026 Michigan Democratic Senate nomination? \u2192 Abdul El-Sayed",
       "url": "https://www.predictit.org/markets/detail/8167/Who-will-win-the-2026-Michigan-Democratic-Senate-nomination",
-      "fetched_at": "2026-08-01T10:06:57.206345+00:00"
+      "fetched_at": "2026-08-01T13:44:22.386273+00:00"
     },
     "Ed Markey": {
       "prob": 0.81,
       "src": "predictit_contract",
       "question": "Who will win the 2026 Massachusetts Democratic Senate nomination? \u2192 Ed Markey",
       "url": "https://www.predictit.org/markets/detail/8359/Who-will-win-the-2026-Massachusetts-Democratic-Senate-nomination",
-      "fetched_at": "2026-08-01T10:06:57.270696+00:00"
+      "fetched_at": "2026-08-01T13:44:22.452226+00:00"
     },
     "Ayanna Pressley": {
       "prob": 0.01,
       "src": "predictit_contract",
       "question": "Who will win the 2026 Massachusetts Democratic Senate nomination? \u2192 Ayanna Pressley",
       "url": "https://www.predictit.org/markets/detail/8359/Who-will-win-the-2026-Massachusetts-Democratic-Senate-nomination",
-      "fetched_at": "2026-08-01T10:06:57.270753+00:00"
+      "fetched_at": "2026-08-01T13:44:22.452283+00:00"
     },
     "Jack Schlossberg": {
       "prob": 0.99,
       "src": "predictit_contract",
       "question": "Will Jack Schlossberg get over 10% of the vote in the NY-12 Dem primary? \u2192 Will Jack Schlossberg get over 10% of the vote in the NY-12 Dem primary?",
       "url": "https://www.predictit.org/markets/detail/8542/Will-Jack-Schlossberg-get-over-10-of-the-vote-in-the-NY-12-Dem-primary",
-      "fetched_at": "2026-08-01T10:06:57.366605+00:00"
+      "fetched_at": "2026-08-01T13:44:22.550016+00:00"
     },
     "Everton Blair": {
       "prob": 0.99,
       "src": "predictit_contract",
       "question": "Who will win the 2026 GA-13 special runoff? \u2192 Everton Blair",
       "url": "https://www.predictit.org/markets/detail/8902/Who-will-win-the-2026-GA-13-special-runoff",
-      "fetched_at": "2026-08-01T10:06:57.506162+00:00"
+      "fetched_at": "2026-08-01T13:44:22.692994+00:00"
     }
   },
   "trackaipac_congress": {
