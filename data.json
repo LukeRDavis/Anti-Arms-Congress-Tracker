@@ -1,14 +1,14 @@
 {
   "meta": {
-    "fetched_at": "2026-08-03T15:00:36.972640+00:00",
-    "trackaipac_scraped": "2026-08-03T15:00:36.972656+00:00",
+    "fetched_at": "2026-08-03T18:03:01.052905+00:00",
+    "trackaipac_scraped": "2026-08-03T18:03:01.052926+00:00",
     "member_count": 531,
     "anti_intervention_count": 39,
     "bill_count": 0,
     "challenger_count": 123,
     "history_events": 5862,
     "grok_enriched": 0,
-    "odds_covered": 8,
+    "odds_covered": 12,
     "version": 8,
     "sources": {
       "members": "trackaipac.com + rlc.org Liberty Index",
@@ -11596,7 +11596,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-03T14:57:03.317885+00:00"
+      "fetched_at": "2026-08-03T17:59:35.143208+00:00"
     },
     "Rand Paul": {
       "prob": 0.003,
@@ -11609,49 +11609,107 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-03T14:57:14.572570+00:00"
+      "fetched_at": "2026-08-03T17:59:42.410146+00:00"
     },
     "Rashida Tlaib": {
+      "prob": 0.999,
+      "src": "polymarket_live",
+      "question": "Will Rashida Tlaib win the MI-12 Democratic House Primary?",
+      "condition_id": "0xd269c384f710cde817f4f208d9087f596de60d27524d2ca509e0ef3be7dd6cc3",
+      "token_id": "25491089964121722344719134360803511771456784438578152766540435022759519437633",
+      "no_token_id": "29301355847034909776744569693424408117136664094600142695093229084575572656605",
+      "slug": "",
+      "volume": 0.0,
+      "volume_24h": 0.0,
+      "url": "https://polymarket.com",
+      "fetched_at": "2026-08-03T17:59:46.485120+00:00"
+    },
+    "Ilhan Omar": {
+      "prob": 0.014,
+      "src": "polymarket_live",
+      "question": "Ilhan Omar expelled from Congress before March?",
+      "condition_id": "0xb9562403498631638145e360d4d1e6c0b4d6329409fe9a383909efe9eda9a6a0",
+      "token_id": "52838408921259159549809322779999227630902882249550180925252857926168976828295",
+      "no_token_id": "104923974957155608789575548127385678789551334224239155681423361332958116304284",
+      "slug": "",
+      "volume": 0.0,
+      "volume_24h": 0.0,
+      "url": "https://polymarket.com",
+      "fetched_at": "2026-08-03T17:59:46.979984+00:00"
+    },
+    "Alexandria Ocasio-Cortez": {
+      "prob": 0.999,
+      "src": "polymarket_live",
+      "question": "Will Alexandria Ocasio-Cortez win the NY-14 Democratic House Primary?",
+      "condition_id": "0x9a908da8bad60c32c8aad3cef0d65cd3770519160468ab1502032439fe3aa0ff",
+      "token_id": "74641241111783994342552887105743406230865382168624478156559910340948157055558",
+      "no_token_id": "78607463845919840116035422021664137752992391871644445751889987324841562790598",
+      "slug": "",
+      "volume": 0.0,
+      "volume_24h": 0.0,
+      "url": "https://polymarket.com",
+      "fetched_at": "2026-08-03T17:59:49.564017+00:00"
+    },
+    "Chip Roy": {
       "prob": 0.01,
-      "src": "predictit_contract",
-      "question": "Who will win the 2026 Michigan Democratic Senate nomination? \u2192 Rashida Tlaib",
-      "url": "https://www.predictit.org/markets/detail/8167/Who-will-win-the-2026-Michigan-Democratic-Senate-nomination",
-      "fetched_at": "2026-08-03T14:57:31.296956+00:00"
+      "src": "polymarket_live",
+      "question": "Will Royce Kinniebrew win the MI-12 Democratic House Primary?",
+      "condition_id": "0x65e20e8a7129820960a86c87e956e710829804eb762ed2238e4af300ccd4fd31",
+      "token_id": "38111551012857195743187080267709834801593949458745830546663152982051154103987",
+      "no_token_id": "23759512077253666858125384568898377783804755497925422033114617874899140502127",
+      "slug": "",
+      "volume": 0.0,
+      "volume_24h": 0.0,
+      "url": "https://polymarket.com",
+      "fetched_at": "2026-08-03T17:59:52.862902+00:00"
+    },
+    "Bernie Sanders": {
+      "prob": 0.999,
+      "src": "polymarket_live",
+      "question": "Will Bernie Sanders speak at the DNC?",
+      "condition_id": "0xe05e70ff34019ed5d03f86f3ae83e69f80d902ae1854c2740122688dfa55c543",
+      "token_id": "68049881232457946755999085625755133693113314392750886011680736257188449819058",
+      "no_token_id": "107985871626224673025512950000646003306685877852993252974702047686501469684553",
+      "slug": "",
+      "volume": 0.0,
+      "volume_24h": 0.0,
+      "url": "https://polymarket.com",
+      "fetched_at": "2026-08-03T17:59:54.741207+00:00"
     },
     "Abdul el-Sayed": {
-      "prob": 0.97,
+      "prob": 0.98,
       "src": "predictit_contract",
       "question": "Who will win the 2026 Michigan Democratic Senate nomination? \u2192 Abdul El-Sayed",
       "url": "https://www.predictit.org/markets/detail/8167/Who-will-win-the-2026-Michigan-Democratic-Senate-nomination",
-      "fetched_at": "2026-08-03T14:57:31.298905+00:00"
+      "fetched_at": "2026-08-03T18:00:00.216645+00:00"
     },
     "Ed Markey": {
       "prob": 0.75,
       "src": "predictit_contract",
       "question": "Who will win the 2026 Massachusetts Democratic Senate nomination? \u2192 Ed Markey",
       "url": "https://www.predictit.org/markets/detail/8359/Who-will-win-the-2026-Massachusetts-Democratic-Senate-nomination",
-      "fetched_at": "2026-08-03T14:57:31.366401+00:00"
+      "fetched_at": "2026-08-03T18:00:00.282265+00:00"
     },
     "Ayanna Pressley": {
       "prob": 0.01,
       "src": "predictit_contract",
       "question": "Who will win the 2026 Massachusetts Democratic Senate nomination? \u2192 Ayanna Pressley",
       "url": "https://www.predictit.org/markets/detail/8359/Who-will-win-the-2026-Massachusetts-Democratic-Senate-nomination",
-      "fetched_at": "2026-08-03T14:57:31.366447+00:00"
+      "fetched_at": "2026-08-03T18:00:00.282324+00:00"
     },
     "Jack Schlossberg": {
       "prob": 0.99,
       "src": "predictit_contract",
       "question": "Will Jack Schlossberg get over 10% of the vote in the NY-12 Dem primary? \u2192 Will Jack Schlossberg get over 10% of the vote in the NY-12 Dem primary?",
       "url": "https://www.predictit.org/markets/detail/8542/Will-Jack-Schlossberg-get-over-10-of-the-vote-in-the-NY-12-Dem-primary",
-      "fetched_at": "2026-08-03T14:57:31.466275+00:00"
+      "fetched_at": "2026-08-03T18:00:00.378811+00:00"
     },
     "Everton Blair": {
       "prob": 0.98,
       "src": "predictit_contract",
       "question": "Who will win the 2026 GA-13 special runoff? \u2192 Everton Blair",
       "url": "https://www.predictit.org/markets/detail/8902/Who-will-win-the-2026-GA-13-special-runoff",
-      "fetched_at": "2026-08-03T14:57:31.610902+00:00"
+      "fetched_at": "2026-08-03T18:00:00.518247+00:00"
     }
   },
   "trackaipac_congress": {
@@ -20804,136 +20862,7 @@
     }
   ],
   "rlc_index": {},
-  "rlc_endorsed": [
-    {
-      "name": "Paul Rojas",
-      "state": "",
-      "district": null,
-      "party": "R",
-      "chamber": "house",
-      "antiArms": true,
-      "antiArmsLevel": "yes",
-      "ps": "UPCOMING",
-      "primaryDate": "",
-      "website": "",
-      "source": "rlc_endorsed",
-      "note": "Endorsed by Republican Liberty Caucus for TX CD-21\u201d\" loading=\"lazy\">",
-      "opponent": "",
-      "incumbentParty": ""
-    },
-    {
-      "name": "Congressman Thomas Massie",
-      "state": "KY",
-      "district": 4,
-      "party": "R",
-      "chamber": "house",
-      "antiArms": true,
-      "antiArmsLevel": "yes",
-      "ps": "UPCOMING",
-      "primaryDate": "",
-      "website": "",
-      "source": "rlc_endorsed",
-      "note": "Endorsed by Republican Liberty Caucus for Kentucky\u2019s 4th Congressional District&hellip;",
-      "opponent": "",
-      "incumbentParty": ""
-    },
-    {
-      "name": "Larry Sharpe",
-      "state": "NY",
-      "district": null,
-      "party": "R",
-      "chamber": "house",
-      "antiArms": true,
-      "antiArmsLevel": "yes",
-      "ps": "UPCOMING",
-      "primaryDate": "",
-      "website": "",
-      "source": "rlc_endorsed",
-      "note": "Endorsed by Republican Liberty Caucus for Governor of New York\u201d\" loading=\"lazy\">",
-      "opponent": "",
-      "incumbentParty": ""
-    },
-    {
-      "name": "Alex Mooney",
-      "state": "VA",
-      "district": null,
-      "party": "R",
-      "chamber": "senate",
-      "antiArms": true,
-      "antiArmsLevel": "yes",
-      "ps": "UPCOMING",
-      "primaryDate": "",
-      "website": "",
-      "source": "rlc_endorsed",
-      "note": "Endorsed by Republican Liberty Caucus for U.S. Senate in West Virginia\u201d\" loading=\"lazy\">",
-      "opponent": "",
-      "incumbentParty": ""
-    },
-    {
-      "name": "Andy Biggs",
-      "state": "",
-      "district": null,
-      "party": "R",
-      "chamber": "house",
-      "antiArms": true,
-      "antiArmsLevel": "yes",
-      "ps": "UPCOMING",
-      "primaryDate": "",
-      "website": "",
-      "source": "rlc_endorsed",
-      "note": "Endorsed by Republican Liberty Caucus for House Speaker\">",
-      "opponent": "",
-      "incumbentParty": ""
-    },
-    {
-      "name": "John Mills",
-      "state": "FL",
-      "district": 1,
-      "party": "R",
-      "chamber": "house",
-      "antiArms": true,
-      "antiArmsLevel": "yes",
-      "ps": "UPCOMING",
-      "primaryDate": "",
-      "website": "",
-      "source": "rlc_endorsed",
-      "note": "Endorsed by Republican Liberty Caucus for Florida&#8217;s 1st Congressional District\u201d\" loading=\"lazy\">",
-      "opponent": "",
-      "incumbentParty": ""
-    },
-    {
-      "name": "Willie J Montague",
-      "state": "FL",
-      "district": 10,
-      "party": "R",
-      "chamber": "house",
-      "antiArms": true,
-      "antiArmsLevel": "yes",
-      "ps": "UPCOMING",
-      "primaryDate": "",
-      "website": "",
-      "source": "rlc_endorsed",
-      "note": "Endorsed by Republican Liberty Caucus for Florida&#8217;s 10th Congressional District\u201d\" loading=\"lazy\"",
-      "opponent": "",
-      "incumbentParty": ""
-    },
-    {
-      "name": "Kat Cammack",
-      "state": "FL",
-      "district": 3,
-      "party": "R",
-      "chamber": "house",
-      "antiArms": true,
-      "antiArmsLevel": "yes",
-      "ps": "UPCOMING",
-      "primaryDate": "",
-      "website": "",
-      "source": "rlc_endorsed",
-      "note": "Endorsed by Republican Liberty Caucus for Florida&#8217;s 3rd Congressional District\u201d\" loading=\"lazy\">",
-      "opponent": "",
-      "incumbentParty": ""
-    }
-  ],
+  "rlc_endorsed": [],
   "congress_history": {
     "117": {
       "congress": 117,
@@ -21106,14 +21035,14 @@
       "primary_opponent": "TBD",
       "general_date": "2026-11-03",
       "cook_rating": "Safe Democratic",
-      "win_prob": 0.01,
+      "win_prob": 0.999,
       "impact_if_wins": "+1 soft-D retained",
       "impact_if_loses": "Likely -1 if defeated by AIPAC-backed primary challenger",
       "note": "Won 2024 primary 58% vs AIPAC-backed challenger. May face renewed challenge in 2026.",
       "description": "Search \u2318K Suggest Edit Sign in Sign in Early Life and Education Family Background and Upbringing Academic Pursuits and Early Influences State Political Career Entry into Michigan Legislature Legislative Record and Policy Focus Early Controversies and Public Engagements Congressional Elections 2018 Primary Victory and General Election Re-elections from 2020 to 2024 Congressional Tenure Committee Assignments and Caucus Roles Key Legislative Initiatives and Votes Interactions with Leadership and Pe.",
       "win_prob_src": "polymarket",
-      "forecast_url": "https://www.predictit.org/markets/detail/8167/Who-will-win-the-2026-Michigan-Democratic-Senate-nomination",
-      "polymarket_url": "https://www.predictit.org/markets/detail/8167/Who-will-win-the-2026-Michigan-Democratic-Senate-nomination"
+      "forecast_url": "https://polymarket.com",
+      "polymarket_url": "https://polymarket.com"
     },
     {
       "id": "omar-mn05",
@@ -21129,10 +21058,13 @@
       "primary_date": "2026-08-11",
       "general_date": "2026-11-03",
       "cook_rating": "Safe Democratic",
-      "win_prob": 0.78,
+      "win_prob": 0.014,
       "impact_if_wins": "+1 soft-D retained",
       "note": "Survived close 2024 primary 56%. AIPAC spent heavily against her. May face challenge again.",
-      "description": "Search \u2318K Suggest Edit Sign in Sign in Early Life and Background Childhood in Somalia Immigration to the United States Personal Life Family and Relationships Religious and Cultural Identity Education and Pre-Political Career Formal Education Early Professional Roles State Legislative Career 2016 Election to Minnesota House Legislative Record in Minnesota U.S. Congressional Career 2018 Election to U.S."
+      "description": "Search \u2318K Suggest Edit Sign in Sign in Early Life and Background Childhood in Somalia Immigration to the United States Personal Life Family and Relationships Religious and Cultural Identity Education and Pre-Political Career Formal Education Early Professional Roles State Legislative Career 2016 Election to Minnesota House Legislative Record in Minnesota U.S. Congressional Career 2018 Election to U.S.",
+      "win_prob_src": "polymarket",
+      "forecast_url": "https://polymarket.com",
+      "polymarket_url": "https://polymarket.com"
     },
     {
       "id": "herrera-tx23",
