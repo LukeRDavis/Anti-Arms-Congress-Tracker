@@ -1,7 +1,7 @@
 {
   "meta": {
-    "fetched_at": "2026-08-10T05:42:51.250727+00:00",
-    "trackaipac_scraped": "2026-08-10T05:42:51.250747+00:00",
+    "fetched_at": "2026-08-10T09:44:19.518154+00:00",
+    "trackaipac_scraped": "2026-08-10T09:44:19.518176+00:00",
     "member_count": 531,
     "anti_intervention_count": 39,
     "bill_count": 0,
@@ -11596,7 +11596,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-10T05:39:24.216549+00:00"
+      "fetched_at": "2026-08-10T09:40:52.216944+00:00"
     },
     "Rand Paul": {
       "prob": 0.003,
@@ -11609,7 +11609,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-10T05:39:31.351180+00:00"
+      "fetched_at": "2026-08-10T09:40:59.469229+00:00"
     },
     "Rashida Tlaib": {
       "prob": 0.999,
@@ -11622,7 +11622,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-10T05:39:35.532068+00:00"
+      "fetched_at": "2026-08-10T09:41:03.554942+00:00"
     },
     "Ilhan Omar": {
       "prob": 0.014,
@@ -11635,7 +11635,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-10T05:39:36.049605+00:00"
+      "fetched_at": "2026-08-10T09:41:04.076254+00:00"
     },
     "Alexandria Ocasio-Cortez": {
       "prob": 0.999,
@@ -11648,7 +11648,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-10T05:39:38.559799+00:00"
+      "fetched_at": "2026-08-10T09:41:06.652944+00:00"
     },
     "Chip Roy": {
       "prob": 0.01,
@@ -11661,7 +11661,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-10T05:39:41.794443+00:00"
+      "fetched_at": "2026-08-10T09:41:10.071741+00:00"
     },
     "Bernie Sanders": {
       "prob": 0.999,
@@ -11674,35 +11674,35 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-10T05:39:43.703007+00:00"
+      "fetched_at": "2026-08-10T09:41:12.012666+00:00"
     },
     "Ed Markey": {
       "prob": 0.77,
       "src": "predictit_contract",
       "question": "Who will win the 2026 Massachusetts Democratic Senate nomination? \u2192 Ed Markey",
       "url": "https://www.predictit.org/markets/detail/8359/Who-will-win-the-2026-Massachusetts-Democratic-Senate-nomination",
-      "fetched_at": "2026-08-10T05:39:49.339815+00:00"
+      "fetched_at": "2026-08-10T09:41:17.591364+00:00"
     },
     "Ayanna Pressley": {
       "prob": 0.01,
       "src": "predictit_contract",
       "question": "Who will win the 2026 Massachusetts Democratic Senate nomination? \u2192 Ayanna Pressley",
       "url": "https://www.predictit.org/markets/detail/8359/Who-will-win-the-2026-Massachusetts-Democratic-Senate-nomination",
-      "fetched_at": "2026-08-10T05:39:49.339868+00:00"
+      "fetched_at": "2026-08-10T09:41:17.591436+00:00"
     },
     "Jack Schlossberg": {
       "prob": 0.99,
       "src": "predictit_contract",
       "question": "Will Jack Schlossberg get over 10% of the vote in the NY-12 Dem primary? \u2192 Will Jack Schlossberg get over 10% of the vote in the NY-12 Dem primary?",
       "url": "https://www.predictit.org/markets/detail/8542/Will-Jack-Schlossberg-get-over-10-of-the-vote-in-the-NY-12-Dem-primary",
-      "fetched_at": "2026-08-10T05:39:49.438279+00:00"
+      "fetched_at": "2026-08-10T09:41:17.689402+00:00"
     },
     "Everton Blair": {
       "prob": 0.97,
       "src": "predictit_contract",
       "question": "Who will win the 2026 GA-13 special runoff? \u2192 Everton Blair",
       "url": "https://www.predictit.org/markets/detail/8902/Who-will-win-the-2026-GA-13-special-runoff",
-      "fetched_at": "2026-08-10T05:39:49.560080+00:00"
+      "fetched_at": "2026-08-10T09:41:17.809412+00:00"
     }
   },
   "trackaipac_congress": {
@@ -22006,14 +22006,14 @@
     },
     "Valerie Foushee|NC|house": {
       "description": "Search \u2318K Suggest Edit Sign in Sign in Personal Background Early life and family Education Pre-political career State Legislative Career North Carolina House of Representatives North Carolina Senate Key committees and leadership roles U.S.",
-      "fetched_at": "2026-08-09T08:53:10.915395+00:00",
+      "fetched_at": "2026-08-10T09:40:34.500857+00:00",
       "_source": "grokipedia",
       "person_slug": "Valerie_Foushee",
       "race_slug": "2026_North_Carolinas_4th_congressional_district_election"
     },
     "Brandon Herrera|TX|house": {
       "description": "Search \u2318K Suggest Edit Sign in Sign in Early Life Childhood and Education Initial Firearms Interest YouTube Career Launch of The AK Guy Channel Growth and Milestones Content Creation Firearms Education and Analysis Custom Builds and Innovations Public Persona Humor and Commentary Style Controversies in Media Political Activities 2024 Congressional Campaign 2026 Election Bid Advocacy and Influence Second Amendment Positions Broader Cultural Impact Reception Media Coverage Public and Political Res.",
-      "fetched_at": "2026-08-09T08:53:10.903056+00:00",
+      "fetched_at": "2026-08-10T09:40:34.428182+00:00",
       "_source": "grokipedia",
       "person_slug": "Brandon_Herrera",
       "race_slug": "2026_Texas_23th_congressional_district_election"
