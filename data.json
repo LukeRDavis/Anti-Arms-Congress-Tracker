@@ -1,12 +1,12 @@
 {
   "meta": {
-    "fetched_at": "2026-08-13T20:56:29.890326+00:00",
-    "trackaipac_scraped": "2026-08-13T20:56:29.890342+00:00",
+    "fetched_at": "2026-08-14T02:33:25.029207+00:00",
+    "trackaipac_scraped": "2026-08-14T02:33:25.029223+00:00",
     "member_count": 531,
     "anti_intervention_count": 39,
     "bill_count": 0,
     "challenger_count": 123,
-    "history_events": 6252,
+    "history_events": 6291,
     "grok_enriched": 0,
     "odds_covered": 10,
     "version": 8,
@@ -11596,7 +11596,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-13T20:53:01.430691+00:00"
+      "fetched_at": "2026-08-14T02:29:46.749039+00:00"
     },
     "Rand Paul": {
       "prob": 0.003,
@@ -11609,7 +11609,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-13T20:53:08.761124+00:00"
+      "fetched_at": "2026-08-14T02:29:56.371255+00:00"
     },
     "Rashida Tlaib": {
       "prob": 0.999,
@@ -11622,7 +11622,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-13T20:53:12.872461+00:00"
+      "fetched_at": "2026-08-14T02:30:02.295170+00:00"
     },
     "Ilhan Omar": {
       "prob": 0.014,
@@ -11635,7 +11635,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-13T20:53:13.361312+00:00"
+      "fetched_at": "2026-08-14T02:30:02.954781+00:00"
     },
     "Alexandria Ocasio-Cortez": {
       "prob": 0.999,
@@ -11648,7 +11648,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-13T20:53:15.950397+00:00"
+      "fetched_at": "2026-08-14T02:30:06.684731+00:00"
     },
     "Chip Roy": {
       "prob": 0.01,
@@ -11661,7 +11661,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-13T20:53:19.166059+00:00"
+      "fetched_at": "2026-08-14T02:30:11.446273+00:00"
     },
     "Bernie Sanders": {
       "prob": 0.006,
@@ -11674,28 +11674,28 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-13T20:53:21.028791+00:00"
+      "fetched_at": "2026-08-14T02:30:14.143327+00:00"
     },
     "Ed Markey": {
       "prob": 0.88,
       "src": "predictit_contract",
       "question": "Who will win the 2026 Massachusetts Democratic Senate nomination? \u2192 Ed Markey",
       "url": "https://www.predictit.org/markets/detail/8359/Who-will-win-the-2026-Massachusetts-Democratic-Senate-nomination",
-      "fetched_at": "2026-08-13T20:53:26.732904+00:00"
+      "fetched_at": "2026-08-14T02:30:21.947896+00:00"
     },
     "Ayanna Pressley": {
       "prob": 0.01,
       "src": "predictit_contract",
       "question": "Who will win the 2026 Massachusetts Democratic Senate nomination? \u2192 Ayanna Pressley",
       "url": "https://www.predictit.org/markets/detail/8359/Who-will-win-the-2026-Massachusetts-Democratic-Senate-nomination",
-      "fetched_at": "2026-08-13T20:53:26.732981+00:00"
+      "fetched_at": "2026-08-14T02:30:21.947944+00:00"
     },
     "Everton Blair": {
       "prob": 0.96,
       "src": "predictit_contract",
       "question": "Who will win the 2026 GA-13 special runoff? \u2192 Everton Blair",
       "url": "https://www.predictit.org/markets/detail/8902/Who-will-win-the-2026-GA-13-special-runoff",
-      "fetched_at": "2026-08-13T20:53:26.935431+00:00"
+      "fetched_at": "2026-08-14T02:30:22.110531+00:00"
     }
   },
   "trackaipac_congress": {
@@ -22034,7 +22034,7 @@
     },
     "Rashida Tlaib|MI|house": {
       "description": "Search \u2318K Suggest Edit Sign in Sign in Early Life and Education Family Background and Upbringing Academic Pursuits and Early Influences State Political Career Entry into Michigan Legislature Legislative Record and Policy Focus Early Controversies and Public Engagements Congressional Elections 2018 Primary Victory and General Election Re-elections from 2020 to 2024 Congressional Tenure Committee Assignments and Caucus Roles Key Legislative Initiatives and Votes Interactions with Leadership and Pe.",
-      "fetched_at": "2026-08-12T20:54:12.646641+00:00",
+      "fetched_at": "2026-08-14T02:29:24.961891+00:00",
       "_source": "grokipedia",
       "person_slug": "Rashida_Tlaib",
       "race_slug": "2026_Michigans_12th_congressional_district_election"
