@@ -1,7 +1,7 @@
 {
   "meta": {
-    "fetched_at": "2026-08-15T01:43:47.424336+00:00",
-    "trackaipac_scraped": "2026-08-15T01:43:47.424352+00:00",
+    "fetched_at": "2026-08-15T04:43:08.813349+00:00",
+    "trackaipac_scraped": "2026-08-15T04:43:08.813364+00:00",
     "member_count": 531,
     "anti_intervention_count": 39,
     "bill_count": 0,
@@ -11596,7 +11596,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-15T01:40:19.940520+00:00"
+      "fetched_at": "2026-08-15T04:39:33.224553+00:00"
     },
     "Rand Paul": {
       "prob": 0.003,
@@ -11609,7 +11609,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-15T01:40:26.937710+00:00"
+      "fetched_at": "2026-08-15T04:39:42.585175+00:00"
     },
     "Rashida Tlaib": {
       "prob": 0.999,
@@ -11622,7 +11622,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-15T01:40:30.957429+00:00"
+      "fetched_at": "2026-08-15T04:39:47.483037+00:00"
     },
     "Ilhan Omar": {
       "prob": 0.014,
@@ -11635,7 +11635,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-15T01:40:31.451495+00:00"
+      "fetched_at": "2026-08-15T04:39:48.127583+00:00"
     },
     "Alexandria Ocasio-Cortez": {
       "prob": 0.999,
@@ -11648,7 +11648,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-15T01:40:33.930345+00:00"
+      "fetched_at": "2026-08-15T04:39:51.593517+00:00"
     },
     "Chip Roy": {
       "prob": 0.01,
@@ -11661,7 +11661,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-15T01:40:37.130981+00:00"
+      "fetched_at": "2026-08-15T04:39:55.797155+00:00"
     },
     "Bernie Sanders": {
       "prob": 0.006,
@@ -11674,28 +11674,28 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-15T01:40:39.059834+00:00"
+      "fetched_at": "2026-08-15T04:39:58.317458+00:00"
     },
     "Ed Markey": {
       "prob": 0.89,
       "src": "predictit_contract",
       "question": "Who will win the 2026 Massachusetts Democratic Senate nomination? \u2192 Ed Markey",
       "url": "https://www.predictit.org/markets/detail/8359/Who-will-win-the-2026-Massachusetts-Democratic-Senate-nomination",
-      "fetched_at": "2026-08-15T01:40:44.249859+00:00"
+      "fetched_at": "2026-08-15T04:40:05.723844+00:00"
     },
     "Ayanna Pressley": {
       "prob": 0.01,
       "src": "predictit_contract",
       "question": "Who will win the 2026 Massachusetts Democratic Senate nomination? \u2192 Ayanna Pressley",
       "url": "https://www.predictit.org/markets/detail/8359/Who-will-win-the-2026-Massachusetts-Democratic-Senate-nomination",
-      "fetched_at": "2026-08-15T01:40:44.249924+00:00"
+      "fetched_at": "2026-08-15T04:40:05.723898+00:00"
     },
     "Everton Blair": {
       "prob": 0.96,
       "src": "predictit_contract",
       "question": "Who will win the 2026 GA-13 special runoff? \u2192 Everton Blair",
       "url": "https://www.predictit.org/markets/detail/8902/Who-will-win-the-2026-GA-13-special-runoff",
-      "fetched_at": "2026-08-15T01:40:44.455172+00:00"
+      "fetched_at": "2026-08-15T04:40:05.878006+00:00"
     }
   },
   "trackaipac_congress": {
@@ -22034,7 +22034,7 @@
     },
     "Rashida Tlaib|MI|house": {
       "description": "Search \u2318K Suggest Edit Sign in Sign in Early Life and Education Family Background and Upbringing Academic Pursuits and Early Influences State Political Career Entry into Michigan Legislature Legislative Record and Policy Focus Early Controversies and Public Engagements Congressional Elections 2018 Primary Victory and General Election Re-elections from 2020 to 2024 Congressional Tenure Committee Assignments and Caucus Roles Key Legislative Initiatives and Votes Interactions with Leadership and Pe.",
-      "fetched_at": "2026-08-14T02:29:24.961891+00:00",
+      "fetched_at": "2026-08-15T04:39:12.478784+00:00",
       "_source": "grokipedia",
       "person_slug": "Rashida_Tlaib",
       "race_slug": "2026_Michigans_12th_congressional_district_election"
