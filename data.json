@@ -1,12 +1,12 @@
 {
   "meta": {
-    "fetched_at": "2026-08-16T20:34:16.447517+00:00",
-    "trackaipac_scraped": "2026-08-16T20:34:16.447535+00:00",
+    "fetched_at": "2026-08-17T01:48:27.693129+00:00",
+    "trackaipac_scraped": "2026-08-17T01:48:27.693145+00:00",
     "member_count": 531,
     "anti_intervention_count": 39,
     "bill_count": 0,
     "challenger_count": 123,
-    "history_events": 6369,
+    "history_events": 6408,
     "grok_enriched": 0,
     "odds_covered": 10,
     "version": 8,
@@ -11596,7 +11596,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-16T20:30:46.536800+00:00"
+      "fetched_at": "2026-08-17T01:44:55.848140+00:00"
     },
     "Rand Paul": {
       "prob": 0.003,
@@ -11609,7 +11609,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-16T20:30:53.692320+00:00"
+      "fetched_at": "2026-08-17T01:45:03.755608+00:00"
     },
     "Rashida Tlaib": {
       "prob": 0.999,
@@ -11622,7 +11622,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-16T20:30:57.810695+00:00"
+      "fetched_at": "2026-08-17T01:45:08.442032+00:00"
     },
     "Ilhan Omar": {
       "prob": 0.014,
@@ -11635,7 +11635,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-16T20:30:58.300638+00:00"
+      "fetched_at": "2026-08-17T01:45:09.016540+00:00"
     },
     "Alexandria Ocasio-Cortez": {
       "prob": 0.999,
@@ -11648,7 +11648,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-16T20:31:00.815901+00:00"
+      "fetched_at": "2026-08-17T01:45:12.036065+00:00"
     },
     "Chip Roy": {
       "prob": 0.01,
@@ -11661,7 +11661,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-16T20:31:04.043683+00:00"
+      "fetched_at": "2026-08-17T01:45:15.789462+00:00"
     },
     "Bernie Sanders": {
       "prob": 0.006,
@@ -11674,28 +11674,28 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-16T20:31:05.975492+00:00"
+      "fetched_at": "2026-08-17T01:45:18.259866+00:00"
     },
     "Ed Markey": {
       "prob": 0.89,
       "src": "predictit_contract",
       "question": "Who will win the 2026 Massachusetts Democratic Senate nomination? \u2192 Ed Markey",
       "url": "https://www.predictit.org/markets/detail/8359/Who-will-win-the-2026-Massachusetts-Democratic-Senate-nomination",
-      "fetched_at": "2026-08-16T20:31:13.346779+00:00"
+      "fetched_at": "2026-08-17T01:45:24.584873+00:00"
     },
     "Ayanna Pressley": {
       "prob": 0.01,
       "src": "predictit_contract",
       "question": "Who will win the 2026 Massachusetts Democratic Senate nomination? \u2192 Ayanna Pressley",
       "url": "https://www.predictit.org/markets/detail/8359/Who-will-win-the-2026-Massachusetts-Democratic-Senate-nomination",
-      "fetched_at": "2026-08-16T20:31:13.346843+00:00"
+      "fetched_at": "2026-08-17T01:45:24.584923+00:00"
     },
     "Everton Blair": {
       "prob": 0.96,
       "src": "predictit_contract",
       "question": "Who will win the 2026 GA-13 special runoff? \u2192 Everton Blair",
       "url": "https://www.predictit.org/markets/detail/8902/Who-will-win-the-2026-GA-13-special-runoff",
-      "fetched_at": "2026-08-16T20:31:13.563860+00:00"
+      "fetched_at": "2026-08-17T01:45:24.740212+00:00"
     }
   },
   "trackaipac_congress": {
