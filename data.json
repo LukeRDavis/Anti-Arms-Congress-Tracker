@@ -1,7 +1,7 @@
 {
   "meta": {
-    "fetched_at": "2026-08-17T16:39:12.145538+00:00",
-    "trackaipac_scraped": "2026-08-17T16:39:12.145555+00:00",
+    "fetched_at": "2026-08-17T20:39:17.760304+00:00",
+    "trackaipac_scraped": "2026-08-17T20:39:17.760321+00:00",
     "member_count": 531,
     "anti_intervention_count": 39,
     "bill_count": 0,
@@ -11596,7 +11596,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-17T16:35:43.762215+00:00"
+      "fetched_at": "2026-08-17T20:35:06.929849+00:00"
     },
     "Rand Paul": {
       "prob": 0.003,
@@ -11609,7 +11609,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-17T16:35:50.766041+00:00"
+      "fetched_at": "2026-08-17T20:35:18.396066+00:00"
     },
     "Rashida Tlaib": {
       "prob": 0.999,
@@ -11622,7 +11622,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-17T16:35:54.909772+00:00"
+      "fetched_at": "2026-08-17T20:35:34.676163+00:00"
     },
     "Ilhan Omar": {
       "prob": 0.014,
@@ -11635,7 +11635,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-17T16:35:55.427981+00:00"
+      "fetched_at": "2026-08-17T20:35:35.355555+00:00"
     },
     "Alexandria Ocasio-Cortez": {
       "prob": 0.999,
@@ -11648,7 +11648,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-17T16:35:58.170492+00:00"
+      "fetched_at": "2026-08-17T20:35:40.106444+00:00"
     },
     "Chip Roy": {
       "prob": 0.01,
@@ -11661,7 +11661,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-17T16:36:01.527717+00:00"
+      "fetched_at": "2026-08-17T20:35:46.504936+00:00"
     },
     "Bernie Sanders": {
       "prob": 0.006,
@@ -11674,28 +11674,28 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-17T16:36:03.423166+00:00"
+      "fetched_at": "2026-08-17T20:35:57.920819+00:00"
     },
     "Ed Markey": {
-      "prob": 0.98,
+      "prob": 0.97,
       "src": "predictit_contract",
       "question": "Who will win the 2026 Massachusetts Democratic Senate nomination? \u2192 Ed Markey",
       "url": "https://www.predictit.org/markets/detail/8359/Who-will-win-the-2026-Massachusetts-Democratic-Senate-nomination",
-      "fetched_at": "2026-08-17T16:36:08.962977+00:00"
+      "fetched_at": "2026-08-17T20:36:14.592744+00:00"
     },
     "Ayanna Pressley": {
       "prob": 0.01,
       "src": "predictit_contract",
       "question": "Who will win the 2026 Massachusetts Democratic Senate nomination? \u2192 Ayanna Pressley",
       "url": "https://www.predictit.org/markets/detail/8359/Who-will-win-the-2026-Massachusetts-Democratic-Senate-nomination",
-      "fetched_at": "2026-08-17T16:36:08.963048+00:00"
+      "fetched_at": "2026-08-17T20:36:14.592822+00:00"
     },
     "Everton Blair": {
       "prob": 0.96,
       "src": "predictit_contract",
       "question": "Who will win the 2026 GA-13 special runoff? \u2192 Everton Blair",
       "url": "https://www.predictit.org/markets/detail/8902/Who-will-win-the-2026-GA-13-special-runoff",
-      "fetched_at": "2026-08-17T16:36:09.173479+00:00"
+      "fetched_at": "2026-08-17T20:36:14.790641+00:00"
     }
   },
   "trackaipac_congress": {
@@ -20175,22 +20175,6 @@
       "incumbentParty": ""
     },
     {
-      "name": "Jillian Gilchrest",
-      "state": "CT",
-      "district": 1,
-      "party": "D",
-      "chamber": "house",
-      "antiArms": true,
-      "antiArmsLevel": "yes",
-      "ps": "UPCOMING",
-      "primaryDate": "2026-08-11",
-      "website": "https://voteforjillian.com/",
-      "source": "trackaipac",
-      "note": "Endorsed by Citizens Against AIPAC Corruption.",
-      "opponent": "",
-      "incumbentParty": ""
-    },
-    {
       "name": "Andrew Rice",
       "state": "CT",
       "district": 3,
@@ -20281,6 +20265,22 @@
       "ps": "UPCOMING",
       "primaryDate": "2026-08-18",
       "website": "https://locklinforcongress.com/",
+      "source": "trackaipac",
+      "note": "Endorsed by Citizens Against AIPAC Corruption.",
+      "opponent": "",
+      "incumbentParty": ""
+    },
+    {
+      "name": "Everton Blair",
+      "state": "GA",
+      "district": 13,
+      "party": "D",
+      "chamber": "house",
+      "antiArms": true,
+      "antiArmsLevel": "yes",
+      "ps": "UPCOMING",
+      "primaryDate": "2026-08-25",
+      "website": "https://www.evertonblair.com/",
       "source": "trackaipac",
       "note": "Endorsed by Citizens Against AIPAC Corruption.",
       "opponent": "",
@@ -20566,8 +20566,8 @@
       "chamber": "house",
       "antiArms": true,
       "antiArmsLevel": "yes",
-      "ps": "UPCOMING",
-      "primaryDate": "2026-08-06",
+      "ps": "GENERAL",
+      "primaryDate": "2026-11-03",
       "website": "https://www.votejustinj.com/",
       "source": "trackaipac",
       "note": "Endorsed by Citizens Against AIPAC Corruption.",
@@ -21999,14 +21999,14 @@
     },
     "Valerie Foushee|NC|house": {
       "description": "Search \u2318K Suggest Edit Sign in Sign in Personal Background Early life and family Education Pre-political career State Legislative Career North Carolina House of Representatives North Carolina Senate Key committees and leadership roles U.S.",
-      "fetched_at": "2026-08-16T20:30:28.660283+00:00",
+      "fetched_at": "2026-08-17T20:34:12.227652+00:00",
       "_source": "grokipedia",
       "person_slug": "Valerie_Foushee",
       "race_slug": "2026_North_Carolinas_4th_congressional_district_election"
     },
     "Brandon Herrera|TX|house": {
       "description": "Search \u2318K Suggest Edit Sign in Sign in Early Life Childhood and Education Initial Firearms Interest YouTube Career Launch of The AK Guy Channel Growth and Milestones Content Creation Firearms Education and Analysis Custom Builds and Innovations Public Persona Humor and Commentary Style Controversies in Media Political Activities 2024 Congressional Campaign 2026 Election Bid Advocacy and Influence Second Amendment Positions Broader Cultural Impact Reception Media Coverage Public and Political Res.",
-      "fetched_at": "2026-08-16T20:30:28.578874+00:00",
+      "fetched_at": "2026-08-17T20:34:12.546510+00:00",
       "_source": "grokipedia",
       "person_slug": "Brandon_Herrera",
       "race_slug": "2026_Texas_23th_congressional_district_election"
