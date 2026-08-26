@@ -1,14 +1,14 @@
 {
   "meta": {
-    "fetched_at": "2026-08-26T04:52:15.586441+00:00",
-    "trackaipac_scraped": "2026-08-26T04:52:15.586456+00:00",
+    "fetched_at": "2026-08-26T08:56:54.557880+00:00",
+    "trackaipac_scraped": "2026-08-26T08:56:54.557893+00:00",
     "member_count": 531,
     "anti_intervention_count": 39,
     "bill_count": 0,
     "challenger_count": 124,
     "history_events": 6759,
     "grok_enriched": 0,
-    "odds_covered": 6,
+    "odds_covered": 10,
     "version": 8,
     "sources": {
       "members": "trackaipac.com + rlc.org Liberty Index",
@@ -11596,7 +11596,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-26T04:48:33.333048+00:00"
+      "fetched_at": "2026-08-26T08:53:26.286002+00:00"
     },
     "Rand Paul": {
       "prob": 0.003,
@@ -11609,7 +11609,33 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-26T04:48:41.919385+00:00"
+      "fetched_at": "2026-08-26T08:53:32.933063+00:00"
+    },
+    "Rashida Tlaib": {
+      "prob": 0.999,
+      "src": "polymarket_live",
+      "question": "Will Rashida Tlaib win the MI-12 Democratic House Primary?",
+      "condition_id": "0xd269c384f710cde817f4f208d9087f596de60d27524d2ca509e0ef3be7dd6cc3",
+      "token_id": "25491089964121722344719134360803511771456784438578152766540435022759519437633",
+      "no_token_id": "29301355847034909776744569693424408117136664094600142695093229084575572656605",
+      "slug": "",
+      "volume": 0.0,
+      "volume_24h": 0.0,
+      "url": "https://polymarket.com",
+      "fetched_at": "2026-08-26T08:53:36.841946+00:00"
+    },
+    "Ilhan Omar": {
+      "prob": 0.014,
+      "src": "polymarket_live",
+      "question": "Ilhan Omar expelled from Congress before March?",
+      "condition_id": "0xb9562403498631638145e360d4d1e6c0b4d6329409fe9a383909efe9eda9a6a0",
+      "token_id": "52838408921259159549809322779999227630902882249550180925252857926168976828295",
+      "no_token_id": "104923974957155608789575548127385678789551334224239155681423361332958116304284",
+      "slug": "",
+      "volume": 0.0,
+      "volume_24h": 0.0,
+      "url": "https://polymarket.com",
+      "fetched_at": "2026-08-26T08:53:37.329772+00:00"
     },
     "Alexandria Ocasio-Cortez": {
       "prob": 0.999,
@@ -11622,28 +11648,54 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-26T04:48:52.018257+00:00"
+      "fetched_at": "2026-08-26T08:53:39.952575+00:00"
+    },
+    "Chip Roy": {
+      "prob": 0.01,
+      "src": "polymarket_live",
+      "question": "Will Royce Kinniebrew win the MI-12 Democratic House Primary?",
+      "condition_id": "0x65e20e8a7129820960a86c87e956e710829804eb762ed2238e4af300ccd4fd31",
+      "token_id": "38111551012857195743187080267709834801593949458745830546663152982051154103987",
+      "no_token_id": "23759512077253666858125384568898377783804755497925422033114617874899140502127",
+      "slug": "",
+      "volume": 0.0,
+      "volume_24h": 0.0,
+      "url": "https://polymarket.com",
+      "fetched_at": "2026-08-26T08:53:43.092010+00:00"
+    },
+    "Bernie Sanders": {
+      "prob": 0.006,
+      "src": "polymarket_live",
+      "question": "Bernie Sanders endorses Kamala as Dem Nominee?",
+      "condition_id": "0x6b27bbaf0661dea01868071bdda2e02591095c50ad72cfa2907278020a3f35db",
+      "token_id": "61522653266786580303022070664696879813267451106763316499189853086450239395834",
+      "no_token_id": "16250598624814369960282632529241733600215852865831095877018369829632704058734",
+      "slug": "",
+      "volume": 0.0,
+      "volume_24h": 0.0,
+      "url": "https://polymarket.com",
+      "fetched_at": "2026-08-26T08:53:44.973361+00:00"
     },
     "Ed Markey": {
       "prob": 0.97,
       "src": "predictit_contract",
       "question": "Who will win the 2026 Massachusetts Democratic Senate nomination? \u2192 Ed Markey",
       "url": "https://www.predictit.org/markets/detail/8359/Who-will-win-the-2026-Massachusetts-Democratic-Senate-nomination",
-      "fetched_at": "2026-08-26T04:49:06.392980+00:00"
+      "fetched_at": "2026-08-26T08:53:50.270926+00:00"
     },
     "Ayanna Pressley": {
       "prob": 0.01,
       "src": "predictit_contract",
       "question": "Who will win the 2026 Massachusetts Democratic Senate nomination? \u2192 Ayanna Pressley",
       "url": "https://www.predictit.org/markets/detail/8359/Who-will-win-the-2026-Massachusetts-Democratic-Senate-nomination",
-      "fetched_at": "2026-08-26T04:49:06.393044+00:00"
+      "fetched_at": "2026-08-26T08:53:50.270986+00:00"
     },
     "Everton Blair": {
       "prob": 0.99,
       "src": "predictit_contract",
       "question": "Who will win the 2026 GA-13 special runoff? \u2192 Everton Blair",
       "url": "https://www.predictit.org/markets/detail/8902/Who-will-win-the-2026-GA-13-special-runoff",
-      "fetched_at": "2026-08-26T04:49:06.599568+00:00"
+      "fetched_at": "2026-08-26T08:53:50.418252+00:00"
     }
   },
   "trackaipac_congress": {
@@ -20874,11 +20926,14 @@
       "primary_opponent": "TBD",
       "general_date": "2026-11-03",
       "cook_rating": "Safe Democratic",
-      "win_prob": 0.8,
+      "win_prob": 0.999,
       "impact_if_wins": "+1 soft-D retained",
       "impact_if_loses": "Likely -1 if defeated by AIPAC-backed primary challenger",
       "note": "Won 2024 primary 58% vs AIPAC-backed challenger. May face renewed challenge in 2026.",
-      "description": "Search \u2318K Suggest Edit Sign in Sign in Early Life and Education Family Background and Upbringing Academic Pursuits and Early Influences State Political Career Entry into Michigan Legislature Legislative Record and Policy Focus Early Controversies and Public Engagements Congressional Elections 2018 Primary Victory and General Election Re-elections from 2020 to 2024 Congressional Tenure Committee Assignments and Caucus Roles Key Legislative Initiatives and Votes Interactions with Leadership and Pe."
+      "description": "Search \u2318K Suggest Edit Sign in Sign in Early Life and Education Family Background and Upbringing Academic Pursuits and Early Influences State Political Career Entry into Michigan Legislature Legislative Record and Policy Focus Early Controversies and Public Engagements Congressional Elections 2018 Primary Victory and General Election Re-elections from 2020 to 2024 Congressional Tenure Committee Assignments and Caucus Roles Key Legislative Initiatives and Votes Interactions with Leadership and Pe.",
+      "win_prob_src": "polymarket",
+      "forecast_url": "https://polymarket.com",
+      "polymarket_url": "https://polymarket.com"
     },
     {
       "id": "omar-mn05",
@@ -20894,10 +20949,13 @@
       "primary_date": "2026-08-11",
       "general_date": "2026-11-03",
       "cook_rating": "Safe Democratic",
-      "win_prob": 0.78,
+      "win_prob": 0.014,
       "impact_if_wins": "+1 soft-D retained",
       "note": "Survived close 2024 primary 56%. AIPAC spent heavily against her. May face challenge again.",
-      "description": "Search \u2318K Suggest Edit Sign in Sign in Early Life and Background Childhood in Somalia Immigration to the United States Personal Life Family and Relationships Religious and Cultural Identity Education and Pre-Political Career Formal Education Early Professional Roles State Legislative Career 2016 Election to Minnesota House Legislative Record in Minnesota U.S. Congressional Career 2018 Election to U.S."
+      "description": "Search \u2318K Suggest Edit Sign in Sign in Early Life and Background Childhood in Somalia Immigration to the United States Personal Life Family and Relationships Religious and Cultural Identity Education and Pre-Political Career Formal Education Early Professional Roles State Legislative Career 2016 Election to Minnesota House Legislative Record in Minnesota U.S. Congressional Career 2018 Election to U.S.",
+      "win_prob_src": "polymarket",
+      "forecast_url": "https://polymarket.com",
+      "polymarket_url": "https://polymarket.com"
     },
     {
       "id": "herrera-tx23",
