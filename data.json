@@ -1,11 +1,11 @@
 {
   "meta": {
-    "fetched_at": "2026-08-26T16:56:37.335350+00:00",
-    "trackaipac_scraped": "2026-08-26T16:56:37.335369+00:00",
+    "fetched_at": "2026-08-26T23:19:51.976905+00:00",
+    "trackaipac_scraped": "2026-08-26T23:19:51.976921+00:00",
     "member_count": 531,
     "anti_intervention_count": 39,
     "bill_count": 0,
-    "challenger_count": 124,
+    "challenger_count": 125,
     "history_events": 6759,
     "grok_enriched": 0,
     "odds_covered": 10,
@@ -11596,7 +11596,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-26T16:53:04.749018+00:00"
+      "fetched_at": "2026-08-26T23:16:06.449842+00:00"
     },
     "Rand Paul": {
       "prob": 0.003,
@@ -11609,7 +11609,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-26T16:53:13.085182+00:00"
+      "fetched_at": "2026-08-26T23:16:17.848946+00:00"
     },
     "Rashida Tlaib": {
       "prob": 0.999,
@@ -11622,7 +11622,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-26T16:53:17.351578+00:00"
+      "fetched_at": "2026-08-26T23:16:23.902681+00:00"
     },
     "Ilhan Omar": {
       "prob": 0.014,
@@ -11635,7 +11635,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-26T16:53:17.892078+00:00"
+      "fetched_at": "2026-08-26T23:16:24.576545+00:00"
     },
     "Alexandria Ocasio-Cortez": {
       "prob": 0.999,
@@ -11648,7 +11648,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-26T16:53:20.730872+00:00"
+      "fetched_at": "2026-08-26T23:16:28.718271+00:00"
     },
     "Chip Roy": {
       "prob": 0.01,
@@ -11661,7 +11661,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-26T16:53:24.383789+00:00"
+      "fetched_at": "2026-08-26T23:16:34.166912+00:00"
     },
     "Bernie Sanders": {
       "prob": 0.006,
@@ -11674,28 +11674,28 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-08-26T16:53:26.692299+00:00"
+      "fetched_at": "2026-08-26T23:16:37.116946+00:00"
     },
     "Ed Markey": {
-      "prob": 0.97,
+      "prob": 0.98,
       "src": "predictit_contract",
       "question": "Who will win the 2026 Massachusetts Democratic Senate nomination? \u2192 Ed Markey",
       "url": "https://www.predictit.org/markets/detail/8359/Who-will-win-the-2026-Massachusetts-Democratic-Senate-nomination",
-      "fetched_at": "2026-08-26T16:53:32.948719+00:00"
+      "fetched_at": "2026-08-26T23:16:46.386528+00:00"
     },
     "Ayanna Pressley": {
       "prob": 0.01,
       "src": "predictit_contract",
       "question": "Who will win the 2026 Massachusetts Democratic Senate nomination? \u2192 Ayanna Pressley",
       "url": "https://www.predictit.org/markets/detail/8359/Who-will-win-the-2026-Massachusetts-Democratic-Senate-nomination",
-      "fetched_at": "2026-08-26T16:53:32.948800+00:00"
+      "fetched_at": "2026-08-26T23:16:46.386594+00:00"
     },
     "Everton Blair": {
       "prob": 0.99,
       "src": "predictit_contract",
       "question": "Who will win the 2026 GA-13 special runoff? \u2192 Everton Blair",
       "url": "https://www.predictit.org/markets/detail/8902/Who-will-win-the-2026-GA-13-special-runoff",
-      "fetched_at": "2026-08-26T16:53:33.143651+00:00"
+      "fetched_at": "2026-08-26T23:16:46.579376+00:00"
     }
   },
   "trackaipac_congress": {
@@ -20191,22 +20191,6 @@
       "incumbentParty": ""
     },
     {
-      "name": "Bernard Taylor",
-      "state": "FL",
-      "district": 21,
-      "party": "D",
-      "chamber": "house",
-      "antiArms": true,
-      "antiArmsLevel": "yes",
-      "ps": "UPCOMING",
-      "primaryDate": "2026-08-18",
-      "website": "https://www.bernardtaylorforcongress.org/",
-      "source": "trackaipac",
-      "note": "Endorsed by Citizens Against AIPAC Corruption.",
-      "opponent": "",
-      "incumbentParty": ""
-    },
-    {
       "name": "Nicole Locklin",
       "state": "FL",
       "district": 26,
@@ -20217,22 +20201,6 @@
       "ps": "GENERAL",
       "primaryDate": "2026-11-03",
       "website": "https://locklinforcongress.com/",
-      "source": "trackaipac",
-      "note": "Endorsed by Citizens Against AIPAC Corruption.",
-      "opponent": "",
-      "incumbentParty": ""
-    },
-    {
-      "name": "Everton Blair",
-      "state": "GA",
-      "district": 13,
-      "party": "D",
-      "chamber": "house",
-      "antiArms": true,
-      "antiArmsLevel": "yes",
-      "ps": "UPCOMING",
-      "primaryDate": "2026-08-25",
-      "website": "https://www.evertonblair.com/",
       "source": "trackaipac",
       "note": "Endorsed by Citizens Against AIPAC Corruption.",
       "opponent": "",
@@ -20313,6 +20281,22 @@
       "ps": "UPCOMING",
       "primaryDate": "2026-09-01",
       "website": "https://www.jamiebelsito.com/",
+      "source": "trackaipac",
+      "note": "Endorsed by Citizens Against AIPAC Corruption.",
+      "opponent": "",
+      "incumbentParty": ""
+    },
+    {
+      "name": "Tram Nguyen",
+      "state": "MA",
+      "district": 6,
+      "party": "D",
+      "chamber": "house",
+      "antiArms": true,
+      "antiArmsLevel": "yes",
+      "ps": "UPCOMING",
+      "primaryDate": "2026-09-01",
+      "website": "https://www.tramforcongress.com/",
       "source": "trackaipac",
       "note": "Endorsed by Citizens Against AIPAC Corruption.",
       "opponent": "",
