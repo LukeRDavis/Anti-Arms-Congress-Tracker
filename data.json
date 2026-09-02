@@ -1,12 +1,12 @@
 {
   "meta": {
-    "fetched_at": "2026-09-02T19:24:45.219848+00:00",
-    "trackaipac_scraped": "2026-09-02T19:24:45.219864+00:00",
-    "member_count": 531,
-    "anti_intervention_count": 39,
+    "fetched_at": "2026-09-02T22:35:04.781675+00:00",
+    "trackaipac_scraped": "2026-09-02T22:35:04.781691+00:00",
+    "member_count": 533,
+    "anti_intervention_count": 40,
     "bill_count": 0,
     "challenger_count": 125,
-    "history_events": 7032,
+    "history_events": 7033,
     "grok_enriched": 0,
     "odds_covered": 7,
     "version": 8,
@@ -942,6 +942,23 @@
         "DMFI",
         "JAC"
       ],
+      "ps": "INCUMBENT",
+      "bills": [],
+      "votes": [],
+      "note": ""
+    },
+    {
+      "bioguide_id": "",
+      "name": "Aisha Wahab",
+      "party": "D",
+      "state": "CA",
+      "district": 14,
+      "chamber": "house",
+      "antiArms": false,
+      "antiArmsLevel": null,
+      "rlc_score": null,
+      "lobby_total": 110300,
+      "pacs": [],
       "ps": "INCUMBENT",
       "bills": [],
       "votes": [],
@@ -3141,6 +3158,23 @@
         "NACPAC",
         "RJC"
       ],
+      "ps": "INCUMBENT",
+      "bills": [],
+      "votes": [],
+      "note": ""
+    },
+    {
+      "bioguide_id": "",
+      "name": "Everton Blair",
+      "party": "D",
+      "state": "GA",
+      "district": 13,
+      "chamber": "house",
+      "antiArms": true,
+      "antiArmsLevel": "yes",
+      "rlc_score": null,
+      "lobby_total": 0,
+      "pacs": [],
       "ps": "INCUMBENT",
       "bills": [],
       "votes": [],
@@ -11596,7 +11630,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-09-02T19:21:09.673988+00:00"
+      "fetched_at": "2026-09-02T22:31:27.623625+00:00"
     },
     "Rand Paul": {
       "prob": 0.003,
@@ -11609,7 +11643,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-09-02T19:21:16.935027+00:00"
+      "fetched_at": "2026-09-02T22:31:35.898177+00:00"
     },
     "Rashida Tlaib": {
       "prob": 0.999,
@@ -11622,7 +11656,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-09-02T19:21:21.286102+00:00"
+      "fetched_at": "2026-09-02T22:31:40.220162+00:00"
     },
     "Ilhan Omar": {
       "prob": 0.014,
@@ -11635,7 +11669,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-09-02T19:21:21.802475+00:00"
+      "fetched_at": "2026-09-02T22:31:40.752113+00:00"
     },
     "Alexandria Ocasio-Cortez": {
       "prob": 0.999,
@@ -11648,7 +11682,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-09-02T19:21:24.389952+00:00"
+      "fetched_at": "2026-09-02T22:31:43.552352+00:00"
     },
     "Chip Roy": {
       "prob": 0.01,
@@ -11661,7 +11695,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-09-02T19:21:28.159229+00:00"
+      "fetched_at": "2026-09-02T22:31:47.104725+00:00"
     },
     "Bernie Sanders": {
       "prob": 0.006,
@@ -11674,7 +11708,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-09-02T19:21:30.142165+00:00"
+      "fetched_at": "2026-09-02T22:31:49.208740+00:00"
     }
   },
   "trackaipac_congress": {
@@ -12332,16 +12366,16 @@
       ],
       "note": ""
     },
-    "vacant": {
-      "name": "Vacant",
-      "state": "",
-      "district": "?",
-      "party": "?",
+    "aisha wahab": {
+      "name": "Aisha Wahab",
+      "state": "CA",
+      "district": 14,
+      "party": "D",
       "chamber": "house",
       "approved": false,
-      "lobby_total": 0,
+      "lobby_total": 110300,
       "pacs": [],
-      "note": "resigned from Congress on April 14, 2026 Special"
+      "note": ""
     },
     "kevin mullin": {
       "name": "Kevin Mullin",
@@ -13566,6 +13600,17 @@
       ],
       "note": "Running for Governor 2026"
     },
+    "vacant": {
+      "name": "Vacant",
+      "state": "",
+      "district": "?",
+      "party": "?",
+      "chamber": "house",
+      "approved": false,
+      "lobby_total": 0,
+      "pacs": [],
+      "note": "resigned from Congress on April 14, 2026 Special"
+    },
     "brian mast": {
       "name": "Brian Mast",
       "state": "FL",
@@ -13929,6 +13974,17 @@
         "NACPAC",
         "RJC"
       ],
+      "note": ""
+    },
+    "everton blair": {
+      "name": "Everton Blair",
+      "state": "GA",
+      "district": 13,
+      "party": "D",
+      "chamber": "house",
+      "approved": true,
+      "lobby_total": 0,
+      "pacs": [],
       "note": ""
     },
     "clay fuller": {

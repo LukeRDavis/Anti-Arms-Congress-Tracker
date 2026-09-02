@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-09-02T19:19:24.422604+00:00",
+  "last_updated": "2026-09-02T22:30:14.070912+00:00",
   "events": [
     {
       "id": "65f3f6ba1a",
@@ -467,6 +467,18 @@
       "party": "D",
       "change": "soft_to_hard",
       "trigger": "Upgraded to Hard via co-sponsorship or vote record",
+      "source": "trackaipac+rlc"
+    },
+    {
+      "id": "5388512d31",
+      "date": "2026-09-02",
+      "detected_at": "2026-09-02T22:30:14.070912+00:00",
+      "member": "Everton Blair",
+      "chamber": "house",
+      "state": "GA",
+      "party": "D",
+      "change": "pro_to_anti",
+      "trigger": "First detected as anti-intervention",
       "source": "trackaipac+rlc"
     },
     {
