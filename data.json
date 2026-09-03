@@ -1,12 +1,12 @@
 {
   "meta": {
-    "fetched_at": "2026-09-02T22:35:04.781675+00:00",
-    "trackaipac_scraped": "2026-09-02T22:35:04.781691+00:00",
+    "fetched_at": "2026-09-03T04:07:33.442629+00:00",
+    "trackaipac_scraped": "2026-09-03T04:07:33.442646+00:00",
     "member_count": 533,
     "anti_intervention_count": 40,
     "bill_count": 0,
     "challenger_count": 125,
-    "history_events": 7033,
+    "history_events": 7073,
     "grok_enriched": 0,
     "odds_covered": 7,
     "version": 8,
@@ -11630,7 +11630,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-09-02T22:31:27.623625+00:00"
+      "fetched_at": "2026-09-03T04:03:54.730795+00:00"
     },
     "Rand Paul": {
       "prob": 0.003,
@@ -11643,7 +11643,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-09-02T22:31:35.898177+00:00"
+      "fetched_at": "2026-09-03T04:04:06.326133+00:00"
     },
     "Rashida Tlaib": {
       "prob": 0.999,
@@ -11656,7 +11656,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-09-02T22:31:40.220162+00:00"
+      "fetched_at": "2026-09-03T04:04:10.487686+00:00"
     },
     "Ilhan Omar": {
       "prob": 0.014,
@@ -11669,7 +11669,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-09-02T22:31:40.752113+00:00"
+      "fetched_at": "2026-09-03T04:04:11.019084+00:00"
     },
     "Alexandria Ocasio-Cortez": {
       "prob": 0.999,
@@ -11682,7 +11682,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-09-02T22:31:43.552352+00:00"
+      "fetched_at": "2026-09-03T04:04:13.654590+00:00"
     },
     "Chip Roy": {
       "prob": 0.01,
@@ -11695,7 +11695,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-09-02T22:31:47.104725+00:00"
+      "fetched_at": "2026-09-03T04:04:16.978105+00:00"
     },
     "Bernie Sanders": {
       "prob": 0.006,
@@ -11708,7 +11708,7 @@
       "volume": 0.0,
       "volume_24h": 0.0,
       "url": "https://polymarket.com",
-      "fetched_at": "2026-09-02T22:31:49.208740+00:00"
+      "fetched_at": "2026-09-03T04:04:18.849797+00:00"
     }
   },
   "trackaipac_congress": {
@@ -21906,14 +21906,14 @@
     },
     "Valerie Foushee|NC|house": {
       "description": "Search \u2318K Suggest Edit Sign in Sign in Personal Background Early life and family Education Pre-political career State Legislative Career North Carolina House of Representatives North Carolina Senate Key committees and leadership roles U.S.",
-      "fetched_at": "2026-09-01T22:31:37.120955+00:00",
+      "fetched_at": "2026-09-03T04:03:37.114779+00:00",
       "_source": "grokipedia",
       "person_slug": "Valerie_Foushee",
       "race_slug": "2026_North_Carolinas_4th_congressional_district_election"
     },
     "Brandon Herrera|TX|house": {
       "description": "Search \u2318K Suggest Edit Sign in Sign in Early Life Childhood and Education Initial Firearms Interest YouTube Career Launch of The AK Guy Channel Growth and Milestones Content Creation Firearms Education and Analysis Custom Builds and Innovations Public Persona Humor and Commentary Style Controversies in Media Political Activities 2024 Congressional Campaign 2026 Election Bid Advocacy and Influence Second Amendment Positions Broader Cultural Impact Reception Media Coverage Public and Political Res.",
-      "fetched_at": "2026-09-01T22:31:37.089952+00:00",
+      "fetched_at": "2026-09-03T04:03:36.976433+00:00",
       "_source": "grokipedia",
       "person_slug": "Brandon_Herrera",
       "race_slug": "2026_Texas_23th_congressional_district_election"
